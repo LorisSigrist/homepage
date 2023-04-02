@@ -3,6 +3,13 @@
 @tailwind utilities;
 
 body {
-    @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen;
+    @apply bg-gray-50 dark:bg-stone-900 text-gray-900 dark:text-gray-100 min-h-screen;
     @apply print:bg-transparent print:text-black;
+}
+
+/* Add some margin to the page while printing */
+@media print {
+    @page {
+        margin: 1.75cm;
+    }
 }
