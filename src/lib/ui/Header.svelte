@@ -24,6 +24,7 @@
 		<button
 			class="hover:bg-gray-100 hover:dark:bg-gray-800 p-2 rounded-md aspect-square"
 			on:click={toggle_dark_theme}
+			title="Toggle Theme"
 		>
 			<Icon src={$theme === 'dark' ? Sun : Moon} class="w-4 h-4 block" />
 		</button>
