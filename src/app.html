@@ -4,16 +4,6 @@
 		<meta charset="utf-8" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
 		<meta name="viewport" content="width=device-width" />
-		<script>
-			if ('localStorage' in window) {
-				const prefers_dark = localStorage.getItem('theme') === 'dark';
-
-				if (prefers_dark) {
-					document.documentElement.classList.add('dark');
-				}
-			}
-		</script>
-
 		%sveltekit.head%
 	</head>
 
