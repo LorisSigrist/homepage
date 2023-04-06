@@ -1,9 +1,10 @@
+import { dev } from '$app/environment';
 import type { Metadata } from '$lib/Metadata.svelte';
+
+export const csr = dev;
 
 export function load(): Metadata {
 	return {
-		title: 'Loris Sigrist',
-		description: 'This is a page',
-		author: 'Loris Sigrist'
+		title: 'Runtime Type Validation'
 	};
 }

@@ -56,7 +56,7 @@
 	been edited are drawn in italics, and entries that have been deleted are ghosted out.
 </p>
 
-<div class="grid grid-cols-1 gap-2 sm:grid-cols-3 ">
+<div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
 	<img
 		class="rounded-3xl dark:border border-gray-300"
 		src={pending_create}
@@ -68,7 +68,7 @@
 		alt="An entry that has been edited, but not synced"
 	/>
 	<img
-		class="rounded-3xl dark:border border-gray-300 "
+		class="rounded-3xl dark:border border-gray-300"
 		src={pending_delete}
 		alt="An entry that has been deleted, but not synced"
 	/>

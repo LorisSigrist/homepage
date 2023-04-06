@@ -1,27 +1,31 @@
 <script lang="ts">
 	import avatar from '$lib/assets/avatar.png';
+	import { Icon, Sun, Moon } from 'svelte-hero-icons';
+	import { theme } from '$lib/stores/theme';
 
 	function toggle_dark_theme() {
-		document.getElementsByTagName('html')[0].classList.toggle('dark');
+		theme.update((t) => (t === 'dark' ? 'light' : 'dark'));
 	}
 </script>
 
 <header class="container mx-auto px-4 py-4 print:hidden flex flex-row justify-between">
 	<div id="header-start">
-		<a href="/" class="flex flex-row items-center gap-4">
+		<a href="/" class="flex flex-row items-center gap-3">
 			<img
 				src={avatar}
 				alt="Loris Sigrist looking very handsome"
-				class="rounded-full w-10 aspect-square"
+				class="rounded-full w-9 aspect-square"
 			/>
 
-            <span class="font-bold text-lg">Loris Sigrist</span>
+			<span class="font-bold text-md">Loris Sigrist</span>
 		</a>
 	</div>
 	<div id="header-end">
 		<button
-			class="hover:bg-gray-100 hover:dark:bg-gray-800 p-1 px-4 rounded-md"
-			on:click={toggle_dark_theme}>Toggle dark theme</button
+			class="hover:bg-gray-100 hover:dark:bg-gray-800 p-2 rounded-md aspect-square"
+			on:click={toggle_dark_theme}
 		>
+			<Icon src={$theme === 'dark' ? Sun : Moon} class="w-4 h-4 block" />
+		</button>
 	</div>
 </header>

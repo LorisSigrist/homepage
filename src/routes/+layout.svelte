@@ -4,7 +4,6 @@
 	import Header from '$lib/ui/Header.svelte';
 </script>
 
-
 <Metadata />
 
 <Header />
