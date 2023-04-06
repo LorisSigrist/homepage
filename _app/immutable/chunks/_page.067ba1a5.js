@@ -1,0 +1,1 @@
+function e(){return{title:"Loris Sigrist",description:"This is a page",author:"Loris Sigrist"}}const t=Object.freeze(Object.defineProperty({__proto__:null,load:e},Symbol.toStringTag,{value:"Module"}));export{t as _,e as l};
