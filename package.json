@@ -41,6 +41,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"topology-renderer": "^0.1.1"
+		"topology-renderer": "^0.1.3"
 	}
 }
