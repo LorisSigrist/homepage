@@ -1,0 +1,109 @@
+# Never write Mock-Data again, with Zocker
+
+The trend of zod-driven-development continues! This time, we're going to use zod to generate
+sensible mock-data for our tests.
+
+## Writing Mock Data is the worst
+
+When writing tests, you often need to provide some mock-data to test your code against. This can
+be a real pain, especially if you're working with large data-structures.
+
+Most mock-data generation libraries supply only individual fields, not entire data-structures.
+
+These manual mock-data structures are often brittle, and prone to get out of sync with your code
+as your project evolves. They quickly become a maintenance burden slowing you down to a crawl.
+
+## Enter Zocker
+
+[Zocker](https://zocker.sigrist.dev) is a library I've built to forever
+eliminate the pain of writing and maintaining mock-data. It uses your zod-schemas to generate sensible mock-data for
+you. That way, the data will always be in sync with your code.
+
+### Getting Started
+
+Obviously, install it first:
+
+```bash
+npm install --save-dev zocker
+```
+
+Then, in your test-file, import the <code>zocker</code> function and pass it your zod-schema:
+
+```typescript
+import { z } from 'zod';
+import { zocker } from 'zocker';
+
+const schema = z.object({
+	name: z.string(),
+	age: z.number(),
+	isAwesome: z.boolean()
+});
+
+const mockData = zocker(schema).generate();
+// { name: "Jimmy Smith", age: 42, isAwesome: true }
+```
+
+And voilà! You have your mock-data.
+
+That was obviously a very simple example. Zocker can handle much more complex schemas, including
+cyclic schemas, anys, unkowns, regular expressions, and much more. This here works just fine:
+
+```typescript
+const difficult_schema = z.object({
+	id: z.string().uuid(),
+	name: z.string().min(3).max(20),
+	age: z.number().int().min(0).max(120).multipleOf(10),
+	isAwesome: z.boolean().optional(),
+	friends: z.array(z.string().min(3).max(20)).min(1).max(10),
+	zip: z.string().regex(/^[0-9]{5}$/),
+	children: z.map(
+		z.string(),
+		z.lazy(() => difficult_schema)
+	)
+});
+
+const mockData = zocker(schema).generate();
+```
+
+### Supplying values
+
+When testing specific edge-cases, you often want to supply your own values for certain fields. 
+
+This can be done by "supplying" your own value, or generator function, for a schema. That value is then
+used whenever a value is needed for a (sub)schema that matches the given schema by reference.
+
+This is easier to undestand with an example:
+
+```typescript
+const user = z.object({
+	name: z.string(),
+	age: z.number()
+});
+
+const mockData = zocker(schema).supply(user.shape.name, 'Jimmy Smith').generate();
+
+// { name: "Jimmy Smith", age: 42 } - The name is now fixed
+```
+
+
+### Limitations
+
+There are a few limitations though. Zocker will never be able to generate data for preprocess or
+refinement functions. At least not out of the box. We can however supply our own values for those
+(sub)schemas, and side-step the issue.
+
+### Repeatability
+
+By default, zocker will generate a new random value for each schema. This is great for most cases,
+but can lead to flaky tests if you're not careful. If you want to generate the same data every
+time, you can set a seed using the `setSeed` method. This will generate the same data every time.
+
+```typescript
+const mockData = zocker(schema).setSeed(42).generate();
+```
+
+## Conclusion
+
+I hope this article has given you a taste of what zocker can do. If you want to learn more, check out
+the [documentation](https://zocker.sigrist.dev). In my own use, zocker has
+been a huge time-saver. I hope it can help you too!

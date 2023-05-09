@@ -9,7 +9,7 @@
 </script>
 
 <header class="container mx-auto px-4 py-4 print:hidden flex flex-row justify-between">
-	<div id="header-start">
+	<div id="header-start" class="flex flex-row items-center gap-4">
 		<a href="/" class="flex flex-row items-center gap-3">
 			<img
 				src={avatar}
@@ -20,7 +20,12 @@
 			<span class="font-bold text-md">Loris Sigrist</span>
 		</a>
 	</div>
-	<div id="header-end">
+	<div id="header-end" class="flex flex-row items-center gap-4">
+		<a href="https://www.github.com/LorisSigrist" 
+		target="_blank" 
+		class="hover:bg-gray-100 hover:dark:bg-gray-800 p-1 px-3 rounded-md text-gray-800 dark:text-gray-200">
+			Github
+		</a>
 		<button
 			class="hover:bg-gray-100 hover:dark:bg-gray-800 p-2 rounded-md aspect-square"
 			on:click={toggle_dark_theme}

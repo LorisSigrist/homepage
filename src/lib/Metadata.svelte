@@ -3,6 +3,7 @@
 		title?: string;
 		description?: string;
 		author?: string;
+		published?: Date;
 	}
 </script>
 
@@ -19,4 +20,7 @@
 		<meta name="description" content={$page.data.description} />
 	{/if}
 	<meta name="author" content={$page.data.author ?? DEFAULT_AUTHOR} />
+	{#if $page.data.published}
+		<meta name="date" content={$page.data.published.toISOString()} />
+	{/if}
 </svelte:head>
