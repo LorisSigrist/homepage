@@ -10,14 +10,20 @@ const config = {
 	// for more information about preprocessors
 	preprocess: [vitePreprocess(), mdsvex({
 		extensions: ['.svx', '.mdx'],
+		smartypants: {
+			dashes: 'oldschool'
+		},
 	})],
 
 	kit: {
-		// adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.
-		// If your environment is not supported or you settled on a specific environment, switch out the adapter.
-		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
-		adapter: adapter()
-	}
+		adapter: adapter(),
+		typescript: {
+			config: (conf) => {
+				conf.include.push("../plugins/**/*.d.ts")
+				return conf
+			}
+		}
+	},
 };
 
 export default config;
