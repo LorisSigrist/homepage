@@ -31,10 +31,3 @@
 		<meta name="date" content={$page.data.published.toISOString()} />
 	{/if}
 </svelte:head>
-
-<!-- 
-	This is a hack to make the og:image prerender work.
-	Remove if sveltejs/kit#5228 is fixed.
--->
-<!-- svelte-ignore a11y-missing-content -->
-<a href="/og/{encodeURI(title)}.png" style="display:none" aria-hidden="true" />
