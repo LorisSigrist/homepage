@@ -1,71 +1,60 @@
-const a = /* @__PURE__ */ location.pathname.split("/").slice(0, -1).join("/"), i = [
-  a + "/_app/immutable/entry/app.96dbaf85.js",
-  a + "/_app/immutable/chunks/0.40eed8e9.js",
-  a + "/_app/immutable/chunks/1.77e2e4a6.js",
-  a + "/_app/immutable/chunks/2.296e3a02.js",
-  a + "/_app/immutable/chunks/3.83196589.js",
-  a + "/_app/immutable/chunks/4.c64f43c5.js",
-  a + "/_app/immutable/chunks/_layout.da46b06b.js",
-  a + "/_app/immutable/chunks/_page.8217579f.js",
-  a + "/_app/immutable/chunks/_page.dd6af2e0.js",
-  a + "/_app/immutable/chunks/index.6ca33f2d.js",
-  a + "/_app/immutable/chunks/index.76514a08.js",
-  a + "/_app/immutable/chunks/singletons.84af436c.js",
-  a + "/_app/immutable/chunks/stores.fac3ac8a.js",
-  a + "/_app/immutable/chunks/theme.f9ced453.js",
-  a + "/_app/immutable/entry/start.21b0ad74.js",
-  a + "/_app/immutable/entry/error.svelte.d5781d34.js",
-  a + "/_app/immutable/assets/avatar.4558b389.png",
-  a + "/_app/immutable/assets/_layout.2f52a585.css",
-  a + "/_app/immutable/entry/(articles)-layout.svelte.d1d7ce9b.js",
-  a + "/_app/immutable/entry/(articles)-mock-data-with-zocker-page.svx.f7125d96.js",
-  a + "/_app/immutable/entry/(articles)-mock-data-with-zocker-page.ts.25cbbef8.js",
-  a + "/_app/immutable/assets/_layout.2d78b62a.css",
-  a + "/_app/immutable/entry/_layout.svelte.40d24d82.js",
-  a + "/_app/immutable/entry/_layout.ts.984db11e.js",
-  a + "/_app/immutable/assets/_page.7520a7f7.css",
-  a + "/_app/immutable/entry/_page.svelte.492703a5.js",
-  a + "/_app/immutable/entry/_page.ts.ac7151f4.js"
+const e = /* @__PURE__ */ location.pathname.split("/").slice(0, -1).join("/"), p = [
+  e + "/_app/immutable/entry/app.e0277b41.js",
+  e + "/_app/immutable/assets/0.b909e3c6.css",
+  e + "/_app/immutable/nodes/0.b10cfe98.js",
+  e + "/_app/immutable/assets/avatar.4558b389.png",
+  e + "/_app/immutable/nodes/1.bb9ceeea.js",
+  e + "/_app/immutable/assets/2.2f52a585.css",
+  e + "/_app/immutable/nodes/2.48f8f9ca.js",
+  e + "/_app/immutable/assets/3.7520a7f7.css",
+  e + "/_app/immutable/nodes/3.bc1122c6.js",
+  e + "/_app/immutable/nodes/4.6d9f2747.js",
+  e + "/_app/immutable/chunks/index.2413453e.js",
+  e + "/_app/immutable/chunks/index.328d30d5.js",
+  e + "/_app/immutable/chunks/singletons.aea337d4.js",
+  e + "/_app/immutable/chunks/stores.a9985085.js",
+  e + "/_app/immutable/chunks/theme.179a6edd.js",
+  e + "/_app/immutable/entry/start.3b3c082b.js"
+], o = [
+  e + "/.nojekyll",
+  e + "/favicon.png"
 ], l = [
-  a + "/.nojekyll",
-  a + "/favicon.png"
-], m = [
-  a + "/",
-  a + "/mock-data-with-zocker",
-  a + "/og/Loris Sigrist.png",
-  a + "/og/Never write Mock Data again, with Zocker.png"
-], u = "1683736769291", n = `cache-${u}`, p = [
-  ...i,
+  e + "/",
+  e + "/mock-data-with-zocker",
+  e + "/og/Loris Sigrist.png",
+  e + "/og/Never write Mock Data again, with Zocker.png"
+], m = "1684481452540", c = `cache-${m}`, i = [
+  ...p,
   // the app itself
-  ...l,
+  ...o,
   // everything in `static`
-  ...m
+  ...l
   // prerendered pages
 ];
-self.addEventListener("install", (e) => {
-  async function t() {
-    await (await caches.open(n)).addAll(p);
+self.addEventListener("install", (a) => {
+  async function s() {
+    await (await caches.open(c)).addAll(i);
   }
-  e.waitUntil(t());
+  a.waitUntil(s());
 });
-self.addEventListener("activate", (e) => {
-  async function t() {
-    for (const s of await caches.keys())
-      s !== n && await caches.delete(s);
+self.addEventListener("activate", (a) => {
+  async function s() {
+    for (const t of await caches.keys())
+      t !== c && await caches.delete(t);
   }
-  e.waitUntil(t());
+  a.waitUntil(s());
 });
-self.addEventListener("fetch", (e) => {
-  const { request: t } = e, s = new URL(e.request.url);
-  if (t.method !== "GET") {
-    e.respondWith(fetch(t));
+self.addEventListener("fetch", (a) => {
+  const { request: s } = a, t = new URL(a.request.url);
+  if (s.method !== "GET") {
+    a.respondWith(fetch(s));
     return;
   }
-  if (!p.includes(s.pathname)) {
-    e.respondWith(fetch(t));
+  if (!i.includes(t.pathname)) {
+    a.respondWith(fetch(s));
     return;
   }
-  e.respondWith(
-    caches.open(n).then((c) => c.match(s.pathname)).then((c) => c || (console.error("Cache miss for: " + s.pathname), fetch(t)))
+  a.respondWith(
+    caches.open(c).then((n) => n.match(t.pathname)).then((n) => n || (console.error("Cache miss for: " + t.pathname), fetch(s)))
   );
 });

@@ -1,1 +1,0 @@
-function e(){return{title:"Loris Sigrist",description:"Loris Sigrist is a software engineer based in Zurich, Switzerland. This is his personal website.",author:"Loris Sigrist"}}const i=Object.freeze(Object.defineProperty({__proto__:null,load:e},Symbol.toStringTag,{value:"Module"}));export{i as _,e as l};
