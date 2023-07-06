@@ -12,7 +12,17 @@ export default {
 						fontSize: '1.25rem',
 						lineHeight: '1.75rem',
 						color: theme('colors.gray.950 dark:gray.50'),
-					}
+
+						blockquote: {
+							fontStyle: 'normal',
+							'& p::before': {
+								content: 'none',
+							},
+							'& p::after': {
+								content: 'none',
+							}
+						},
+					},
 				}
 			})
 		}
