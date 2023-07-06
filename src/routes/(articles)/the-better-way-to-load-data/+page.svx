@@ -4,6 +4,8 @@
 	import TextStreamGif from "./text-stream.gif"
 	import ParseResultValueStreamGif from "./parse-result-value-stream.gif"
 	import FinalStreamGif from "./final-stream.gif"
+	import NonStreamLoadGif from "./non-stream-load.gif"
+	import StreamLoadGif from "./stream-load.gif"
 </script>
 
 # The Better Way to load data
@@ -24,6 +26,8 @@ for(const todo of todos) {
 ```
 
 But what if there are hundreds of items and the connection to the server is slow. If we wait for the entire response to arrive the user is going to see absolutely nothing for several seconds, and then see all the items at once. This feels sluggish. Unfortunately, for anyone taking the subway, this is a daily experience.
+
+<img src={NonStreamLoadGif} alt="A list of items loading for a long time, and then being filled all at once" />
 
 There might be a better way though. We don't actually need to wait for all the data before we start displaying it. Once the data for the first item has made it over the network, we should be able display it. Having the items trickle in as the data arrives over the network would be a much nicer user experience.
 
@@ -130,6 +134,8 @@ while(true) {
 	display(value)
 }
 ```
+
+<img src={StreamLoadGif} alt="The list being rendered one item at a time" />
 
 Just what we wanted!
 
