@@ -2,6 +2,7 @@ import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
 import { html as toReactElement } from 'satori-html';
 import inter_regular_base64 from "$lib/assets/Inter-Regular.woff?base64"
+import baskerville_bold_base64 from "$lib/assets/LibreBaskerville-Bold.ttf?base64"
 import avatar from "$lib/assets/avatar.png?base64"
 
 
@@ -13,7 +14,8 @@ const WIDTH = 1200;
 export const GET = async ({ params }) => {
   const title = params.title.replace(".png", "");
 
-  const fontData = Buffer.from(inter_regular_base64, 'base64')
+  const interRegular = Buffer.from(inter_regular_base64, 'base64')
+  const baskervilleBold = Buffer.from(baskerville_bold_base64, 'base64')
 
   const avatar_data_url = `data:image/png;base64,${avatar}`
 
@@ -24,7 +26,7 @@ export const GET = async ({ params }) => {
 
       <h2 tw="flex flex-col flex-1 font-bold text-left p-12">
         <span class="text-indigo-600  text-4xl font-bold py-3">Loris Sigrist</span>
-        <span class="text-black  text-6xl">${title}</span>
+        <span class="text-black  text-6xl" style="font-family: Baskerville;">${title}</span>
       </h2>
 
     </div>
@@ -34,7 +36,12 @@ export const GET = async ({ params }) => {
     fonts: [
       {
         name: 'Inter Latin',
-        data: fontData,
+        data: interRegular,
+        style: 'normal'
+      },
+      {
+        name: 'Baskerville',
+        data: baskervilleBold,
         style: 'normal'
       }
     ],
