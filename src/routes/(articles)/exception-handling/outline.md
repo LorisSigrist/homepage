@@ -1,0 +1,4 @@
+- Think of Exceptions as alternate execution paths, kinda like function calls
+- Since Execution Paths are Application specific, you should define your own Exceptions-Types that fit the application. Asking if you should define your own exceptions is kinda like asking if you should define your own functions. Obviously, they are what makes your app work. One nice way to do this is with `class NotFoundException extends Error {}`, which keeps the `Error` classes signature. You can then use `instanceof` to check for the type of error.
+- Always rethrow exceptions you are not handling. Use the instaceof operator to distinguish error types.
+- Make sure to not introduce Catch-All bugs. The only catch block without a throw inside it, is the one at top of you app, that triggers the error page. Consider logging the error to an error-aggregator like Sentry.

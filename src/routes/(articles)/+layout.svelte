@@ -1,5 +1,6 @@
 <script>
 	import "$lib/atom-dark.css"
+	import "$lib/baskerville.css"
 </script>
 
 <article

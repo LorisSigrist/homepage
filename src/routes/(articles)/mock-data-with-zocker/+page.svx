@@ -5,19 +5,16 @@ sensible mock-data for our tests.
 
 ## Writing Mock Data is the worst
 
-When writing tests, you often need to provide some mock-data to test your code against. This can
-be a real pain, especially if you're working with large data-structures.
+When writing tests, you often need to provide some mock-data to test your code against. This can be a real pain, especially if you need lot's of it, and if it's complex.
 
-Most mock-data generation libraries supply only individual fields, not entire data-structures.
+Most mock-data generation libraries, such as the excellent [faker](https://www.npmjs.com/package/@faker-js/faker), supply only individual fields, not entire data-structures.
 
-These manual mock-data structures are often brittle, and prone to get out of sync with your code
-as your project evolves. They quickly become a maintenance burden slowing you down to a crawl.
+Manually assembling these fields into a data-structure is tedious, and maintenance-heavy. 
 
 ## Enter Zocker
 
 [Zocker](https://zocker.sigrist.dev) is a library I've built to forever
-eliminate the pain of writing and maintaining mock-data. It uses your zod-schemas to generate sensible mock-data for
-you. That way, the data will always be in sync with your code.
+eliminate the pain of writing and maintaining mock-data. It uses your zod-schemas as a guide to generate sensible and realistic mock-data for you. This way you can focus on writing tests, not on writing mock-data. Data generation does not get harder if you need more data, or if your data gets more complex. It's all handled for you.
 
 ### Getting Started
 
