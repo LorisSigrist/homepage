@@ -1,5 +1,9 @@
 <script>
     import forAwaitOfCompat from "./for-await-of-compat.png"
+	import RawStreamGif from "./raw-stream.gif"
+	import TextStreamGif from "./text-stream.gif"
+	import ParseResultValueStreamGif from "./parse-result-value-stream.gif"
+	import FinalStreamGif from "./final-stream.gif"
 </script>
 
 # The Better Way to load data
@@ -50,6 +54,8 @@ while(true) {
 
 We now see see a bunch of `Uint8Arrays` in the console. This is the raw binary data arriving over the network.
 
+<img src={RawStreamGif} alt="A bunch of Uint8Arrays being logged to the console" />
+
 But we want text, so let's convert the raw data to text. We can modify a stream's data using a TransformStream. A TransformStream takes in a stream, runs some logic on each chunk of data as it arrives, and writes the result to an outgoing stream. 
 In our case, we want a TransformStream that takes in a stream of raw binary data and outputs a stream of strings. This is such a common task that there actually is a built in one, the  [`TextDecoderStream`](https://developer.mozilla.org/en-US/docs/Web/API/TextDecoderStream).  Let's use that. Don't worry,  we will be creating our own TransformStreams later on.
 
@@ -61,6 +67,9 @@ const stream = request.body
 ```
 
 We now have a bunch of readable strings in the console.
+
+<img src={TextStreamGif} alt="A bunch of strings being logged to the console, with each being a chunk of a big JSON string" />
+
 
 But we really want a stream of objects that represent our items. We can't just `JSON.parse` each string-chunk, they don't line up with the JSON structure; What we need is a streaming JSON parser. 
 
@@ -86,6 +95,8 @@ const stream = response.body
 
 In the console we now see a bunch of weird objects. The `value` property in each one contains our list items in their fully parsed glory. `JSONParser` emits what it calls "ParsedElementInfo" objects, which contain the parsed values as well as some extra metadata. That's what we're seeing.
 
+<img src={ParseResultValueStreamGif} alt="A bunch of objects with the properties value,key,parent and stack being logged to the console" />
+
 Since we only care about the parsed values, let's map over each element in the stream using, you guessed it, another Transform Stream. This time we'll create our own. The constructor takes an object with some lifecycle methods. The `start` method runs when the stream starts, the `flush` method runs if the stream is about to be closed, and the `transform` method runs whenever a new chunk of data arrives. We will only be using `transform` . It takes two arguments the first one is the chunk of incoming data, in our case that is the ParsedElementInfo object from the JSONParser, and the second one is a stream-controller for the output stream. The stream-controller is how we write to or close the output stream. Here we enqueue the value property of each parsed element.
 
 ```ts
@@ -96,13 +107,17 @@ const mapToValueStream = new TransformStream({
 })
 ```
 
-Let's tack on our TransformStream and look at the console. That's looking good already! We get list-items trickling in as the data is arriving over the network!
+Let's tack on our TransformStream and look at the console.
 
 ```ts
 const stream = response.body
 	.pipeThrough(parser)
 	.pipeThrough(valueStream)
 ```
+
+<img src={FinalStreamGif} alt="Each object in the list being logged out one after the other" />
+
+That's looking good already! We get list-items trickling in as the data is arriving over the network!
 
 Let's replace the log-statement with our rendering logic. I want to keep this post framework agnostic, so I won't spend much time here. This is where you would hook into your UI framework.
 
@@ -116,7 +131,7 @@ while(true) {
 }
 ```
 
-Looking good!
+Just what we wanted!
 
 The original code we had did one more thing that we are not yet doing. It validated the data. Let's add that. We're going to need another TransformStream. This one is very similar to the one we already made. We need to validate each element in the stream, and write it to the output if and only if it's valid. You could throw an error if an item is invalid; I'm just going to fail silently.
 
@@ -203,7 +218,7 @@ for await (const todo of asIterable(stream)) {
 The final code now looks like this:
 
 ```ts
-import { JSONParser } from "./JSONParser"
+import { JSONParser } from "@streamparser/json-whatwg"
 import { MapStream, asIterable } from "./helpers"
 import { TodoSchema } from "./TodoSchema"
 
@@ -225,7 +240,7 @@ for await (const todo of asIterable(stream)) {
 
 A few observations to close out. 
 
-1. The Streaming version is both faster to show stuff to the user and also finishes earlier, since the parsing and validation happen in parallel with the fetching.
+1. On slow connections, the Streaming version is both faster to show stuff to the user and also finishes earlier, since the parsing and validation happen in parallel with the fetching. On fast connections, the performance difference is negligible.
 2. Once the `MapStream` and `asIterable` helpers are defined, the streaming version of the code isn't meaningfully longer. The effort for both versions is about the same.
 3. The bundle size for the streaming versions is slightly larger than the non-streaming version since we need to ship the JSONParser. This isn't always worth it. On sites with long session times it likely *is* worth it, since the extra code is only sent once and every subsequent request can be sped up. In PWAs, where your code is already cached on the client, streaming is a no brainer. 
 

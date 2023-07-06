@@ -20,7 +20,6 @@ const minification_options: Options = {
 	sortClassName: true
 };
 
-/** @type {import('@sveltejs/kit').Handle} */
 export async function handle({ event, resolve }) {
 	let page = '';
 
@@ -32,4 +31,4 @@ export async function handle({ event, resolve }) {
 			}
 		}
 	});
-}
+};
