@@ -8,7 +8,7 @@ When we are loading lists in out applications, we usually do the following. Our 
 
 ```ts
 import { TodosSchema, type Todo } from "./model"
-import { display } from "./my-framework"
+import { display } from "my-framework"
 
 const response = await fetch("/todos");    //fetch
 const data = await response.json();        //wait
@@ -82,6 +82,8 @@ const stream = response.body
 	.pipeThrough(parser)
 ```
 
+> Optional Performance optimization: Add `keepStack: false, stringBufferSize: undefined` along with the paths option. 
+
 In the console we now see a bunch of weird objects. The `value` property in each one contains our list items in their fully parsed glory. `JSONParser` emits what it calls "ParsedElementInfo" objects, which contain the parsed values as well as some extra metadata. That's what we're seeing.
 
 Since we only care about the parsed values, let's map over each element in the stream using, you guessed it, another Transform Stream. This time we'll create our own. The constructor takes an object with some lifecycle methods. The `start` method runs when the stream starts, the `flush` method runs if the stream is about to be closed, and the `transform` method runs whenever a new chunk of data arrives. We will only be using `transform` . It takes two arguments the first one is the chunk of incoming data, in our case that is the ParsedElementInfo object from the JSONParser, and the second one is a stream-controller for the output stream. The stream-controller is how we write to or close the output stream. Here we enqueue the value property of each parsed element.
@@ -103,6 +105,16 @@ const stream = response.body
 ```
 
 Let's replace the log-statement with our rendering logic. I want to keep this post framework agnostic, so I won't spend much time here. This is where you would hook into your UI framework.
+
+```ts
+import { display } from "my-framework"
+...
+while(true) {
+	const { value, done } = await reader.read();
+	if(done) break;
+	display(value)
+}
+```
 
 Looking good!
 
@@ -183,6 +195,29 @@ We can now use  `for await (const todo of asIterable(stream))` to asynchronously
 ```js
 import { MapStream, asIterable } from "./helpers"
 ...
+for await (const todo of asIterable(stream)) {
+	display(todo);
+}
+```
+
+The final code now looks like this:
+
+```ts
+import { JSONParser } from "./JSONParser"
+import { MapStream, asIterable } from "./helpers"
+import { TodoSchema } from "./TodoSchema"
+
+const response = await fetch("/todos.json")
+
+const parser = new JSONParser({ 
+	paths: ["$.*"]
+})
+
+const stream = response.body
+	.pipeThrough(parser)
+	.pipeThrough(MapStream(result => result.value))
+	.pipeThrough(MapStream(TodoSchema.parse))
+
 for await (const todo of asIterable(stream)) {
 	display(todo);
 }
