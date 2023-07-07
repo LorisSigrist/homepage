@@ -248,6 +248,6 @@ A few observations to close out.
 
 1. On slow connections, the Streaming version is both faster to show stuff to the user and also finishes earlier, since the parsing and validation happen in parallel with the fetching. On fast connections, the performance difference is negligible.
 2. Once the `MapStream` and `asIterable` helpers are defined, the streaming version of the code isn't meaningfully longer. The effort for both versions is about the same.
-3. The bundle size for the streaming versions is slightly larger than the non-streaming version since we need to ship the JSONParser. This isn't always worth it. On sites with long session times it likely *is* worth it, since the extra code is only sent once and every subsequent request can be sped up. In PWAs, where your code is already cached on the client, streaming is a no brainer. 
+3. The bundle size for the streaming versions is slightly larger than the non-streaming version since we need to ship the JSONParser (+20kB). This isn't always worth it. On sites with long session times it likely *is* worth it, since the extra code is only sent once and every subsequent request can be sped up. In PWAs, where your code is already cached on the client, streaming is a no brainer. 
 
 There is a lot more you can do with streams, I really encourage you to play around with them. They're a really powerful idea that applies to much more than just data-fetching. I hope you've learned something and have a good day.
