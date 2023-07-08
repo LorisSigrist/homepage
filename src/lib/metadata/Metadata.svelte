@@ -1,10 +1,5 @@
 <script lang="ts" context="module">
-	export interface Metadata {
-		title?: string;
-		description?: string;
-		author?: string;
-		published?: Date;
-	}
+	export type { Metadata } from './types';
 </script>
 
 <script lang="ts">

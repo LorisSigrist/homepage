@@ -1,6 +1,6 @@
-import type { Metadata } from '$lib/Metadata.svelte';
+import type { ArticleMetadata } from '$lib/articles/types';
 
-export function load(): Metadata {
+export function load(): ArticleMetadata {
 	return {
         title: 'Never write Mock Data again, with Zocker',
         description: "Over tha last couple weeks I've been building a library to generate mock data for my projects. Today I'm happy to announce the first stable release of Zocker, a Schema first Mock Data Generator.",

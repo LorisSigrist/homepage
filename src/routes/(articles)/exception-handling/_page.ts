@@ -1,6 +1,6 @@
-import type { Metadata } from '$lib/Metadata.svelte';
+import type { ArticleMetadata } from '$lib/articles/types';
 
-export function load(): Metadata {
+export function load(): ArticleMetadata {
 	return {
 		title: 'Exception Handling',
 		description: `This article explores advanced patterns for exception handling, 
