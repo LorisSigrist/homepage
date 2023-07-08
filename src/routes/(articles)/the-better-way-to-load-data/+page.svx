@@ -10,7 +10,7 @@
 
 # The Better Way to load data
 
-When we are loading lists in out applications, we usually do the following. Our app makes a fetch request to a server, waits for all the data to arrive, maybe the app validates it, and then displays the items.
+When we are loading lists in out web-apps, we usually do the following. Our app makes a fetch request to a server, waits for all the data to arrive, maybe the app validates it, and then displays the items.
 
 ```ts
 import { TodosSchema, type Todo } from "./model"
