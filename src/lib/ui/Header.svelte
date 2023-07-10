@@ -1,5 +1,6 @@
 <script lang="ts">
 	import avatar from '$lib/assets/avatar.png';
+	import avatar_color from '$lib/assets/avatar.png?color';
 	import { Icon, Sun, Moon } from 'svelte-hero-icons';
 	import { theme } from '$lib/stores/theme';
 	import Themed from './Themed.svelte';
@@ -16,6 +17,7 @@
 				src={avatar}
 				alt="Loris Sigrist looking very handsome"
 				class="rounded-full w-9 aspect-square"
+				style="background-color: {avatar_color}"
 			/>
 
 			<span class="font-bold text-md">Loris Sigrist</span>
