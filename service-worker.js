@@ -1,15 +1,15 @@
 const a = /* @__PURE__ */ location.pathname.split("/").slice(0, -1).join("/"), p = [
-  a + "/_app/immutable/entry/app.c78a95a4.js",
-  a + "/_app/immutable/assets/0.aa51c14f.css",
-  a + "/_app/immutable/nodes/0.ab457758.js",
+  a + "/_app/immutable/entry/app.7d95844d.js",
+  a + "/_app/immutable/assets/0.f5c19244.css",
+  a + "/_app/immutable/nodes/0.f0067cd7.js",
   a + "/_app/immutable/assets/avatar.4558b389.png",
-  a + "/_app/immutable/nodes/1.d5841e49.js",
-  a + "/_app/immutable/assets/2.e1cc326a.css",
-  a + "/_app/immutable/nodes/2.90524fd0.js",
+  a + "/_app/immutable/nodes/1.4b645288.js",
+  a + "/_app/immutable/assets/2.3d7ef7ec.css",
+  a + "/_app/immutable/nodes/2.4c5fa574.js",
   a + "/_app/immutable/assets/3.8b9ba990.css",
-  a + "/_app/immutable/nodes/3.b4587b61.js",
-  a + "/_app/immutable/nodes/4.7e948f94.js",
-  a + "/_app/immutable/nodes/5.81e75ee4.js",
+  a + "/_app/immutable/nodes/3.ad648cfe.js",
+  a + "/_app/immutable/nodes/4.7463e73a.js",
+  a + "/_app/immutable/nodes/5.7ab993d7.js",
   a + "/_app/immutable/assets/for-await-of-compat.16fd3cc1.png",
   a + "/_app/immutable/assets/raw-stream.af5d3091.gif",
   a + "/_app/immutable/assets/text-stream.8cbdd213.gif",
@@ -17,17 +17,16 @@ const a = /* @__PURE__ */ location.pathname.split("/").slice(0, -1).join("/"), p
   a + "/_app/immutable/assets/final-stream.7ab47112.gif",
   a + "/_app/immutable/assets/non-stream-load.67378d23.gif",
   a + "/_app/immutable/assets/stream-load.a3f8ce89.gif",
-  a + "/_app/immutable/chunks/index.2413453e.js",
-  a + "/_app/immutable/chunks/index.328d30d5.js",
-  a + "/_app/immutable/chunks/singletons.d2f0b7f0.js",
-  a + "/_app/immutable/chunks/stores.cff4c72d.js",
-  a + "/_app/immutable/chunks/theme.179a6edd.js",
-  a + "/_app/immutable/entry/start.0107d4cb.js"
+  a + "/_app/immutable/chunks/index.4190156f.js",
+  a + "/_app/immutable/chunks/index.c3b38f65.js",
+  a + "/_app/immutable/chunks/singletons.6a82630e.js",
+  a + "/_app/immutable/chunks/stores.973c34bc.js",
+  a + "/_app/immutable/chunks/theme.de549241.js",
+  a + "/_app/immutable/entry/start.dbe4de50.js"
 ], m = [
   a + "/.nojekyll",
-  a + "/favicon.png",
-  a + "/fonts/LibreBaskerville-Regular.ttf"
-], l = [
+  a + "/favicon.png"
+], o = [
   a + "/",
   a + "/__data.json",
   a + "/mock-data-with-zocker",
@@ -35,12 +34,12 @@ const a = /* @__PURE__ */ location.pathname.split("/").slice(0, -1).join("/"), p
   a + "/og/Loris Sigrist.png",
   a + "/og/Never write Mock Data again, with Zocker.png",
   a + "/og/The better way to load data.png"
-], o = "1688829401266", n = `cache-${o}`, c = [
+], l = "1688982731221", n = `cache-${l}`, c = [
   ...p,
   // the app itself
   ...m,
   // everything in `static`
-  ...l
+  ...o
   // prerendered pages
 ];
 self.addEventListener("install", (e) => {
