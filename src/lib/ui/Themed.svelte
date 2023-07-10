@@ -1,6 +1,6 @@
 <!--
     @component
-    allows you to display two different versions of a component based on the theme.
+    Allows you to display two different versions of a component based on the theme.
     css-only implementation.
 
     @slot-light
@@ -11,8 +11,8 @@
 
     @example
     <Themed>
-        <Icon src={Sun} slot="light" class="w-4 h-4 block" />
-        <Icon src={Moon} slot="dark" class="w-4 h-4 block" />
+        <Icon src={Sun} slot="light" />
+        <Icon src={Moon} slot="dark" />
     </Themed>
 -->
 
