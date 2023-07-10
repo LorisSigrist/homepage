@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { dev } from '$app/environment';
 	import type { Article } from './types';
 	export let data: Article;
 </script>
@@ -6,7 +7,7 @@
 <article
 	class="flex w-full flex-col items-start justify-between bg-white dark:bg-gray-950 p-10 rounded-md relative shadow-sm"
 >
-	<div class="flex items-center gap-x-4 text-xs">
+	<div class="flex items-center gap-x-3 text-xs">
 		<time datetime="2020-03-16" class="text-gray-500 dark:text-gray-400">
 			{data.published.toLocaleDateString('en-US', {
 				year: 'numeric',
@@ -14,6 +15,23 @@
 				day: 'numeric'
 			})}
 		</time>
+
+		{#if dev}
+			{#if data.draft}
+				<span
+					class="relative z-10 rounded-full bg-gray-50 dark:bg-gray-900 dark:text-gray-400 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
+					>Draft</span
+				>
+			{/if}
+
+			{#if data.published > new Date()}
+				<span
+					class="relative z-10 rounded-full bg-gray-50 dark:bg-gray-900 dark:text-gray-400 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
+				>
+					Scheduled
+				</span>
+			{/if}
+		{/if}
 	</div>
 	<div class="group">
 		<h3

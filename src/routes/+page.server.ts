@@ -1,4 +1,5 @@
 import { ArticleMetadataSchema, type Article, type ArticleMetadata } from '$lib/articles/types';
+import { dev } from '$app/environment';
 
 export async function load() {
 	return {
@@ -12,7 +13,7 @@ async function getArticles(): Promise<Article[]> {
 	const modules = import.meta.glob('./\\(articles\\)/*/+page.ts', { eager: true });
 
 	const articles: Article[] = [];
-	
+
 	for (const [path, module] of Object.entries(modules)) {
 		if (typeof module !== 'object' || module === null || !('load' in module) || typeof module.load !== 'function') {
 			throw new Error('Failed to load module' + path);
@@ -21,13 +22,15 @@ async function getArticles(): Promise<Article[]> {
 		const data = await module.load();
 		const metadata = ArticleMetadataSchema.parse(data);
 
-		//Skip unpublished articles
-		if (metadata.draft === true) continue;
-		if(metadata.published > new Date()) continue;
+		//Skip unpublished articles in production
+		if (!dev) {
+			if (metadata.draft === true) continue;
+			if (metadata.published > new Date()) continue;
+		}
 
 		const slug = path.replace('./(articles)/', '').replace('/+page.ts', '');
 		const link = "/" + slug;
-		
+
 		articles.push({
 			...metadata,
 			link
@@ -36,5 +39,5 @@ async function getArticles(): Promise<Article[]> {
 
 	articles.sort((a, b) => b.published.getTime() - a.published.getTime());
 
-	return articles; 
+	return articles;
 }

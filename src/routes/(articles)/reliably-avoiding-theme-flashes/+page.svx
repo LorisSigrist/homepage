@@ -1,5 +1,48 @@
-# Reliably avoid Theme Flashes
+# Reliably avoiding Theme Flashes
 
-A very common issue with theme toggles is accidentally flashing the default theme on page-load.
+> **TLDR: Add a non-deferred `script` tag at the start of the document and react to the user's theme preference there**
 
-In his excellently titled post [Flash of inAccurate coloR Theme (FART)](https://css-tricks.com/flash-of-inaccurate-color-theme-fart/), Chris Coyier coined the term FART to describe this phenomenon. I will be using this term throughout this post, because it is both hilarious and accurate.
+
+A common issue on sites with theme-toggles is a flash of the wrong theme when the page loads. In the hilariously titled post [Flash of inAccurate coloR Theme (FART)](https://css-tricks.com/flash-of-inaccurate-color-theme-fart/), Chris Coyier coined the term FART to describe this phenomenon. In this post, we will explore the cause of FARTs, and how to avoid them client-side only. Along the way we will be learning about how page-loading works in the browser.
+
+## Diagnosing the Problem
+HTML is a streaming format. This is great, since we can display the content of a page before it has fully loaded. Even massive sites, like the [HTML Specification](https://html.spec.whatwg.org/) with it's **13MB (!)** of raw HTML can be displayed almost instantly. This is one of the most underrated features of the web.
+
+But this poses a question when running Javascript. If the page has not fully loaded by the time our code runs, how does a selector like `document.getElementById` behave? Well, it only gets run on the part that has already been loaded.
+This is dangerous when trying to hydrate a page, since the elements your code is trying to hydrate might not be there yet. To avoid this, pretty much all sites run their JS _after_ the HTML has been fully recieved and parsed. We used to do this with [`DOMContentLoaded`](https://developer.mozilla.org/en-US/docs/Web/API/Window/DOMContentLoaded_event) or by putting our scripts at the bottom of the page, but today we usually use `defered`, or `type=module` on the script tag to achieve this. 
+
+There is also the additional problem that non-deferred scripts are render-blocking, meaning that the browser will not render anything that comes after them until they have finished running. Loading your frontend framework like this would completely negate the benefits of SSR or prerendering, the behaviour would be identical to pure client-side-rendering.
+
+For these reasons pretty much all frameworks load their JS code in a deferred manner. 
+
+Unfortunately this causes FARTs. In order to decide which theme we should display, we need to check some sort local persistence. That might be `localStorage`, `IndexedDB` or a plain old `cookie`. Either way, JS needs to run. If our JS runs _after_ the page has been fully parsed, as is the default nowadays, we get a flash of the default theme. You might get lucky and the browser will run your JS between finishing parsing and rendering, but you can't rely on that.
+
+## The Solution
+We need to somehow determine the desired theme before the page gets rendered. The way we do this is by returning the web-development stone age. The primitive `<script>` tag with no `defer` or `type="module"` attributes will block the page from rendering until it has run. If we put our theme code in such a script we will not get a FART.
+
+>Tip: Most projects have a skeleton HTML file somewhere, which is used as a template for all pages. Add the script there.
+
+```html
+
+<!DOCTYPE html>
+<html>
+	<head>
+		...
+		<script>
+			document.documentElement
+			.classList.add(localStorage.getItem("theme") ?? "light")
+		</script>
+	</head>
+	<body>
+		<div id="app">...</div>
+	</body>
+</html>
+```
+
+Beware though. Since the HTML is not yet fully parsed when this script runs you only have guaranteed access to the elements that come before it, not after it. In the above example we could not safely add a class to the `body`, only to the `html` tag. Any elements that come before the script could potentially be displayed before it has run. You also need to account for that. The best place to put the script is usually either in the `head`, or as the first thing in the `body`.
+
+> Warning: It's tempting to put the JS in a separate file and load it via `src`, but that would require an additional HTTP request, during which the page cannot be rendered. Just inline it.
+
+## Addressing the concerns
+
+Some developers will avoid blocking scripts like the plague, since they used to be common sources of performance issues. However, in our case, the page cannot safely be rendered before the code has run, so this is an exception. Understanding _why_ something is considered bad practice is key to knowing when it's okay to break the rules. Think of it like this: The theme-checking code needs to run anyway, so we might as well run it as early as possible. There is no performance loss.
