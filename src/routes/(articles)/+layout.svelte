@@ -1,10 +1,6 @@
 <script lang="ts">
-	import materialLightSrc from '$lib/styles/prism-themes/material-light.css?url';
-	import materialDarkSrc from '$lib/styles/prism-themes/material-dark.css?url';
+	import "$lib/styles/prism-themes/material.css"
 	import "$lib/styles/prose.css"
-
-	import { theme } from '$lib/stores/theme';
-
 
 	async function handleProseClick(e: MouseEvent) {
 		/*
@@ -24,13 +20,6 @@
 
 </script>
 
-<svelte:head>
-	{#if $theme === 'dark'}
-		<link rel="stylesheet" href={materialDarkSrc} />
-	{:else}
-		<link rel="stylesheet" href={materialLightSrc} />
-	{/if}
-</svelte:head>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <article
