@@ -9,7 +9,7 @@
 	async function handleProseClick(e: MouseEvent) {
 		/*
 		The `rehype-autolink-headings` plugin adds anchor tags inside the headings.
-		
+
 		<h*>
 			<a href="">Text</a>
 		</h*>

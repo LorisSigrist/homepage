@@ -31,7 +31,13 @@
 			on:click={toggle_dark_theme}
 			title="Toggle Theme"
 		>
-			<Icon src={$theme === 'dark' ? Sun : Moon} class="w-4 h-4 block" />
+			<div class="dark:hidden block">
+				<Icon src={Sun} class="w-4 h-4 block" />
+			</div>
+
+			<div class="hidden dark:block">
+				<Icon src={Moon} class="w-4 h-4 block" />
+			</div>
 		</button>
 	</div>
 </header>
