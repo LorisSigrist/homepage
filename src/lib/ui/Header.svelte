@@ -2,6 +2,7 @@
 	import avatar from '$lib/assets/avatar.png';
 	import { Icon, Sun, Moon } from 'svelte-hero-icons';
 	import { theme } from '$lib/stores/theme';
+	import Themed from './Themed.svelte';
 
 	function toggle_dark_theme() {
 		theme.update((t) => (t === 'dark' ? 'light' : 'dark'));
@@ -21,9 +22,11 @@
 		</a>
 	</div>
 	<div id="header-end" class="flex flex-row items-center gap-4">
-		<a href="https://www.github.com/LorisSigrist" 
-		target="_blank" 
-		class="hover:bg-gray-100 hover:dark:bg-gray-800 p-1 px-3 rounded-md text-gray-800 dark:text-gray-200">
+		<a
+			href="https://www.github.com/LorisSigrist"
+			target="_blank"
+			class="hover:bg-gray-100 hover:dark:bg-gray-800 p-1 px-3 rounded-md text-gray-800 dark:text-gray-200"
+		>
 			Github
 		</a>
 		<button
@@ -31,13 +34,10 @@
 			on:click={toggle_dark_theme}
 			title="Toggle Theme"
 		>
-			<div class="dark:hidden block">
-				<Icon src={Sun} class="w-4 h-4 block" />
-			</div>
-
-			<div class="hidden dark:block">
-				<Icon src={Moon} class="w-4 h-4 block" />
-			</div>
+			<Themed>
+				<Icon src={Sun} slot="light" class="w-4 h-4 block" />
+				<Icon src={Moon} slot="dark" class="w-4 h-4 block" />
+			</Themed>
 		</button>
 	</div>
 </header>
