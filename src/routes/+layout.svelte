@@ -1,5 +1,5 @@
 <script>
-	import '$lib/bootstrap.css';
+	import '$lib/styles/bootstrap.css';
 	import Metadata from '$lib/metadata/Metadata.svelte';
 	import Header from '$lib/ui/Header.svelte';
 </script>
