@@ -1,0 +1,5 @@
+# Reliably avoid Theme Flashes
+
+A very common issue with theme toggles is accidentally flashing the default theme on page-load.
+
+In his excellently titled post [Flash of inAccurate coloR Theme (FART)](https://css-tricks.com/flash-of-inaccurate-color-theme-fart/), Chris Coyier coined the term FART to describe this phenomenon. I will be using this term throughout this post, because it is both hilarious and accurate.

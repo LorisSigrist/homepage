@@ -21,9 +21,13 @@ async function getArticles(): Promise<Article[]> {
 		const data = await module.load();
 		const metadata = ArticleMetadataSchema.parse(data);
 
+		//Skip unpublished articles
+		if (metadata.draft === true) continue;
+		if(metadata.published > new Date()) continue;
+
 		const slug = path.replace('./(articles)/', '').replace('/+page.ts', '');
 		const link = "/" + slug;
-
+		
 		articles.push({
 			...metadata,
 			link
