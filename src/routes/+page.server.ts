@@ -9,8 +9,15 @@ export async function load() {
 
 async function getArticles(): Promise<Article[]> {
 
-	//We need to double escape the braces, once for the glob and once for the string literal
-	const modules = import.meta.glob('./\\(articles\\)/*/+page.ts', { eager: true });
+	//Vite glob imports only work with string literals, so we can't generate these paths dynamically
+	let modules = {
+		//We need to double escape the braces, once for the glob and once for the string literal
+		...import.meta.glob('./\\(articles\\)/*/+page.ts', { eager: true }),
+		...import.meta.glob('./\\(articles\\)/*/+page.server.ts', { eager: true }),
+		...import.meta.glob('./\\(articles\\)/*/+page.js', { eager: true }),
+		...import.meta.glob('./\\(articles\\)/*/+page.server.js', { eager: true }),
+	};
+
 
 	const articles: Article[] = [];
 
@@ -28,7 +35,12 @@ async function getArticles(): Promise<Article[]> {
 			if (metadata.published > new Date()) continue;
 		}
 
-		const slug = path.replace('./(articles)/', '').replace('/+page.ts', '');
+		const slug = path.replace('./(articles)/', '')
+			.replace('/+page.ts', '')
+			.replace('/+page.server.ts', '')
+			.replace('/+page.js', '')
+			.replace('/+page.server.js', '');
+		
 		const link = "/" + slug;
 
 		articles.push({
