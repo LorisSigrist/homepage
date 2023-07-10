@@ -1,11 +1,9 @@
 <script>
-	import laserwaveSrc from '$lib/styles/prism-themes/laserwave.css?url';
 	import materialLightSrc from '$lib/styles/prism-themes/material-light.css?url';
 	import materialDarkSrc from '$lib/styles/prism-themes/material-dark.css?url';
+	import "$lib/styles/prose.css"
 
 	import { theme } from '$lib/stores/theme';
-
-	import '$lib/styles/baskerville.css';
 </script>
 
 <svelte:head>
