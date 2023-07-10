@@ -1,16 +1,16 @@
 const e = /* @__PURE__ */ location.pathname.split("/").slice(0, -1).join("/"), m = [
-  e + "/_app/immutable/entry/app.702e65e0.js",
+  e + "/_app/immutable/entry/app.176ef2dc.js",
   e + "/_app/immutable/assets/0.7e8976f9.css",
-  e + "/_app/immutable/nodes/0.d4a6735c.js",
+  e + "/_app/immutable/nodes/0.be01fc3e.js",
   e + "/_app/immutable/assets/avatar.4558b389.png",
-  e + "/_app/immutable/nodes/1.e5b0b72f.js",
+  e + "/_app/immutable/nodes/1.c091523e.js",
   e + "/_app/immutable/assets/2.57052bc9.css",
   e + "/_app/immutable/nodes/2.9e201422.js",
   e + "/_app/immutable/assets/3.8b9ba990.css",
   e + "/_app/immutable/nodes/3.3e6ba3eb.js",
   e + "/_app/immutable/nodes/4.6fd3f7a4.js",
   e + "/_app/immutable/nodes/5.ad278d36.js",
-  e + "/_app/immutable/nodes/6.d3f4949a.js",
+  e + "/_app/immutable/nodes/6.61b7df3e.js",
   e + "/_app/immutable/nodes/7.08f4601b.js",
   e + "/_app/immutable/assets/for-await-of-compat.16fd3cc1.png",
   e + "/_app/immutable/assets/raw-stream.af5d3091.gif",
@@ -21,14 +21,14 @@ const e = /* @__PURE__ */ location.pathname.split("/").slice(0, -1).join("/"), m
   e + "/_app/immutable/assets/stream-load.a3f8ce89.gif",
   e + "/_app/immutable/chunks/index.4190156f.js",
   e + "/_app/immutable/chunks/index.c3b38f65.js",
-  e + "/_app/immutable/chunks/singletons.9fe5eb71.js",
-  e + "/_app/immutable/chunks/stores.19601eeb.js",
+  e + "/_app/immutable/chunks/singletons.f9372397.js",
+  e + "/_app/immutable/chunks/stores.6379edc0.js",
   e + "/_app/immutable/chunks/theme.de549241.js",
-  e + "/_app/immutable/entry/start.0bf37e19.js"
-], l = [
+  e + "/_app/immutable/entry/start.145d48be.js"
+], c = [
   e + "/.nojekyll",
   e + "/favicon.png"
-], o = [
+], l = [
   e + "/",
   e + "/__data.json",
   e + "/color-thief",
@@ -39,12 +39,12 @@ const e = /* @__PURE__ */ location.pathname.split("/").slice(0, -1).join("/"), m
   e + "/og/Never write Mock Data again, with Zocker.png",
   e + "/og/Reliably Avoiding Theme flashes.png",
   e + "/og/The better way to load data.png"
-], c = "1688997887804", n = `cache-${c}`, p = [
+], o = "1688998343471", n = `cache-${o}`, p = [
   ...m,
   // the app itself
-  ...l,
+  ...c,
   // everything in `static`
-  ...o
+  ...l
   // prerendered pages
 ];
 self.addEventListener("install", (a) => {
