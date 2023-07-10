@@ -1,9 +1,9 @@
 const a = /* @__PURE__ */ location.pathname.split("/").slice(0, -1).join("/"), p = [
-  a + "/_app/immutable/entry/app.7d95844d.js",
+  a + "/_app/immutable/entry/app.c09593a3.js",
   a + "/_app/immutable/assets/0.f5c19244.css",
-  a + "/_app/immutable/nodes/0.f0067cd7.js",
+  a + "/_app/immutable/nodes/0.cbf0a5cf.js",
   a + "/_app/immutable/assets/avatar.4558b389.png",
-  a + "/_app/immutable/nodes/1.4b645288.js",
+  a + "/_app/immutable/nodes/1.1bb6634b.js",
   a + "/_app/immutable/assets/2.3d7ef7ec.css",
   a + "/_app/immutable/nodes/2.4c5fa574.js",
   a + "/_app/immutable/assets/3.8b9ba990.css",
@@ -19,10 +19,10 @@ const a = /* @__PURE__ */ location.pathname.split("/").slice(0, -1).join("/"), p
   a + "/_app/immutable/assets/stream-load.a3f8ce89.gif",
   a + "/_app/immutable/chunks/index.4190156f.js",
   a + "/_app/immutable/chunks/index.c3b38f65.js",
-  a + "/_app/immutable/chunks/singletons.6a82630e.js",
-  a + "/_app/immutable/chunks/stores.973c34bc.js",
+  a + "/_app/immutable/chunks/singletons.c73804aa.js",
+  a + "/_app/immutable/chunks/stores.e17b4953.js",
   a + "/_app/immutable/chunks/theme.de549241.js",
-  a + "/_app/immutable/entry/start.dbe4de50.js"
+  a + "/_app/immutable/entry/start.e4570af4.js"
 ], m = [
   a + "/.nojekyll",
   a + "/favicon.png"
@@ -34,7 +34,7 @@ const a = /* @__PURE__ */ location.pathname.split("/").slice(0, -1).join("/"), p
   a + "/og/Loris Sigrist.png",
   a + "/og/Never write Mock Data again, with Zocker.png",
   a + "/og/The better way to load data.png"
-], l = "1688982731221", n = `cache-${l}`, c = [
+], l = "1688984203092", n = `cache-${l}`, c = [
   ...p,
   // the app itself
   ...m,
