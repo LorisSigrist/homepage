@@ -43,6 +43,8 @@ Beware though. Since the HTML is not yet fully parsed when this script runs you 
 
 > Warning: It's tempting to put the JS in a separate file and load it via `src`, but that would require an additional HTTP request, during which the page cannot be rendered. Just inline it.
 
+There is another benefit to this. Elements with css transitions can often look awkward when switching themes, since they take longer than the rest of the page. This is especially noticeable during FARTs. By running the theme-switching code before the page has been rendered this problem is avoided, since the initial render will already be in the correct theme.
+
 ## Addressing the concerns
 
 Some developers will avoid blocking scripts like the plague, since they used to be common sources of performance issues. However, in our case, the page cannot safely be rendered before the code has run, so this is an exception. Understanding _why_ something is considered bad practice is key to knowing when it's okay to break the rules. Think of it like this: The theme-checking code needs to run anyway, so we might as well run it as early as possible. There is no performance loss.
