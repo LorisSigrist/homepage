@@ -23,7 +23,6 @@ We need to somehow determine the desired theme before the page gets rendered. Th
 >Tip: Most projects have a skeleton HTML file somewhere, which is used as a template for all pages. Add the script there.
 
 ```html
-
 <!DOCTYPE html>
 <html>
 	<head>
@@ -41,7 +40,7 @@ We need to somehow determine the desired theme before the page gets rendered. Th
 
 Beware though. Since the HTML is not yet fully parsed when this script runs you only have guaranteed access to the elements that come before it, not after it. In the above example we could not safely add a class to the `body`, only to the `html` tag. Any elements that come before the script could potentially be displayed before it has run. You also need to account for that. The best place to put the script is usually either in the `head`, or as the first thing in the `body`.
 
-> Warning: It's tempting to put the JS in a separate file and load it via `src`, but that would require an additional HTTP request, during which the page cannot be rendered. Just inline it.
+> Warning: If the theme logic is more complex, it's tempting to put the JS in a separate file and load it via `src`. But that would require an additional HTTP request, during which the page cannot be rendered. Just inline it.
 
 There is another benefit to this. Elements with css transitions can often look awkward when switching themes, since they take longer than the rest of the page. This is especially noticeable during FARTs. By running the theme-switching code before the page has been rendered this problem is avoided, since the initial render will already be in the correct theme.
 
