@@ -1,0 +1,31 @@
+# The poor man's scheduled post
+While working on this site, I quickly developed the desire to schedule posts. Often I would write a post, and then immediately have another idea for another post. Not wanting to publish them all at once, I would often just save the post as a draft and come back to it later. Having a way to schedule posts would be much more convenient.
+
+But, this site is currently (July 2023) hosted on GitHub Pages, which only hosts static sites. This makes it difficult to schedule posts, as there is no server to decide when a post should become available. 
+
+## The solution
+The solution I came up with is quite a brute force one, but it works very well. During the site-build, filter out any posts that have a publish date in the future. Then have a Github Actions cron-job that rebuilds and redeploys the site every day. This will cause the posts to become available on the day they are scheduled to be published.
+
+Doing this is quite straight forward. Go into your GitHub Actions workflow file, and add a `schedule` trigger. Make it run every day at midnight.
+
+```yml
+name: Build and Deploy
+on: 
+  # The Schedule on which to redeploy the site (every day at midnight)
+  schedule:
+    - cron:  '0 0 * * *'
+
+  # Other events to trigger the build and deploy
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    ... # Your build and deploy steps
+```
+
+This is very wasteful, but with GitHub's generous free tier you can easily get away with it. It's also very reliable. I've tested this by building an [experiment](https://today.sigrist.dev) that just prerenders the current date every day. It's been running for a few months now, and it's never failed. 
+Thanks to it's very fast build times, it has used so little of my free minutes that it doesn't even show up on my usage graph.
+
+The build-time for this site is a lot longer, at almost two minutes, but that's still only 60 out of the 2000 free minutes per month. I'm willing to pay that price for the convenience of scheduled posts.
