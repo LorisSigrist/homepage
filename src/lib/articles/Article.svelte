@@ -12,7 +12,7 @@
 </script>
 
 <article
-	class="flex w-full flex-col items-start justify-between bg-white dark:bg-gray-950 p-10 rounded-md relative shadow-sm"
+	class="flex w-full flex-col items-start justify-between bg-white dark:bg-gray-950 p-10 print:p-0 rounded-md relative shadow-sm print:shadow-none print:break-inside-avoid"
 	id={slugify(data.title)}
 >
 	<div class="flex items-center gap-x-3 text-xs">
@@ -40,6 +40,11 @@
 				</span>
 			{/if}
 		{/if}
+
+		<!--Link-->
+		<span class="hidden print:block text-gray-500 dark:text-gray-400">
+			{data.link}
+		</span>
 	</div>
 	<div class="group">
 		<h3

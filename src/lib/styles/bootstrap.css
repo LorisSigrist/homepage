@@ -12,4 +12,8 @@ body {
 	@page {
 		margin: 1.75cm;
 	}
+
+	:root {
+		font-size: 10pt;
+	}
 }

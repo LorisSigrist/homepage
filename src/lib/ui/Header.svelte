@@ -19,7 +19,7 @@
 				src={avatar}
 				alt="Loris Sigrist looking very handsome"
 				class="rounded-full w-9 aspect-square"
-				style="background-color: {avatar_color}"
+				style:background-color={avatar_color}
 				width={avatar_size.width}
 				height={avatar_size.height}
 			/>

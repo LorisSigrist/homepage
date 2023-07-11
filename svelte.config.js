@@ -4,6 +4,7 @@ import { vitePreprocess } from '@sveltejs/kit/vite';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeSlug from 'rehype-slug';
 import rehypeExternalLinks from 'rehype-external-links';
+import remarkAbbr from 'remark-abbr';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -25,6 +26,10 @@ const config = {
 				[rehypeAutolinkHeadings, { behavior: 'wrap' }],
 				// @ts-ignore
 				[rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }]
+			],
+			remarkPlugins: [
+				// @ts-ignore
+				remarkAbbr
 			]
 		})
 	],

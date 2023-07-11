@@ -4,6 +4,7 @@
 	all: inherit;
 	position: relative;
 	cursor: pointer;
+	text-decoration: none;
 }
 
 .prose :is(h1, h2, h3, h4, h5, h6) a:hover::after {

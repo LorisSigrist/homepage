@@ -1,0 +1,29 @@
+# Zod Driven Development
+Over the last year we've been seing [zod](https://zod.dev), a schema validation library, grow into the lingua franca of many tools. From [trpc](https://trpc.io/), to [SvelteKit Superforms](https://superforms.rocks/), even ORMs like [drizzle](https://orm.drizzle.team/). I myself have contributed to this trend with [zocker](https://zocker.sigrist.dev), a mock-data generator that uses zod schemas to generate mock data. 
+
+This got me thinking. How far can I push this? Could I generate an entire app from a zod schema? This article documents my experiment.
+
+## The Goalpost and how to get there
+Since this is a toy project, I'm going to keep the scope limited to a CRUD app with multiple entities. Let's build a library app. We'll have `Books`, `Authors` and `Publishers`. Each book has one author and one publisher. Each author can have multiple books. Each publisher can have multiple books.
+
+We will be using the following tools:
+- [drizzle](https://orm.drizzle.team/) as the ORM
+- [drizzle-zod](https://orm.drizzle.team/docs/zod), a first party way to generate the zod schemas from drizzle models
+- [sveltekit superforms](https://superforms.rocks/) to generate and validate forms from the zod schemas
+- [sveltekit](https://kit.svelte.dev/) as the application framework
+
+## Conclusion 
+Zod Driven Development has some very obvious strengths. Development speed and maintainability. But, once more complexity get's added, such as authorization, complex business logic, and more complex relationships, it starts to struggle.
+
+Earlier iterations of similar ideas, such as model-driven development, have caused many development failures when the complexity of the projects grew beyond the capabilities of the tool. [healthcare.gov](https://healthcare.gov) is a prime example of this. 
+
+Fortunately, ZDD is not an all or nothing approach. You can use this for the trivial parts of your app, and write the more complex parts the way you usually would. It only gets dangerous if your tooling grows more complex than the app itself.
+
+While I likely won't be generating entire apps like this, I will certainly add some of these tools to my toolkit. The form-generation & validation, the automagic UI, and the mock-data generation have all been fantastic to work with. [Drizzle](https://orm.drizzle.team/) is not quite there yet, but it's evolving fast and I'm excited to see where it goes.
+
+*[ZDD]: Zod Driven Development
+*[ORM]: Object Relational Mapper
+*[ORMs]: Object Relational Mappers
+*[TS]: Typescript
+*[CRUD]: Create Read Update Delete
+*[CRUDL]: Create Read Update Delete List
