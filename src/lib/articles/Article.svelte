@@ -2,10 +2,18 @@
 	import { dev } from '$app/environment';
 	import type { Article } from './types';
 	export let data: Article;
+
+	function slugify(str: string) {
+		return str
+			.toLowerCase()
+			.replace(/[^a-z0-9]+/g, '-')
+			.replace(/(^-|-$)+/g, '');
+	}
 </script>
 
 <article
 	class="flex w-full flex-col items-start justify-between bg-white dark:bg-gray-950 p-10 rounded-md relative shadow-sm"
+	id={slugify(data.title)}
 >
 	<div class="flex items-center gap-x-3 text-xs">
 		<time datetime="2020-03-16" class="text-gray-500 dark:text-gray-400">
@@ -35,7 +43,7 @@
 	</div>
 	<div class="group">
 		<h3
-			class="mt-3 text-lg font-semibold leading-6 text-gray-900 dark:text-white dark:group-hover:text-gray-300 group-hover:text-gray-600"
+			class="mt-3 text-lg font-semibold leading-6 text-gray-900 dark:text-white dark:group-hover:text-gray-300 group-hover:text-gray-600 capitalize"
 		>
 			<a href={data.link}>
 				<!--This makes the link clickable on the whole card-->

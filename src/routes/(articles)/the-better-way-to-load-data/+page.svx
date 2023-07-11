@@ -1,11 +1,24 @@
 <script>
     import forAwaitOfCompat from "./for-await-of-compat.png"
+	import forAwaitOfCompatSize from "./for-await-of-compat.png?size"
+
 	import RawStreamGif from "./raw-stream.gif"
+	import RawStreamGifSize from "./raw-stream.gif?size"
+
 	import TextStreamGif from "./text-stream.gif"
+	import TextStreamGifSize from "./text-stream.gif?size"
+
 	import ParseResultValueStreamGif from "./parse-result-value-stream.gif"
+	import ParseResultValueStreamGifSize from "./parse-result-value-stream.gif?size"
+
 	import FinalStreamGif from "./final-stream.gif"
+	import FinalStreamGifSize from "./final-stream.gif?size"
+
 	import NonStreamLoadGif from "./non-stream-load.gif"
+	import NonStreamLoadGifSize from "./non-stream-load.gif?size"
+
 	import StreamLoadGif from "./stream-load.gif"
+	import StreamLoadGifSize from "./stream-load.gif?size"
 </script>
 
 # The Better Way to load data
@@ -27,63 +40,76 @@ for(const todo of todos) {
 
 But what if there are hundreds of items and the connection to the server is slow. If we wait for the entire response to arrive the user is going to see absolutely nothing for several seconds, and then see all the items at once. This feels sluggish. Unfortunately, for anyone taking the subway, this is a daily experience.
 
-<img src={NonStreamLoadGif} alt="A list of items loading for a long time, and then being filled all at once" />
+<img
+	src={NonStreamLoadGif}
+	width={NonStreamLoadGifSize.width}
+	height={NonStreamLoadGifSize.height}
+    alt="A list of items loading for a long time, and then being filled all at once"
+/>
 
 There might be a better way though. We don't actually need to wait for all the data before we start displaying it. Once the data for the first item has made it over the network, we should be able display it. Having the items trickle in as the data arrives over the network would be a much nicer user experience.
 
 In this post we are going to implement this using streams.
 
-> Quick note: In the Javascript world there are two different Stream APIs: Node Streams, and Web streams. Node Streams only work in Node, whereas Web Streams work both in Browsers and Node.  Also, web-streams are sometimes called WHATWG-streams, after the standards organisation, It's a mess.
-> 
+> Quick note: In the Javascript world there are two different Stream APIs: Node Streams, and Web streams. Node Streams only work in Node, whereas Web Streams work both in Browsers and Node. Also, web-streams are sometimes called WHATWG-streams, after the standards organisation, It's a mess.
+>
 > We will be using web-streams.
 
 Fortunately this won't be that hard.
 
 Our trusty fetch API is designed to make streaming easy. `response.body` is actually a stream that will give you access to the raw data coming in over the network, as it is coming in.
 
-Let's visualise that by logging each chunk of data as it arrives. 
-We can access a stream's data by getting it's reader and waiting for a value to arrive. Once a value arrives we log it and again wait for the next value, and then the next value, etc, until the stream is done. 
+Let's visualise that by logging each chunk of data as it arrives.
+We can access a stream's data by getting it's reader and waiting for a value to arrive. Once a value arrives we log it and again wait for the next value, and then the next value, etc, until the stream is done.
 
 ```ts
-const response = await fetch("/list")
+const response = await fetch('/list');
 const stream = response.body;
 
 const reader = stream.getReader(); //Get reader (boilerplate)
-while(true) {
-	const {value, done} = await reader.read(); //wait for value
-	if(done) break;
-	console.log(value)
+while (true) {
+	const { value, done } = await reader.read(); //wait for value
+	if (done) break;
+	console.log(value);
 }
 ```
 
 We now see see a bunch of `Uint8Arrays` in the console. This is the raw binary data arriving over the network.
 
-<img src={RawStreamGif} alt="A bunch of Uint8Arrays being logged to the console" />
+<img 
+	src={RawStreamGif} 
+	width={RawStreamGifSize.width}
+	height={RawStreamGifSize.height}
+	alt="A bunch of Uint8Arrays being logged to the console"
+/>
 
-But we want text, so let's convert the raw data to text. We can modify a stream's data using a TransformStream. A TransformStream takes in a stream, runs some logic on each chunk of data as it arrives, and writes the result to an outgoing stream. 
-In our case, we want a TransformStream that takes in a stream of raw binary data and outputs a stream of strings. This is such a common task that there actually is a built in one, the  [`TextDecoderStream`](https://developer.mozilla.org/en-US/docs/Web/API/TextDecoderStream).  Let's use that. Don't worry,  we will be creating our own TransformStreams later on.
+But we want text, so let's convert the raw data to text. We can modify a stream's data using a TransformStream. A TransformStream takes in a stream, runs some logic on each chunk of data as it arrives, and writes the result to an outgoing stream.
+In our case, we want a TransformStream that takes in a stream of raw binary data and outputs a stream of strings. This is such a common task that there actually is a built in one, the [`TextDecoderStream`](https://developer.mozilla.org/en-US/docs/Web/API/TextDecoderStream). Let's use that. Don't worry, we will be creating our own TransformStreams later on.
 
 Let's hook the TextDecoder up to our stream using the `pipeThrough` method. This will return a new stream with the transform applied.
 
 ```ts
-const stream = request.body
-	.pipeThrough(new TextDecoderStream())
+const stream = request.body.pipeThrough(new TextDecoderStream());
 ```
 
 We now have a bunch of readable strings in the console.
 
-<img src={TextStreamGif} alt="A bunch of strings being logged to the console, with each being a chunk of a big JSON string" />
+<img 
+	src={TextStreamGif} 
+	width={TextStreamGifSize.width}
+	height={TextStreamGifSize.height}
+	alt="A bunch of strings being logged to the console, with each being a chunk of a big JSON string"
+/>
 
+But we really want a stream of objects that represent our items. We can't just `JSON.parse` each string-chunk, they don't line up with the JSON structure; What we need is a streaming JSON parser.
 
-But we really want a stream of objects that represent our items. We can't just `JSON.parse` each string-chunk, they don't line up with the JSON structure; What we need is a streaming JSON parser. 
-
-Writing our own would be hard and undifferentiated work, so instead we're going to use a library. There is a fantastic one called [`@streamparser/json-whatwg`](https://www.npmjs.com/package/@streamparser/json-whatwg)  which can create a TransformStream that takes in json-data and returns parsed objects.
+Writing our own would be hard and undifferentiated work, so instead we're going to use a library. There is a fantastic one called [`@streamparser/json-whatwg`](https://www.npmjs.com/package/@streamparser/json-whatwg) which can create a TransformStream that takes in json-data and returns parsed objects.
 
 ```bash
 npm install @streamparser/json-whatwg
 ```
 
-We can initialise the TransformStream using the `JSONParser` constructor. We want each object in our todo-array to be emitted one after the other as they trickle in so let's configure the parser for that. We can provide a pattern of which paths should be emitted as the  `paths` option; like a regex that runs on the paths. We want each child of the top-level array to be emitted. This can be expressed using the `$.*` pattern. The dollar-sign is always the top-level object, the array in our case, and the star is a wildcard that matches each direct child. 
+We can initialise the TransformStream using the `JSONParser` constructor. We want each object in our todo-array to be emitted one after the other as they trickle in so let's configure the parser for that. We can provide a pattern of which paths should be emitted as the `paths` option; like a regex that runs on the paths. We want each child of the top-level array to be emitted. This can be expressed using the `$.*` pattern. The dollar-sign is always the top-level object, the array in our case, and the star is a wildcard that matches each direct child.
 
 Let's add this parser to our stream-chain. This parser can also do the text-decoding internally so we don't need the `TextDecoderStream` anymore.
 
@@ -95,31 +121,39 @@ const stream = response.body
 	.pipeThrough(parser)
 ```
 
-> Optional Performance optimization: Add `keepStack: false, stringBufferSize: undefined` along with the paths option. 
+> Optional Performance optimization: Add `keepStack: false, stringBufferSize: undefined` along with the paths option.
 
 In the console we now see a bunch of weird objects. The `value` property in each one contains our list items in their fully parsed glory. `JSONParser` emits what it calls "ParsedElementInfo" objects, which contain the parsed values as well as some extra metadata. That's what we're seeing.
 
-<img src={ParseResultValueStreamGif} alt="A bunch of objects with the properties value,key,parent and stack being logged to the console" />
+<img 
+	src={ParseResultValueStreamGif} 
+	width={ParseResultValueStreamGifSize.width}
+	height={ParseResultValueStreamGifSize.height}
+	alt="A bunch of objects with the properties value,key,parent and stack being logged to the console"
+/>
 
 Since we only care about the parsed values, let's map over each element in the stream using, you guessed it, another Transform Stream. This time we'll create our own. The constructor takes an object with some lifecycle methods. The `start` method runs when the stream starts, the `flush` method runs if the stream is about to be closed, and the `transform` method runs whenever a new chunk of data arrives. We will only be using `transform` . It takes two arguments the first one is the chunk of incoming data, in our case that is the ParsedElementInfo object from the JSONParser, and the second one is a stream-controller for the output stream. The stream-controller is how we write to or close the output stream. Here we enqueue the value property of each parsed element.
 
 ```ts
 const mapToValueStream = new TransformStream({
 	transform(parsedElementInfo, controller) {
-		controller.enqueue(parsedElementInfo.value)
+		controller.enqueue(parsedElementInfo.value);
 	}
-})
+});
 ```
 
 Let's tack on our TransformStream and look at the console.
 
 ```ts
-const stream = response.body
-	.pipeThrough(parser)
-	.pipeThrough(valueStream)
+const stream = response.body.pipeThrough(parser).pipeThrough(valueStream);
 ```
 
-<img src={FinalStreamGif} alt="Each object in the list being logged out one after the other" />
+<img
+	src={FinalStreamGif} 
+	width={FinalStreamGifSize.width}
+	height={FinalStreamGifSize.height}
+	alt="Each object in the list being logged out one after the other"
+/>
 
 That's looking good already! We get list-items trickling in as the data is arriving over the network!
 
@@ -135,7 +169,12 @@ while(true) {
 }
 ```
 
-<img src={StreamLoadGif} alt="The list being rendered one item at a time" />
+<img 
+	src={StreamLoadGif} 	
+	width={StreamLoadGifSize.width}
+	height={StreamLoadGifSize.height}
+	alt="The list being rendered one item at a time"
+/>
 
 Just what we wanted!
 
@@ -145,36 +184,37 @@ The original code we had did one more thing that we are not yet doing. It valida
 const validateItemStream = new TransformStream<unknown, Item>({
 	transform(value, controller) {
 		try {
-			controller.enqueue(ItemSchema.parse(value))
-		} catch(e) {}
+			controller.enqueue(ItemSchema.parse(value));
+		} catch (e) {}
 	}
-})
+});
 ```
 
 Let's add it to the stream-chain. Still Works!
+
 ```ts
 const stream = response.body
 	.pipeThrough(parser)
 	.pipeThrough(valueStream)
-	.pipeThrough(validateTodoStream)
+	.pipeThrough(validateTodoStream);
 ```
 
-We've now implemented all the original functionality in a streaming manner, but there is an opportunity to refactor here. Our two TransformStreams are very similar. They each execute a mapping function over every element, and emit the result. Let's DRY that up. We're going to make a helper called MapStream that takes the mapping-function as an argument and returns a TransformStream that runs it for each chunk. If it throws, we ignore the element. 
+We've now implemented all the original functionality in a streaming manner, but there is an opportunity to refactor here. Our two TransformStreams are very similar. They each execute a mapping function over every element, and emit the result. Let's DRY that up. We're going to make a helper called MapStream that takes the mapping-function as an argument and returns a TransformStream that runs it for each chunk. If it throws, we ignore the element.
 
 ```js
 // helpers.ts
-export function MapStream<I,O>(map: (i: I) => O) : TransformStream<I,O> {
+export function MapStream<I, O>(map: (i: I) => O): TransformStream<I, O> {
 	return new TransformStream({
 		transform(chunk, controller) {
 			try {
-				controller.enqueue(map(chunk))
-			} catch(e) {}
+				controller.enqueue(map(chunk));
+			} catch (e) {}
 		}
-	})
+	});
 }
 ```
 
-We can now rewrite both our TransformStreams using the helper. 
+We can now rewrite both our TransformStreams using the helper.
 
 ```js
 import { MapStream } from "./helpers"
@@ -187,7 +227,7 @@ const stream = response.body
 
 Very expressive, isn't it?
 
-With that, our implementation is done. But there is one more thing I would like to refactor; this while loop at the bottom. According to the spec, you're supposed to be able to consume streams using a `for await of`  loop, but not everyone implements this.
+With that, our implementation is done. But there is one more thing I would like to refactor; this while loop at the bottom. According to the spec, you're supposed to be able to consume streams using a `for await of` loop, but not everyone implements this.
 
 ```js
 for await (const todo of stream) {
@@ -195,23 +235,28 @@ for await (const todo of stream) {
 }
 ```
 
-<img src={forAwaitOfCompat} alt="Table showing that the 'for await of' syntax is only supported in Node, Deno and Firefox" />
+<img 
+	src={forAwaitOfCompat} 
+	width={forAwaitOfCompatSize.width}
+	height={forAwaitOfCompatSize.height}
+	alt="Table showing that the 'for await of' syntax is only supported in Node, Deno and Firefox"
+/>
 
 Let's write another helper that let's us use the nicer syntax. If you've never used async-generators before, this will look unintelligible. That's ok, this is entirely optional; Just stick with the while loop.
 
 ```ts
 // helpers.ts
-export async function* asIterable<T>(stream: ReadableStream<T>) : AsyncGenerator<T> {
+export async function* asIterable<T>(stream: ReadableStream<T>): AsyncGenerator<T> {
 	const reader = stream.getReader();
-	while(true) {
-		const {value, done} = await reader.read();
-		if(done) break;
+	while (true) {
+		const { value, done } = await reader.read();
+		if (done) break;
 		yield value;
 	}
 }
 ```
 
-We can now use  `for await (const todo of asIterable(stream))` to asynchronously loop over the elements in the stream. I find this easier to read, since there is no control-flow.
+We can now use `for await (const todo of asIterable(stream))` to asynchronously loop over the elements in the stream. I find this easier to read, since there is no control-flow.
 
 ```js
 import { MapStream, asIterable } from "./helpers"
@@ -224,30 +269,30 @@ for await (const todo of asIterable(stream)) {
 The final code now looks like this:
 
 ```ts
-import { JSONParser } from "@streamparser/json-whatwg"
-import { MapStream, asIterable } from "./helpers"
-import { TodoSchema } from "./TodoSchema"
+import { JSONParser } from '@streamparser/json-whatwg';
+import { MapStream, asIterable } from './helpers';
+import { TodoSchema } from './TodoSchema';
 
-const response = await fetch("/todos.json")
+const response = await fetch('/todos.json');
 
-const parser = new JSONParser({ 
-	paths: ["$.*"]
-})
+const parser = new JSONParser({
+	paths: ['$.*']
+});
 
 const stream = response.body
 	.pipeThrough(parser)
-	.pipeThrough(MapStream(result => result.value))
-	.pipeThrough(MapStream(TodoSchema.parse))
+	.pipeThrough(MapStream((result) => result.value))
+	.pipeThrough(MapStream(TodoSchema.parse));
 
 for await (const todo of asIterable(stream)) {
 	display(todo);
 }
 ```
 
-A few observations to close out. 
+A few observations to close out.
 
 1. On slow connections, the Streaming version is both faster to show stuff to the user and also finishes earlier, since the parsing and validation happen in parallel with the fetching. On fast connections, the performance difference is negligible.
 2. Once the `MapStream` and `asIterable` helpers are defined, the streaming version of the code isn't meaningfully longer. The effort for both versions is about the same.
-3. The bundle size for the streaming versions is slightly larger than the non-streaming version since we need to ship the JSONParser (+20kB). This isn't always worth it. On sites with long session times it likely *is* worth it, since the extra code is only sent once and every subsequent request can be sped up. In PWAs, where your code is already cached on the client, streaming is a no brainer. 
+3. The bundle size for the streaming versions is slightly larger than the non-streaming version since we need to ship the JSONParser (+20kB). This isn't always worth it. On sites with long session times it likely _is_ worth it, since the extra code is only sent once and every subsequent request can be sped up. In PWAs, where your code is already cached on the client, streaming is a no brainer.
 
 There is a lot more you can do with streams, I really encourage you to play around with them. They're a really powerful idea that applies to much more than just data-fetching. I hope you've learned something and have a good day.
