@@ -9,7 +9,6 @@ export const imageSize = {
             return null;
         
         const dimensions = sizeOf(path);
-        console.log(dimensions);
 
         return `export default {
             width: ${dimensions.width},

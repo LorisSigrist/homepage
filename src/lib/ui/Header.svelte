@@ -1,9 +1,11 @@
 <script lang="ts">
 	import avatar from '$lib/assets/avatar.png';
 	import avatar_color from '$lib/assets/avatar.png?color';
+	import avatar_size from '$lib/assets/avatar.png?size';
 	import { Icon, Sun, Moon } from 'svelte-hero-icons';
 	import { theme } from '$lib/stores/theme';
 	import Themed from './Themed.svelte';
+	import Github from './icons/Github.svelte';
 
 	function toggle_dark_theme() {
 		theme.update((t) => (t === 'dark' ? 'light' : 'dark'));
@@ -18,18 +20,22 @@
 				alt="Loris Sigrist looking very handsome"
 				class="rounded-full w-9 aspect-square"
 				style="background-color: {avatar_color}"
+				width={avatar_size.width}
+				height={avatar_size.height}
 			/>
 
 			<span class="font-bold text-md">Loris Sigrist</span>
 		</a>
 	</div>
-	<div id="header-end" class="flex flex-row items-center gap-4">
+	<div id="header-end" class="flex flex-row items-center gap-2 sm:gap-4">
 		<a
 			href="https://www.github.com/LorisSigrist"
 			target="_blank"
-			class="hover:bg-gray-100 hover:dark:bg-gray-800 p-1 px-3 rounded-md text-gray-800 dark:text-gray-200"
+			class="hover:bg-gray-100 flex gap-2 items-center hover:dark:bg-gray-800 p-1 sm:px-3 rounded-md text-gray-800 dark:text-gray-200"
 		>
-			Github
+		<span><Github small/></span>
+			
+			<span class="hidden sm:block">Github</span>
 		</a>
 		<button
 			class="hover:bg-gray-100 hover:dark:bg-gray-800 p-2 rounded-md aspect-square"
