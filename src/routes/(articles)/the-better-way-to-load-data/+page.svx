@@ -1,24 +1,31 @@
 <script>
     import forAwaitOfCompat from "./for-await-of-compat.png"
 	import forAwaitOfCompatSize from "./for-await-of-compat.png?size"
+	import forAwaitOfCompatColor from "./for-await-of-compat.png?color"
 
 	import RawStreamGif from "./raw-stream.gif"
 	import RawStreamGifSize from "./raw-stream.gif?size"
+	import RawStreamGifColor from "./raw-stream.gif?color"
 
 	import TextStreamGif from "./text-stream.gif"
 	import TextStreamGifSize from "./text-stream.gif?size"
+	import TextStreamGifColor from "./text-stream.gif?color"
 
 	import ParseResultValueStreamGif from "./parse-result-value-stream.gif"
 	import ParseResultValueStreamGifSize from "./parse-result-value-stream.gif?size"
+	import ParseResultValueStreamGifColor from "./parse-result-value-stream.gif?color"
 
 	import FinalStreamGif from "./final-stream.gif"
 	import FinalStreamGifSize from "./final-stream.gif?size"
+	import FinalStreamGifColor from "./final-stream.gif?color"
 
 	import NonStreamLoadGif from "./non-stream-load.gif"
 	import NonStreamLoadGifSize from "./non-stream-load.gif?size"
+	import NonStreamLoadGifColor from "./non-stream-load.gif?color"
 
 	import StreamLoadGif from "./stream-load.gif"
 	import StreamLoadGifSize from "./stream-load.gif?size"
+	import StreamLoadGifColor from "./stream-load.gif?color"
 </script>
 
 # The Better Way to load data
@@ -44,6 +51,7 @@ But what if there are hundreds of items and the connection to the server is slow
 	src={NonStreamLoadGif}
 	width={NonStreamLoadGifSize.width}
 	height={NonStreamLoadGifSize.height}
+	style:background-color={NonStreamLoadGifColor}
     alt="A list of items loading for a long time, and then being filled all at once"
 />
 
@@ -80,6 +88,7 @@ We now see see a bunch of `Uint8Arrays` in the console. This is the raw binary d
 	src={RawStreamGif} 
 	width={RawStreamGifSize.width}
 	height={RawStreamGifSize.height}
+	style:background-color={RawStreamGifColor}
 	alt="A bunch of Uint8Arrays being logged to the console"
 />
 
@@ -98,6 +107,7 @@ We now have a bunch of readable strings in the console.
 	src={TextStreamGif} 
 	width={TextStreamGifSize.width}
 	height={TextStreamGifSize.height}
+	style:background-color={TextStreamGifColor}
 	alt="A bunch of strings being logged to the console, with each being a chunk of a big JSON string"
 />
 
@@ -129,6 +139,7 @@ In the console we now see a bunch of weird objects. The `value` property in each
 	src={ParseResultValueStreamGif} 
 	width={ParseResultValueStreamGifSize.width}
 	height={ParseResultValueStreamGifSize.height}
+	style:background-color={ParseResultValueStreamGifColor}
 	alt="A bunch of objects with the properties value,key,parent and stack being logged to the console"
 />
 
@@ -152,6 +163,7 @@ const stream = response.body.pipeThrough(parser).pipeThrough(valueStream);
 	src={FinalStreamGif} 
 	width={FinalStreamGifSize.width}
 	height={FinalStreamGifSize.height}
+	style:background-color={FinalStreamGifColor}
 	alt="Each object in the list being logged out one after the other"
 />
 
@@ -173,6 +185,7 @@ while(true) {
 	src={StreamLoadGif} 	
 	width={StreamLoadGifSize.width}
 	height={StreamLoadGifSize.height}
+	style:background-color={StreamLoadGifColor}
 	alt="The list being rendered one item at a time"
 />
 
@@ -239,6 +252,7 @@ for await (const todo of stream) {
 	src={forAwaitOfCompat} 
 	width={forAwaitOfCompatSize.width}
 	height={forAwaitOfCompatSize.height}
+	style:background-color={forAwaitOfCompatColor}
 	alt="Table showing that the 'for await of' syntax is only supported in Node, Deno and Firefox"
 />
 
