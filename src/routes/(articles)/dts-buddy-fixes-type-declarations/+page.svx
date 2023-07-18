@@ -1,10 +1,8 @@
 # DTS-Buddy fixes Type-Declarations
 
-[Rich Harris](https://github.com/Rich-Harris) is back at it again with another banger! `dts-buddy`.
+`dts-buddy` is one of those tools that's hard to justify without encountering the problem they solve first. Here's the story of how I ran into it.
 
-There are some common pitfalls surrounding type-declarations that pretty much all TypeScript packages fall into, especially ones with subpackages. [`dts-buddy`](https://www.npmjs.com/package/dts-buddy) is a tool that helps you avoid them.
-
-`dts-buddy` is one of those solutions that's hard to justify without encountering the problem first, so here's the story of how I ran into it. If you don't care, you can [skip past the intro](#the-solution).
+If you don't care why, you can [skip past the intro](#dts-buddy-the-savior)
 
 ## A horror story about types in subpackages
 
@@ -14,7 +12,8 @@ To keep editing convenient, I opted to use JSDoc types, and generate type-declar
 
 While doing this, I quickly learned about the pitfalls of using subpackages. Using the TypeScript compiler means I was generating one `d.ts` file per `js` file. This caused a problems when importing a subpackage. Whenever I started typing `import {` the IDE would show me a list of all the types present in the package, including ones that were not meant to be public. This was very irritating.
 
-Another issue I ran into is that "go to definition" didn't work. I couldn't jump to the implementation of a type, because the IDE didn't know how to map the type-declaration to the actual source code. As the declarations were always colocated with the JS file it wasn't that bad, but still inconveniet. I often have to glance at the implementation to recall what was going on, since the package isn't documented well.
+Another issue I ran into is that `go to definition` didn't work. I couldn't jump to the implementation of a type, because the IDE didn't know how to map the type-declaration to the actual source code. 
+As the declarations were always colocated with the JS file it wasn't that bad, but still inconveniet. I often have to glance at the implementation to recall what was going on, since the package isn't documented well.
 
 ## Dts-Buddy; The savior
 
