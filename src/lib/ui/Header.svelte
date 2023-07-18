@@ -33,8 +33,8 @@
 			target="_blank"
 			class="hover:bg-gray-100 flex gap-2 items-center hover:dark:bg-gray-800 p-1 sm:px-3 rounded-md text-gray-800 dark:text-gray-200"
 		>
-		<span><Github small/></span>
-			
+			<span><Github small /></span>
+
 			<span class="hidden sm:block">Github</span>
 		</a>
 		<button
@@ -43,8 +43,8 @@
 			title="Toggle Theme"
 		>
 			<Themed>
-				<Icon src={Sun} slot="light" class="w-4 h-4 block" />
-				<Icon src={Moon} slot="dark" class="w-4 h-4 block" />
+				<Icon src={Sun} slot="light" class="w-4 h-4" />
+				<Icon src={Moon} slot="dark" class="w-4 h-4" />
 			</Themed>
 		</button>
 	</div>
