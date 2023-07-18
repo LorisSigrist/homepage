@@ -5,7 +5,7 @@ There are some common pitfalls surrounding type-declarations that pretty much al
 
 ## An anecdote about using types & subpackages
 
-This section is kind of like the bit at the start of the recipe where the author tells you their whole life story. If you don't care, you can [skip this section](#the-solution).
+This section is kind of like the bit at the start of the recipe where the author tells you their whole life story. If you don't care, you can [skip this section](#the-solution). Unfortunetely this is one of those issues where it's hard to explain the problem without encountering it yourself.
 
 I've been finding myself copy-pasting a lot of code between projects. To make my life easier, I've been building a package where I would keep all my commonly reused code. Using subpackages for this seemed quite natural, as it would allow me to group my code by domain, while still only having to install one thing. I would have a `@sigrist.dev/framework/pdf` package for all my PDF-related code, a `@sigrist.dev/framework/ui` package for all my UI-related code, and so on.
 
@@ -13,7 +13,7 @@ I expected to often be re-authoring parts of the package while working on anothe
 
 While doing this, I quickly learned about the pitfalls of using subpackages. I was using the TypeScript compiler, so I was generating one type-declaration per file. This caused many problems when importing from a subpackage. Whenever I started typing `import {` the IDE would show me a list of all the types present in the package, including ones that were not meant to be public. This was very irritating.
 
-Another issue I ran into is that "go to definition" didn't work. I couldn't see the implementation of a type, because the IDE didn't know how to map the type-declaration to the actual source code. It wasn't that bad, since the declaration was always next to the JS file, but it still slowed me down a lot. Since I authored this package myself it didn't have any documentation, so I often had to glance at the implementation to understand what something was doing.
+Another issue I ran into is that "go to definition" didn't work. I couldn't jump to the implementation of a type, because the IDE didn't know how to map the type-declaration to the actual source code. It wasn't that bad since the declaration was always colocated with the JS file, but it still slowed me down a lot. Since the package didn't have any documentation, I often had to glance at the implementation to recall what was going on.
 
 
 ## The Solution
@@ -23,7 +23,7 @@ The file contains module declarations for the public interface of the package an
 Here's an example output it generated for one of my (private, sorry) packages:
 
 ```ts
-declare module '@sigrist.dev/framework/esr' {
+declare module '@sigrist.dev/framework/pdf' {
     /**
     * Adds a QR-ESR Invoice footer to the given PDF.
     * Assumes the current page has A4 portrait format.
@@ -49,8 +49,61 @@ Alongside this, it also generates a `.map.d.ts` file, which maps the public type
 
 
 ## How to use it
+First install it:
+```sh
+pnpm i -D dts-buddy
+```
 
+Then create a `build.js` file in your project, and use it as your build script:
+```json
+{
+  "scripts": {
+    "build": "node build.js"
+  }
+}
+```
 
+```js
+// build.js
+import { createBundle } from "dts-buddy";
+
+//Generate a bundle of all type-declarations
+await createBundle({
+  project: "tsconfig.json", //Your tsconfig.json
+
+  //Map subpackages to their entrypoints
+  modules: {
+    "@sigrist.dev/framework/pdf": "src/pdf/index.js",
+    "@sigrist.dev/framework/ui": "src/ui/index.js",
+  },
+
+  include: ["src"],
+
+  output: "types/index.d.ts", //The resulting type-declaration file
+});
+```
+The only thing left to do is to tell the module-resolution to actually use the generated file. So, in your `package.json`, add a `types` field, and also register it in each `exports` field.
+```json
+{
+  "types": "types/index.d.ts",              //here
+    "exports": {
+        ".": {
+            "types": "types/index.d.ts",    //here
+            "import": "./src/index.js"
+        },
+        "./pdf": {
+            "types": "types/index.d.ts",    //here
+            "import": "./src/pdf/index.js"
+        },
+        "./ui": {
+            "types": "types/index.d.ts",    //here
+            "import": "./src/ui/index.js"
+        }
+    }
+}
+```
 
 ## Should you use it?
 `dts-buddy` is a tool that solves the subpackage-problem very very well. Outside of that, the regular TypeScript compiler is good enough. It's going to be more familiar to most developers and is maintained more actively. But when you do need `dts-buddy`, it's a lifesaver.
+
+I for one have really enjoyed it and am very likely to choose it again.
