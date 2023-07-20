@@ -4,6 +4,45 @@
 
 # Fluent Inputs
 
+## Down the Rabbit Hole
+
+A few months ago, I stumbled accross Adam Silver's article _[Designing A Time Input](https://adamsilver.io/blog/designing-a-time-input/)_. In it he very persuasively argued that the ideal time input should be a single text input that accepts a wide range of formats. After reading the article, I implemented this in a few projects and was very happy with the results. 
+
+When I then needed a datetime input I decided to reuse the idea. A text field that allow all kinds of formats. But why just "12. July 2023", why not "Tomorrow" or "Yesterday 12pm". So I also added those special cases. But the slippery slope only started there. What about "Thursday in two weeks at noon"? My ambition soon exceeded my ability and patience, so I started looking for libraries. 
+
+I found `chrono-node`, a library that promised to do most of what I wanted. I used it to build the following input. Try it!
+
 <div class="not-prose font-sans">
     <Fluent/>
 </div>
+
+It kinda works, but there are some obvious issues. 
+
+
+There are obvious advantages to using Fluent Inputs:
+- Much more expressive. The gap between what the user is thinking and what they need to type is much smaller.
+- Support a wide variety of formats. For example, dates can be entered in many different ways, including relative dates like "tomorrow" or "next week".
+- Work without JavaScript - Parsing can be done on the server as fallback.
+- Great dictation support. Dictation is becoming more and more popular, especially among former iPad babies that learned to browser YouTube before they learned to type.
+- Accessible. Fluent Inputs are great for screen readers, as they can be read out loud in a natural way.
+
+Fluent Inputs do have some inherent limitations.
+- Typing on Mobile can be annoying. Users may prefer picker-style inputs depending on context.
+- In complex cases, autofill might be unavailable.
+- Parsing natural language is hard. Unless there is a library that can parse the information you need in all the languages you support, you will be stuck with a lot of work.
+- Relative dates can't be persisted. "Tomorrow" won't be meaningful in the future. When the user comes back to the form in the future, we will be forced to show the machine interpretation of what they had typed, not what they actually typed (Eg Show "20. September 2023" instead of "Tomorrow"). This can be confusing.
+
+There are some additional growing pains as this concept is developed. These are not inherent to Fluent Inputs, but are common in current implementations (2023).
+
+- Unstable while typing. Current parsers often "loose" a result while the user is typing. They may recoginse `Mon` as `Monday`, but then `Mond` does not get recoginsed anymore, even though the user is likely to continue typing `Monday`.
+- Large. Many libraries are quite large (>100kB). This is a problem for client-side parsing. Luckily, they can often be loaded lazily, as they are only needed when the user is typing. You have a few seconds after loading the page to load the parser. Libraries can reduce this by code-splitting by language and scraping strings from the `Intl` API instead of shipping dictionaries.
+- Filling in the blanks too liberally. For Example: If the user types "Monday", the parser may fill in "12:00 AM" as the time. There is no reason to assume this. It would be preferrable to show a Helper-Text asking the user to specify a time.
+- Lack helpers for writing an input that produces a given output. 
+- Poor fuzzyness.
+
+## Getting Started Today
+There are some great libraries out there that can get you started with Fluent Inputs today. I've provided a few examples by category below.
+
+### Date/Time
+- [Timeliness]() - A library for parsing dates and times in a variety of formats.
+- [Chrono-Node]() - Similar to Timeliness, but with more features and a larger footprint. Great for appointments.
