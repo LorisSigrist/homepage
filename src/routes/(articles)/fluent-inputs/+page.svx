@@ -1,0 +1,9 @@
+<script lang="ts">
+    import Fluent from "./Fluent.svelte";
+</script>
+
+# Fluent Inputs
+
+<div class="not-prose font-sans">
+    <Fluent/>
+</div>
