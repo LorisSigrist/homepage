@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { writable } from 'svelte/store';
-	import { fly } from 'svelte/transition';
+	import { fade, fly } from 'svelte/transition';
 	import { onMount } from 'svelte';
 
 	export let id = 'appointment-date';
@@ -15,19 +15,19 @@
 	onMount(async () => {
 		const chrono = await import('chrono-node');
 		loaded = true;
-		
+
 		const unsubscribe = value.subscribe((val) => {
 			parsed = chrono.parseDate(val);
-			console.log(parsed);
 		});
 
 		return unsubscribe;
 	});
-
 </script>
 
 <div>
-	<label for={id} class="block text-sm font-medium leading-6 text-gray-900 dark:text-white pointer-events-none"
+	<label
+		for={id}
+		class="block text-sm font-medium leading-6 text-gray-900 dark:text-white pointer-events-none"
 		>{label}</label
 	>
 	<div class="relative mt-2 rounded-md shadow-sm">
@@ -38,11 +38,11 @@
 			placeholder={loaded ? placeholder : 'Loading chrono-node...'}
 			disabled={!loaded}
 			bind:value={$value}
-			class="block w-full rounded-md border-0 py-1.5 pe-48 disabled:opacity-40 disabled:cursor-not-allowed dark:bg-white/5 pr-10 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-white/10 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:focus-within:ring-indigo-500 sm:text-sm sm:leading-6"
+			class="block w-full rounded-md border-0 py-1.5 sm:pe-48 disabled:opacity-40 disabled:cursor-not-allowed dark:bg-white/5 pr-10 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-white/10 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:focus-within:ring-indigo-500 sm:text-sm sm:leading-6"
 		/>
 		{#if parsed}
 			<div
-				class="pointer-events-none absolute top-1/2 -translate-y-1/2 h-6 right-3 px-4 flex items-center shadow-sm bg-indigo-600 rounded-full text-white"
+				class="pointer-events-none absolute top-1/2 -translate-y-1/2 h-6 right-3 px-4 sm:flex items-center shadow-sm bg-indigo-600 rounded-full hidden"
 				transition:fly={{ x: 10, duration: 100 }}
 			>
 				<span class="align-middle text-xs">
@@ -55,6 +55,24 @@
 					})}
 				</span>
 			</div>
+		{/if}
+	</div>
+
+	<div class="sm:hidden h-6 relative">
+		{#if parsed}
+			<span class="text-xs opacity-75 absolute left-0 top-2" transition:fade={{ duration: 100 }}>
+				{parsed.toLocaleDateString('en', {
+					year: 'numeric',
+					month: 'long',
+					day: 'numeric',
+					hour: 'numeric',
+					minute: 'numeric'
+				})}
+			</span>
+			{:else}
+			<span class="text-xs opacity-75 absolute left-0 top-2" transition:fade={{ duration: 100 }}>
+				Please enter a time and date
+			</span>
 		{/if}
 	</div>
 </div>

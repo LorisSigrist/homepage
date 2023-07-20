@@ -10,9 +10,9 @@ A few months ago, I stumbled accross Adam Silver's article _[Designing A Time In
 
 When I then needed a datetime input I decided to reuse the idea. A text field that allow all kinds of formats. But why just "12. July 2023", why not "Tomorrow" or "Yesterday 12pm". So I also added those special cases. But the slippery slope only started there. What about "Thursday in two weeks at noon"? My ambition soon exceeded my ability and patience, so I started looking for libraries. 
 
-I found `chrono-node`, a library that promised to do most of what I wanted. I used it to build the following input. Try it!
+I found `chrono-node`, a library that promised to do most of what I wanted. I used it to build the following prototype. Try it!
 
-<div class="not-prose font-sans">
+<div class="not-prose font-sans bg-gray-100 dark:bg-gray-800 p-4 sm:p-8 rounded-lg">
     <Fluent/>
 </div>
 

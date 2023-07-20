@@ -2,6 +2,7 @@
 	import { theme } from '$lib/stores/theme';
 	import { onMount } from 'svelte';
 	import { topology } from 'topology-renderer';
+	import { stone, sky } from "tailwindcss/colors"
 
 	let height = 1000;
 	let width = 1000;
@@ -16,8 +17,17 @@
 	let background_color: [number, number, number];
 	let line_color: [number, number, number];
 
-	$: background_color = $theme === 'dark' ? [28, 25, 23] : [249, 250, 251];
-	$: line_color = $theme === 'dark' ? [50, 50, 80] : [220, 220, 250];
+	$: line_color =  hexToRGB($theme === 'dark' ? sky[950] : sky[200]);
+	$: background_color = hexToRGB($theme === 'dark' ? stone[900] : stone[50])
+
+
+	function hexToRGB(hex: string) : [number, number, number] {
+		const r = parseInt(hex.slice(1, 3), 16);
+		const g = parseInt(hex.slice(3, 5), 16);
+		const b = parseInt(hex.slice(5, 7), 16);
+
+		return [r, g, b];
+	}
 </script>
 
 <svelte:window on:resize={set_size} />

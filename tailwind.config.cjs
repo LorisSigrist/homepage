@@ -1,11 +1,15 @@
 import Typography from '@tailwindcss/typography';
 import Forms from '@tailwindcss/forms';
+import colors from 'tailwindcss/colors';
 
 /** @type {import('tailwindcss').Config} */
 export default {
 	content: ['./src/**/*.{html,js,svelte,ts,svx}'],
 	theme: {
 		extend: {
+			colors: {
+				gray: colors.stone,
+			},
 			typography: (theme) => ({
 				DEFAULT: {
 					css: {
@@ -26,7 +30,7 @@ export default {
 					},
 				}
 			})
-		}
+		},
 	},
 	plugins: [Typography, Forms],
 	darkMode: 'class'
