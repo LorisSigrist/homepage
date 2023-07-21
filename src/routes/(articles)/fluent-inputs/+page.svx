@@ -6,7 +6,7 @@
 
 A few months ago, I stumbled accross Adam Silver's article _[Designing A Time Input](https://adamsilver.io/blog/designing-a-time-input/)_. In it he very persuasively argued that the ideal time input should be a single text input that accepts a wide range of formats. I followed his advice in a few projects and was very pleased with the results.
 
-## Down the Rabbit Hole
+## Down the Rabbit Hole and to the Prototype
 
 When I at some point needed a datetime input I decided to reuse the idea. A text field that allow all kinds of formats. But why just "12. July 2023", why not "Tomorrow" or "Next Monday". So I also added some special cases. But the slippery slope only started there. What about "Thursday in two weeks at noon"? My ambition soon exceeded my ability and patience, so I started looking for libraries. 
 
@@ -20,30 +20,101 @@ It's functional, but there are some issues I observed while testing it on a few 
 
 1. Users don't fully trust that the input will understand them. They wait for the feedback before moving on. 
 2. Unstable while typing. Result are often lost while typing. Typing "Mon", will be recognised as monday, but "Mond" won't be recognised anymore, even though the user is likely to continue typing "Monday".
-3. It fills in the blanks too liberally. If you say "In two days" it will fill in a time. This may not be appropriate. It would be preferrable to ask the user to specify a time.
+3. It fills in the blanks too liberally. If you say "In two days" it will fill in a time. This caused several users to enter incorrect values.
 4. Confusingly inconsistent. Some basic instructions are not recognised. "On the 12th" is not recognised, but "On the 12th of July" is.
-5. Typing on mobile is annoying. 
+5. Typing on mobile is annoying.
 
-
-
-These are problems that will need to be fixed. But the idea did show some promise. There are some
-obvious advantages.
+These problems are a mix of UX and implementation problems. They will all need to be fixed. But the idea did show some promise. There are some obvious advantages.
 
 1. Very expressive. The gap between what the user is thinking and what they need to type is much smaller.
 2. Works without JavaScript - Parsing can be done on the server as fallback <small>(intentionally disabled in this demo)</small>.
 3. Dictation is easy. Dictation is becoming more and more popular, especially among former iPad babies that learned to browser YouTube before they learned to write.
 4. Accessible. The input is read in a very natural way by screen readers.
 
-While I wouldn't use the above input in production, I think it's a good starting point to explore the idea of inputs that also accept plain english. These are sometimes called "Natural Language Inputs", but that could also refer to [this kind of input](https://www.jroehm.com/2014/01/26/ui-pattern-natural-language-form/). To avoid confusion, I'll coin and use the term "Fluent Inputs". <small>([obligatory xkcd 927](https://xkcd.com/927/))</small>
+While I wouldn't use the above input anywhere it's a fine starting point to explore the idea of inputs that accept plain english. These are sometimes called "Natural Language Inputs", but that could also refer to [this kind of input](https://www.jroehm.com/2014/01/26/ui-pattern-natural-language-form/). To avoid confusion, I'll coin and use the term "Fluent Inputs". <small>([obligatory xkcd 927](https://xkcd.com/927/))</small>
 
 ## Doing some Experiments
 For now, I'm going to handwave away the parsing problem and focus on the UX. 
+I have a few ideas that I want to test.
+
+### User Feedback Testing
+
+> TODO
+
+### Fluent Inputs as Infodumps
+One idea I had is that a Text-Area could be used as an infodump, substituting a whole form. If the user knew what information was expected they could just type it in in a stream of consciousness style. This might be usefull for things like calendars, where the expected information is known, and the details might be copy-pasted from an email or website.
+
+Let's test that.
 
 
+> TODO
 
 
-## The Parsing Problem
-You've probably notied that I've sofar side-stepped the actual implementation of the parser. That's because I don't have a good solution yet. 
+## The Implementation Problem
+I've side-stepped the actual implementation of the parser until now. That's because I don't have a good solution yet. 
+
+We have all the usuall i18n problems. Different languages, different cultural expectations. These are always hard problem, but they are even harder to get right here. 
+
+
+> TODO
+
+
+### What about LLMs?
+Language Models are all the rage right now. They are very good at parsing natural language, so why not use them here?
+
+Well, they do have some limitations that (currently) hold them back from reliably parsing fluent inputs.
+1. They are slow. Ideally we would want to parse the input on every keystroke. Current LLMs aren't fast enough for that.
+2. Can't run in the browser. Any parsing would need to happen on an external LLM server. This causes latency issues and privacy concerns (since the state is sent on each keystroke, not just at the end).
+3. Not repeatable. The same input may be parsed differently on the client and on the server.
+4. They are (currently) bad at dates. If you tell it "in four days", it would need to both know the current date and be able to calculate the date four days from now. LLMs currently suck at math, time math is even harder. This does not stop them from confidently giving you a wrong answer though.
+
+However, as LLMs get better and more widely available, they might become the best solution eventually. Alternative parsers get increasingly hard to write as the complexity of the input increases. LLMs handle that better.
+
+There is a halfway solution here though. Instead of using the LLM itself as the parser, you could use it as a preprocessor to extract easier to digest strings from the input. This would allow you to use simpler parsers to get the actual data. The LLM doesn't have to do any logic, just language-manipulation. This is an easier job, so faster and cheaper models can be used.
+
+Here is an example of what that might look like. The input is first passed through a LLM to extract the relevant strings. Then a simple parser is used to parse the extracted strings.
+
+Here is an example prompt and the extracted strings.
+
+
+```txt
+The following text includes information about a calendar event.
+
+"""
+Meeting with John, Conference room 103 tomorrow 12:30-13:30, bring the report
+"""
+
+Fill in the following fields.
+| Question | Answer |
+| --- | --- |
+| What is the title of the event? |  |
+| When does it start (day & time)? |  |
+| When does it end (day & time)? |  |
+| Where is it? |  |
+| Additional details (if applicable)? |  |
+
+
+You do not need to format your answers in any particular way. 
+The answers can be natural language.
+If the information for one of the questions is not available leave it blank.
+```
+
+This results in the following output (markdown table)
+
+| Question | Answer |
+| --- | --- |
+| What is the title of the event? | Meeting with John |
+| When does it start (day & time)? | Tomorrow at 12:30 |
+| When does it end (day & time)? | Tomorrow at 13:30 |
+| Where is it? | Conference room 103 |
+| Additional details (if applicable)? | Bring the report |
+
+The promt may be refined to make it easier for the LLM to extract the relevant information. But this is already pretty good. We've broken down a fairly complex input, which replaces a whole form, into a few simple to parse strings. It's within our ability to parse these strings individually.
+
+The i18n problem may also be helped, since we could use the LLM to translate the prompt.
+
+> We needn't worry about prompt-injection attacks here, since the user is entering data for themselves. Tricking the LLM does not achieve anything here. However, from a security perspective, you should consider the output of the LLM as untrusted, as if it were user input itself. 
+
 
 ## Getting Started Today
 There are some great libraries out there that can get you started with Fluent Inputs today. I've provided a few examples by category below.
@@ -51,3 +122,8 @@ There are some great libraries out there that can get you started with Fluent In
 ### Date/Time
 - [Timeliness]() - A library for parsing dates and times in a variety of formats.
 - [Chrono-Node]() - Similar to Timeliness, but with more features and a larger footprint. Great for appointments.
+
+
+
+
+*[i18n]: Internationalization
