@@ -1,44 +1,49 @@
 <script lang="ts">
-    import Fluent from "./Fluent.svelte";
+    import FluentDateTime from "./FluentDatetime.svelte";
 </script>
 
 # Fluent Inputs
 
+A few months ago, I stumbled accross Adam Silver's article _[Designing A Time Input](https://adamsilver.io/blog/designing-a-time-input/)_. In it he very persuasively argued that the ideal time input should be a single text input that accepts a wide range of formats. I followed his advice in a few projects and was very pleased with the results.
+
 ## Down the Rabbit Hole
 
-A few months ago, I stumbled accross Adam Silver's article _[Designing A Time Input](https://adamsilver.io/blog/designing-a-time-input/)_. In it he very persuasively argued that the ideal time input should be a single text input that accepts a wide range of formats. After reading the article, I implemented this in a few projects and was very happy with the results. 
+When I at some point needed a datetime input I decided to reuse the idea. A text field that allow all kinds of formats. But why just "12. July 2023", why not "Tomorrow" or "Next Monday". So I also added some special cases. But the slippery slope only started there. What about "Thursday in two weeks at noon"? My ambition soon exceeded my ability and patience, so I started looking for libraries. 
 
-When I then needed a datetime input I decided to reuse the idea. A text field that allow all kinds of formats. But why just "12. July 2023", why not "Tomorrow" or "Yesterday 12pm". So I also added those special cases. But the slippery slope only started there. What about "Thursday in two weeks at noon"? My ambition soon exceeded my ability and patience, so I started looking for libraries. 
-
-I found `chrono-node`, a library that promised to do most of what I wanted. I used it to build the following prototype. Try it!
+I found `chrono-node` which promised to do what I wanted. I used it to build the following prototype. Try it!
 
 <div class="not-prose font-sans bg-gray-100 dark:bg-gray-800 p-4 sm:p-8 rounded-lg">
-    <Fluent/>
+    <FluentDateTime/>
 </div>
 
-It kinda works, but there are some obvious issues. 
+It's functional, but there are some issues I observed while testing it on a few people.
+
+1. Users don't fully trust that the input will understand them. They wait for the feedback before moving on. 
+2. Unstable while typing. Result are often lost while typing. Typing "Mon", will be recognised as monday, but "Mond" won't be recognised anymore, even though the user is likely to continue typing "Monday".
+3. It fills in the blanks too liberally. If you say "In two days" it will fill in a time. This may not be appropriate. It would be preferrable to ask the user to specify a time.
+4. Confusingly inconsistent. Some basic instructions are not recognised. "On the 12th" is not recognised, but "On the 12th of July" is.
+5. Typing on mobile is annoying. 
 
 
-There are obvious advantages to using Fluent Inputs:
-- Much more expressive. The gap between what the user is thinking and what they need to type is much smaller.
-- Support a wide variety of formats. For example, dates can be entered in many different ways, including relative dates like "tomorrow" or "next week".
-- Work without JavaScript - Parsing can be done on the server as fallback.
-- Great dictation support. Dictation is becoming more and more popular, especially among former iPad babies that learned to browser YouTube before they learned to type.
-- Accessible. Fluent Inputs are great for screen readers, as they can be read out loud in a natural way.
 
-Fluent Inputs do have some inherent limitations.
-- Typing on Mobile can be annoying. Users may prefer picker-style inputs depending on context.
-- In complex cases, autofill might be unavailable.
-- Parsing natural language is hard. Unless there is a library that can parse the information you need in all the languages you support, you will be stuck with a lot of work.
-- Relative dates can't be persisted. "Tomorrow" won't be meaningful in the future. When the user comes back to the form in the future, we will be forced to show the machine interpretation of what they had typed, not what they actually typed (Eg Show "20. September 2023" instead of "Tomorrow"). This can be confusing.
+These are problems that will need to be fixed. But the idea did show some promise. There are some
+obvious advantages.
 
-There are some additional growing pains as this concept is developed. These are not inherent to Fluent Inputs, but are common in current implementations (2023).
+1. Very expressive. The gap between what the user is thinking and what they need to type is much smaller.
+2. Works without JavaScript - Parsing can be done on the server as fallback <small>(intentionally disabled in this demo)</small>.
+3. Dictation is easy. Dictation is becoming more and more popular, especially among former iPad babies that learned to browser YouTube before they learned to write.
+4. Accessible. The input is read in a very natural way by screen readers.
 
-- Unstable while typing. Current parsers often "loose" a result while the user is typing. They may recoginse `Mon` as `Monday`, but then `Mond` does not get recoginsed anymore, even though the user is likely to continue typing `Monday`.
-- Large. Many libraries are quite large (>100kB). This is a problem for client-side parsing. Luckily, they can often be loaded lazily, as they are only needed when the user is typing. You have a few seconds after loading the page to load the parser. Libraries can reduce this by code-splitting by language and scraping strings from the `Intl` API instead of shipping dictionaries.
-- Filling in the blanks too liberally. For Example: If the user types "Monday", the parser may fill in "12:00 AM" as the time. There is no reason to assume this. It would be preferrable to show a Helper-Text asking the user to specify a time.
-- Lack helpers for writing an input that produces a given output. 
-- Poor fuzzyness.
+While I wouldn't use the above input in production, I think it's a good starting point to explore the idea of inputs that also accept plain english. These are sometimes called "Natural Language Inputs", but that could also refer to [this kind of input](https://www.jroehm.com/2014/01/26/ui-pattern-natural-language-form/). To avoid confusion, I'll coin and use the term "Fluent Inputs". <small>([obligatory xkcd 927](https://xkcd.com/927/))</small>
+
+## Doing some Experiments
+For now, I'm going to handwave away the parsing problem and focus on the UX. 
+
+
+
+
+## The Parsing Problem
+You've probably notied that I've sofar side-stepped the actual implementation of the parser. That's because I don't have a good solution yet. 
 
 ## Getting Started Today
 There are some great libraries out there that can get you started with Fluent Inputs today. I've provided a few examples by category below.

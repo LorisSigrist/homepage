@@ -35,14 +35,14 @@
 			type="text"
 			{name}
 			{id}
-			placeholder={loaded ? placeholder : 'Loading chrono-node...'}
+			placeholder={loaded ? placeholder : 'Loading Parser...'}
 			disabled={!loaded}
 			bind:value={$value}
 			class="block w-full rounded-md border-0 py-1.5 sm:pe-48 disabled:opacity-40 disabled:cursor-not-allowed dark:bg-white/5 pr-10 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-white/10 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:focus-within:ring-indigo-500 sm:text-sm sm:leading-6"
 		/>
 		{#if parsed}
 			<div
-				class="pointer-events-none absolute top-1/2 -translate-y-1/2 h-6 right-3 px-4 sm:flex items-center shadow-sm bg-indigo-600 rounded-full hidden"
+				class="pointer-events-none absolute top-1/2 -translate-y-1/2 h-6 right-3 px-4 sm:flex items-center shadow-sm bg-indigo-600 rounded-full hidden text-white"
 				transition:fly={{ x: 10, duration: 100 }}
 			>
 				<span class="align-middle text-xs">

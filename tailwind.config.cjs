@@ -8,7 +8,7 @@ export default {
 	theme: {
 		extend: {
 			colors: {
-				gray: colors.stone,
+				gray: colors.stone
 			},
 			typography: (theme) => ({
 				DEFAULT: {
@@ -21,16 +21,32 @@ export default {
 						blockquote: {
 							fontStyle: 'normal',
 							'& p::before': {
-								content: 'none',
+								content: 'none'
 							},
 							'& p::after': {
-								content: 'none',
+								content: 'none'
 							}
 						},
-					},
+						'code::before': {
+							content: 'none'
+						},
+						'code::after': {
+							content: 'none'
+						},
+						code: {
+							color: "inherit",
+							backgroundColor: "transparent",
+							borderRadius: theme('borderRadius.DEFAULT'),
+							paddingLeft: theme('spacing[1.5]'),
+							paddingRight: theme('spacing[1.5]'),
+							paddingTop: theme('spacing.1'),
+							paddingBottom: theme('spacing.1'),
+							fontSize: '0.875rem',
+						}
+					}
 				}
 			})
-		},
+		}
 	},
 	plugins: [Typography, Forms],
 	darkMode: 'class'
