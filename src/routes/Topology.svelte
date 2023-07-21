@@ -2,13 +2,16 @@
 	import { theme } from '$lib/stores/theme';
 	import { onMount } from 'svelte';
 	import { topology } from 'topology-renderer';
-	import { stone, sky } from "tailwindcss/colors"
+
+	//some commonjs fuckery disallows named imports here
+	import colors from "tailwindcss/colors"
+	const { stone , sky } = colors;
 
 	let height = 1000;
 	let width = 1000;
 
 	function set_size() {
-		height = document.documentElement.clientHeight;
+		height = document. documentElement.clientHeight;
 		width = document.documentElement.clientWidth;
 	}
 
