@@ -18,8 +18,8 @@ I found `chrono-node` which promised to do what I wanted. I used it to build the
 
 It's functional, but there are some issues I observed while testing it on a few people.
 
-1. Users don't fully trust that the input will understand them. They wait for the feedback before moving on. 
-2. Unstable while typing. Result are often lost while typing. Typing "Mon", will be recognised as monday, but "Mond" won't be recognised anymore, even though the user is likely to continue typing "Monday".
+1. Users don't trust that the input will understand them. They wait for feedback before moving on. 
+2. Result are often lost while typing. Typing "Mon", will be recognised as monday, but "Mond" won't be recognised anymore, even though the user is likely to continue typing "Monday".
 3. It fills in the blanks too liberally. If you say "In two days" it will fill in a time. This caused several users to enter incorrect values.
 4. Confusingly inconsistent. Some basic instructions are not recognised. "On the 12th" is not recognised, but "On the 12th of July" is.
 5. Typing on mobile is annoying.
@@ -62,15 +62,15 @@ We have all the usuall i18n problems. Different languages, different cultural ex
 ### What about LLMs?
 Language Models are all the rage right now. They are very good at parsing natural language, so why not use them here?
 
-Well, they do have some limitations that (currently) hold them back from reliably parsing fluent inputs.
+Well, they do have some limitations that (currently) hold them back from reliably parsing user inputs.
 1. They are slow. Ideally we would want to parse the input on every keystroke. Current LLMs aren't fast enough for that.
 2. Can't run in the browser. Any parsing would need to happen on an external LLM server. This causes latency issues and privacy concerns (since the state is sent on each keystroke, not just at the end).
 3. Not repeatable. The same input may be parsed differently on the client and on the server.
-4. They are (currently) bad at dates. If you tell it "in four days", it would need to both know the current date and be able to calculate the date four days from now. LLMs currently suck at math, time math is even harder. This does not stop them from confidently giving you a wrong answer though.
+4. They are (currently) bad at dates. If you tell it "in four days", it would need to both know the current date and be able to calculate the date four days from now. LLMs currently suck at math. Clockface math is even more confusing. This does not stop them from confidently giving you a wrong answer though.
 
 However, as LLMs get better and more widely available, they might become the best solution eventually. Alternative parsers get increasingly hard to write as the complexity of the input increases. LLMs handle that better.
 
-There is a halfway solution here though. Instead of using the LLM itself as the parser, you could use it as a preprocessor to extract easier to digest strings from the input. This would allow you to use simpler parsers to get the actual data. The LLM doesn't have to do any logic, just language-manipulation. This is an easier job, so faster and cheaper models can be used.
+In the meantime, there is a halfway solution. Instead of using the LLM itself as the parser, you could use it as a preprocessor to extract easier to digest strings from the input. This would allow you to use simpler parsers to get the actual data. The LLM doesn't have to do any logic, just language-manipulation. This is an easier job, so faster and cheaper models can be used.
 
 Here is an example of what that might look like. The input is first passed through a LLM to extract the relevant strings. Then a simple parser is used to parse the extracted strings.
 
@@ -81,15 +81,17 @@ Here is an example prompt and the extracted strings.
 The following text includes information about a calendar event.
 
 """
-Meeting with John, Conference room 103 tomorrow 12:30-13:30, bring the report
+Meeting with John, Conference room 103 tomorrow 12:30 until five past two, bring the report & wish Janine a happy birthday
 """
 
 Fill in the following fields.
 | Question | Answer |
 | --- | --- |
 | What is the title of the event? |  |
-| When does it start (day & time)? |  |
-| When does it end (day & time)? |  |
+| What day  does it start? |  |
+| What time does it start? |  |
+| What day  does it end? |  |
+| What time does it end? |  |
 | Where is it? |  |
 | Additional details (if applicable)? |  |
 
@@ -104,17 +106,21 @@ This results in the following output (markdown table)
 | Question | Answer |
 | --- | --- |
 | What is the title of the event? | Meeting with John |
-| When does it start (day & time)? | Tomorrow at 12:30 |
-| When does it end (day & time)? | Tomorrow at 13:30 |
+| What day does it start? | Tomorrow |
+| What time does it start? | 12:30 |
+| What day does it end? | Tomorrow |
+| What time does it end? | Five past two (2:05) |
 | Where is it? | Conference room 103 |
-| Additional details (if applicable)? | Bring the report |
+| Additional details (if applicable)? | Bring the report & wish Janine a happy birthday |
 
-The promt may be refined to make it easier for the LLM to extract the relevant information. But this is already pretty good. We've broken down a fairly complex input, which replaces a whole form, into a few simple to parse strings. It's within our ability to parse these strings individually.
 
-The i18n problem may also be helped, since we could use the LLM to translate the prompt.
+This is already pretty good. We've broken down a fairly complex input, which does the job previously done by a whole form, into a few simple strings. We now only have to parse these individual strings, not the whole input.
+
+You could also use the LLM to translate the prompt, making it easier to adapt to different languages.
 
 > We needn't worry about prompt-injection attacks here, since the user is entering data for themselves. Tricking the LLM does not achieve anything here. However, from a security perspective, you should consider the output of the LLM as untrusted, as if it were user input itself. 
 
+This still doesn't solve the latency and privacy problems, but the others are gone. The LLM doesn't have to do logic, and it's consistent enough that repeated parsing will (usually) give the same result. 
 
 ## Getting Started Today
 There are some great libraries out there that can get you started with Fluent Inputs today. I've provided a few examples by category below.
