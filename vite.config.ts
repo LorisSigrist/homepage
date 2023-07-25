@@ -3,10 +3,12 @@ import { defineConfig } from 'vitest/config';
 import { base64Loader } from './plugins/base64-imports';
 import { colorThief } from './plugins/color-thief';
 import { imageSize } from './plugins/image-size';
+import { imagetools } from 'vite-imagetools'
+
 
 
 export default defineConfig({
-	plugins: [base64Loader, colorThief, imageSize, sveltekit()],
+	plugins: [base64Loader, colorThief, imageSize, imagetools(), sveltekit()],
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']
 	}

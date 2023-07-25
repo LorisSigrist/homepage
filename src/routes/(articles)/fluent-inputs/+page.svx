@@ -1,5 +1,6 @@
 <script lang="ts">
     import FluentDateTime from "./FluentDatetime.svelte";
+    import Showcase from '$lib/ui/Showcase.svelte';
 </script>
 
 # Fluent Inputs
@@ -12,9 +13,9 @@ When I at some point needed a datetime input I decided to reuse the idea. A text
 
 I found `chrono-node` which promised to do what I wanted. I used it to build the following prototype. Try it!
 
-<div class="not-prose font-sans bg-gray-100 dark:bg-gray-800 p-4 sm:p-8 rounded-lg">
+<Showcase>
     <FluentDateTime/>
-</div>
+</Showcase>
 
 It's functional, but there are some issues I observed while testing it on a few people.
 

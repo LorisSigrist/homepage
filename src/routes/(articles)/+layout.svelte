@@ -13,7 +13,6 @@
 		We want to copy the link when the user clicks on the anchor tag.
 		*/
 		if (e.target instanceof HTMLAnchorElement && e.target.parentElement instanceof HTMLHeadingElement) {
-			e.preventDefault();
 			await navigator.clipboard.writeText(e.target.href);
 		}
 	}

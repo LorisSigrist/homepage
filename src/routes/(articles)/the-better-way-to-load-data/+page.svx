@@ -1,5 +1,5 @@
 <script>
-    import forAwaitOfCompat from "./for-await-of-compat.png"
+    import forAwaitOfCompat from "./for-await-of-compat.png?format=webp"
 	import forAwaitOfCompatSize from "./for-await-of-compat.png?size"
 	import forAwaitOfCompatColor from "./for-await-of-compat.png?color"
 

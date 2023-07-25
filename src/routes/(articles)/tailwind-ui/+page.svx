@@ -1,0 +1,97 @@
+<script lang="ts">
+    import Showcase from "$lib/ui/Showcase.svelte";
+    import MoneyInput from "./MoneyInput.svelte";
+    import MoneyInputModified from "./MoneyInputModified.svelte";
+    
+    import { writable } from "svelte/store";
+
+    const currency = writable("USD");
+
+	import BannerSrc from "./banner.png?format=webp"
+	import BannerSize from "./banner.png?size"
+	import BannerColor from "./banner.png?color"
+</script>
+
+<img 
+	src={BannerSrc} 
+	width={BannerSize.width}
+	height={BannerSize.height}
+	style:background-color={BannerColor}
+	alt="The Tailwind UI Landing Page showing a bunch of beautiful components"
+/>
+
+# Is Tailwind UI worth it?
+
+[Tailwind UI](https://tailwindui.com/) is a collection of high-quality components and templates built by the creators of [Tailwind CSS](https://tailwindcss.com). It's 300$ price-tag for a single developer license seems quite steep when considering all the free alternatives out there. Could it really be worth it?
+
+I've been using Tailwind UI for a couple months now. In this article, I'll go through how it has affected my workflow, what I liked and disliked about it, and who might consider buying it.
+
+> Since Tailwind UI and Tailwind CSS share similar and verbose names, I'll refer to them as TUI and TCSS respectively.
+
+## The TUI workflow
+
+TUI components and templates are provided as markup with TCSS classes. You then copy-paste the markup into your project. In true Tailwind fashion, this seems a bit backwards at first. Why would you want to copy-paste markup if you could just install a library? Customisation. If you've ever tried to modify something like [MUI](https://mui.com) you know it's insuffreable. Owning the markup saves you from a lot of headaches.
+
+Let's say you wanted to add a money input to your site. You would first browse through the TUI components to find one that looks like you want.
+
+<Showcase>
+    <MoneyInput bind:currency={$currency} />
+</Showcase>
+
+You would then copy-paste the markup into your project, and modify it to fit your theme, changing colors, shapes, fonts and sizes.
+
+<Showcase>
+    <MoneyInputModified bind:currency={$currency} />
+</Showcase>
+
+For more complex components that require interactivity, TUI also provides React and Vue components that you can copy paste. If you aren't using these, then the markup also includes comments that explain how the component should behave. This makes it easy to adapt the components to your framework of choice.
+
+## Looking good has never been this easy
+
+> TODO
+
+## Framework agnostic\*
+
+Components are provided as markup with TCSS classes. This means that the appearance of the components is not tied to any specific framework. However, the behavior of the components needs to be implemented for each framework.
+
+TUI provides prebuilt React & Vue components that implement expected behavior. If you are using a different framework, you'll have to implement the behavior yourself. Fortunately, this is rarely difficult. The markup includes comments that explain what each part is for, and how it should behave. This makes adapting the components to your framework of choice a breeze.
+
+I've personaly adapted many TUI components to [Svelte](https://svelte.dev), using [Melt UI](https://melt-ui.com) as the behavior library. It's been a great experience. 
+
+I feel comfortable calling TUI framework agnostic.
+
+## It's not perfect
+There are a few things that I find frustrating about TUI. I wish I had been more aware of these before purchasing, and hope they will be addressed in the future.
+
+### Components come in just one theme
+
+All, or at least most, TUI components come in a single theme. Either light or dark. This is unfortunate, since one of TCSS's nicest features is it's easy multi-theme styling.
+
+It's especially odd when the a component appears in multiple themes accross different pages. Clearly both the light and dark styles exist, so why not make them available?
+
+The thinking here was likely that developers would not expected a component to be visually different from the preview page. If you are building a light-theme only site, having your inputs suddenly turn dark if the user has a dark OS theme would be unexpected. So, they decided to make the components single-theme only.
+
+I really would appreciate providing components (at least the primitives) in three variants: light, dark and adaptive.
+
+### Tailwind CSS limitations show
+
+TUI has limited itself to just using TCSS classes. This is great, since it makes all the components easy to copy-paste and customize. However, sometimes the limitations of TCSS shine through.
+
+While Tailwind CSS can do pretty much anything CSS can do when styling a single element, it does not replace CSS when it comes to multi-element interaction and styling using more advanced selectors. This is really unfortunate, since this is one of CSS's most powerful features. TUI has to abstain from using multi-element selectors, which results in some awkward recommendations on how to handle the markup.
+
+For example, it recomends opening dropdowns by using JS to add or remove an element from the DOM. That part of the site will not work without JS, making the site more fragile. This is a shame, since this could easily be solved with a few lines of CSS.
+
+The solution here isn't to add custom CSS to TUI, but to expand TCSS's capabilities. Until that happens, I have to mark it down for this.
+
+## Is it worth it?
+
+As a developer, your job is to ship shit. Decisions you make should be in service of that goal.
+
+When you build a product, ask yourself if the time you spend fiddling to make the page look good really is critical to building a product, or is it merely an instrumental step in between? The answer will depend on your project, a unique look and branding may very well be important. But, if you are just building your frontend as a means for your users to interface with your actual product, consider taking shortcuts. TUI is a really good shortcut.
+
+How much do you value the time you loose by not taking shortcuts? That's the question you need to answer to determine if the price is worth it.
+
+*[TCSS]: Tailwind CSS
+*[TUI]: Tailwind UI
+*[JS]: JavaScript
+*[TS]: TypeScript \*[VSC]: Visual Studio Code

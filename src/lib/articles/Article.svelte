@@ -56,7 +56,7 @@
 				{data.title}
 			</a>
 		</h3>
-		<p class="mt-5 line-clamp-3 text-sm leading-6 text-gray-600 dark:text-gray-400">
+		<p class="mt-5 text-sm leading-6 text-gray-600 dark:text-gray-400">
 			{data.description}
 		</p>
 	</div>

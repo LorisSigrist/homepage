@@ -1,6 +1,2 @@
-declare module "*?size" {
-    export default {
-        width: number,
-        height: number
-    };
-}
+import type { Plugin } from "vite";
+export const imageSize: Plugin;
