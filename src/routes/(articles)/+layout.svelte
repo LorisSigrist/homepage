@@ -26,3 +26,41 @@
 >
 	<slot />
 </article>
+
+
+<div class="progress-bar h-3 bg-blue-700"></div>
+
+
+<style>
+	.progress-bar {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 100%;
+		z-index: 1000;
+
+
+		animation-name: progress;
+  		animation-duration: 1ms; /* Firefox requires this to apply the animation */
+  		animation-direction: alternate;
+  		animation-timeline: scroll(block nearest);
+		animation-timing-function: linear;
+	}
+
+
+	@supports not (animation-timeline: scroll()) {
+		.progress-bar {
+			display: none;
+		}
+	} 
+
+
+	@keyframes progress {
+		from {
+			right: 100%;
+		}
+		to {
+			right: 0;
+		}
+	}
+</style>
