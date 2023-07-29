@@ -30,7 +30,10 @@ const config = {
 			remarkPlugins: [
 				// @ts-ignore
 				remarkAbbr
-			]
+			],
+			layout: {
+				snippet: "./src/lib/mdsvex/SnippetLayout.svelte",
+			}
 		})
 	],
 
