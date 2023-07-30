@@ -215,7 +215,7 @@ pre[class*="language-"] {
 	word-break: normal;
 	word-wrap: normal;
 	color: #eee;
-	background: #2f2f2f;
+	background: rgb(41 37 36);
 	font-family: Roboto Mono, monospace;
 	font-size: 0.9em;
 	line-height: 1.5em;

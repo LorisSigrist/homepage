@@ -32,13 +32,28 @@ I've been using Tailwind UI for a couple months now. In this article, I'll go th
 
 ## The TUI workflow
 
-TUI components and templates are provided as markup with TCSS classes. You then copy-paste the markup into your project. In true Tailwind fashion, this seems a bit backwards at first. Why would you want to copy-paste markup if you could just install a library? Customisation. If you've ever tried to modify something like [MUI](https://mui.com) you know it's insuffreable. Owning the markup and styles saves you from a lot of headaches.
+TUI components and templates are provided as markup with TCSS classes. You then copy-paste the markup into your project. In true Tailwind fashion, this seems a bit backwards at first. Why would you want to copy-paste markup if you could just install a library? Customization. If you've ever tried to modify something like [MUI](https://mui.com) you know it's insufferable. Owning the markup and styles saves you from a lot of headaches.
 
 Let's say you wanted to add a money input to your site. You would first browse through the TUI components to find one that looks like you want.
 
 <Showcase>
     <MoneyInput bind:currency={$currency} />
 </Showcase>
+
+```html
+<div>
+  <label for="price" class="block text-sm font-medium leading-6 text-gray-900">Price</label>
+  <div class="relative mt-2 rounded-md shadow-sm">
+    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+      <span class="text-gray-500 sm:text-sm">$</span>
+    </div>
+    <input type="text" name="price" id="price" class="block w-full rounded-md border-0 py-1.5 pl-7 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="0.00" aria-describedby="price-currency">
+    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+      <span class="text-gray-500 sm:text-sm" id="price-currency">USD</span>
+    </div>
+  </div>
+</div>
+```
 
 Then you would copy-paste the markup into your project and modify it to fit your theme, changing colors, shapes, fonts and sizes.
 
@@ -52,17 +67,17 @@ For more complex components that require interactivity TUI also provides React a
 
 Obviously TUI looks great, you just need to browse their site to see that. What's more impressive is how easy it is to actually achieve similar results in your own project. 
 
-I'm used to Bootstrap, MUI or custom CSS. With these, I would spend a lot of time fiddling to get the look right. Promises of "easy styling" and "beautiful components" woud often go unfulfilled. 
+I'm used to Bootstrap, MUI or custom CSS. With these, I would spend a lot of time fiddling to get the look right. Promises of "easy styling" and "beautiful components" would often go unfulfilled. 
 
 With TUI, I just copy-paste the markup and it looks great. This effortless beauty has been a novel experience for me. 
 
 ## Framework agnostic\*
 
-Components are provided as markup with TCSS classes. The _appearance_ of the components is not tied to any specific framework. However, the _behavior_ of the components needs to be implemented seperately for each framework.
+Components are provided as markup with TCSS classes. The _appearance_ of the components is not tied to any specific framework. However, the _behavior_ of the components needs to be implemented separately for each framework.
 
 TUI provides prebuilt React & Vue components that implement expected behavior. If you are using a different framework or no framework you'll have to implement the behavior yourself. Fortunately, this is rarely difficult. The markup includes comments that explain what each part is for and how it should behave. 
 
-I've personaly adapted many TUI components to [Svelte](https://svelte.dev), using [Melt UI](https://melt-ui.com) as the behavior library. It's been a very smooth experience.
+I've personally adapted many TUI components to [Svelte](https://svelte.dev), using [Melt UI](https://melt-ui.com) as the behavior library. It's been a very smooth experience.
 
 Even when I was using a Server-Side only framework, [Symfony](https://symfony.com), this still worked great. I feel comfortable calling TUI framework agnostic, even though there is an asterisk.
 
@@ -74,7 +89,7 @@ There are things that I find frustrating about TUI and wish I had been aware of 
 
 All, or at least most, TUI components come in a single theme. Either light or dark. This is unfortunate, since one of TCSS's nicest features is it's easy multi-theme styling.
 
-It's especially odd when a component appears in both light and dark accross different pages. Clearly both variants exist, so why not make them available?
+It's especially odd when a component appears in both light and dark across different pages. Clearly both variants exist, so why not make them available?
 
 The thinking here was likely that developers would not expected a component to differ visually from the preview page. If you are building a light-theme site and you copy-paste light theme components, having them suddenly turn dark would be unexpected. This is likely why they decided to make the components single-theme.
 
@@ -82,23 +97,21 @@ I would appreciate components being provided in three variants: `light`, `dark` 
 
 ### Tailwind CSS limitations show
 
-TUI has limited itself to just using TCSS classes. This is great, as all components are easy to copy-paste and customize. However, occasionaly the limitations of TCSS shine through.
+TUI has limited itself to just using TCSS classes. This is great, as all components are easy to copy-paste and customize. However, occasionally the limitations of TCSS shine through.
 
-While Tailwind CSS can do pretty much anything CSS can do when styling a single element, it does not match CSS when it comes to multi-element interaction and styling. This is one of CSS's most powerful features. TUI has to abstain from this, which results in some awkward recommendations. Usually this manifests in an overreliance on JS.
+While TCSS can do pretty much anything CSS can when styling a single element. However, it does not match CSS when it comes to multi-element interaction and styling, it's most powerful feature. TUI has to abstain from this, which results in some awkward recommendations, usually manifesting in an overreliance on JS.
 
-For example, it recomends opening dropdowns by using JS to add or remove an element from the DOM. That part of the site will not work without JS. This is a shame, since this could easily be solved with a few lines of CSS. Failing to adhere to the Least Power Principle like this makes your sites more fragile for no good reason.
+For example, it recommends opening dropdowns by adding/removing an element JS. That part of the site won't work without JS. This is a shame, since this could easily be solved with a few lines of CSS. Failing to adhere to the [Least Power Principle](https://en.wikipedia.org/wiki/Rule_of_least_power) like this makes your sites more fragile for no benefit.
 
-The solution here isn't to add custom CSS to TUI, but to expand TCSS's capabilities. Until that happens I can't give it full marks.
+The solution here isn't to add custom CSS to TUI, but to expand TCSS's capabilities. Until that happens I will continue to be frustrated by this.
 
 ### No Offline Support
-I'm currently writing this on a train and I'm unable to accesss TUI in any way. This baffels me, as it would be quite straight forward to enable offline access. A basic [ServiceWorker](https://developers.mozilla.org/en-US/docs/Web/API/Service_Worker_API) would do.
+I'm currently writing this on a train and I'm unable to access TUI in any way. This is a rather glaring oversight, as it would be very straight forward to enable offline access. A basic [ServiceWorker](https://developers.mozilla.org/en-US/docs/Web/API/Service_Worker_API) would do. Caching static assets isn't hard.
 
 ## Is it worth it?
-I've said a lot of good things about TUI here. I've also given some fair criticism. But I have yet to answer the actual question: Is it worth it?
+I have yet to answer the ultimate question: _Is it worth it?_ I would give the usual "it depends", because it really does depend, but that's not fair. It's not fair because you have to buy it to try it and therefore can't know on which side of the fence you'll land. That's no good. 
 
-I would give the usual "it depends", because it really does depend, but I don't think that's fair. It's not fair because there is no way to determine on which side of "it depends" you personally fall. You have to pay to try it, so you can't know if it's worth it before you've actually bought it. That's no good. Instead, I'll try and guide you to an answer.
 
-If you are currently using Bootstrap, MUI or one of the many other component libraries, I would seriously consider it. You already don't customize your components very much, so having a familiar portable set of components will accelerate you greatly. You will save a lot of time in those few cases where you do decide to customize.
 
 
 > TODO
