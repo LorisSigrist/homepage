@@ -4,30 +4,48 @@
 	import size from './img.jpg?size';
 
 	import { bayerDithering } from './bayer/index';
-	import { halftoneDithering } from './halftone';
+	import { tick } from 'svelte';
 
 	let threshold = 0.33;
-	let noiseIntensity = 1.14;
+	let noiseIntensity = 0.3;
 	let monochrome = false;
 	let colorLight = '#ede6cc';
 	let colorDark = '#21263f';
 
-	let dotSize = 18;
-	let overspill = 1;
+	let image: HTMLImageElement;
 
-	let canvasWidth = size.width / ('window' in globalThis ? window.devicePixelRatio : 1);
-	let canvasHeight = size.height / ('window' in globalThis ? window.devicePixelRatio : 1);
+	function onInput(e: any) {
+		const file = e.target.files[0];
+		if(!file) return;
+
+		const reader = new FileReader();
+		reader.onload = (e) => {
+
+			image = new Image();
+			tick().then(() => {
+				console.log(image);
+
+				if (typeof reader.result !== 'string') return;
+				image.src = reader.result;
+			});
+			console.log(image);
+		};
+		reader.readAsDataURL(file);
+	}
 </script>
 
 <div class="max-w-full px-96">
-	<img src={img_src} alt="" width={size.width} height={size.height} />
+	<input type="file" id="image-input" accept="image/*" on:input={onInput} />
 
+	{#if image}
+	<img src={image?.src} alt="" />
 	<div>
-		<label class="block text-sm font-medium leading-6 text-gray-900">Threshold {threshold}</label>
+		<label for="threshold" class="block text-sm font-medium leading-6 text-gray-900">Threshold {threshold}</label>
 		<div class="mt-2">
 			<input
 				type="range"
 				min="0"
+				id="threshold"
 				max="1"
 				step="0.01"
 				bind:value={threshold}
@@ -37,14 +55,15 @@
 	</div>
 
 	<div>
-		<label class="block text-sm font-medium leading-6 text-gray-900"
+		<label for="noise" class="block text-sm font-medium leading-6 text-gray-900"
 			>Noise Intensity {noiseIntensity}</label
 		>
 		<div class="mt-2">
 			<input
 				type="range"
 				min="0"
-				max="4"
+				id="noise"
+				max="1.5"
 				step="0.01"
 				bind:value={noiseIntensity}
 				class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -67,43 +86,23 @@
         <input type="color" bind:value={colorDark} />
     {/if}
 
+
 	<canvas
 		class="max-w-full"
 		style:width={size.width}
 		style:height={size.height}
 		use:bayerDithering={{
-			image: {
-				src: img_src,
-				width: size.width,
-				height: size.height
-			},
+			image,
 			threshold,
 			noiseIntensity,
 			monochrome,
 			colorLight,
 			colorDark
 		}}
-		width={canvasWidth}
-		height={canvasHeight}
 	/>
 
-	<input type="range" min="2" max="32" step="1" bind:value={dotSize} />
-	<input type="range" min="0.1" max="2" step="0.001" bind:value={overspill} />
-
-	<canvas
-		class="max-w-full"
-		style:width={size.width}
-		style:height={size.height}
-		use:halftoneDithering={{
-			image: {
-				src: img_src,
-				width: size.width,
-				height: size.height
-			},
-			dotSize,
-			overspill
-		}}
-		width={canvasWidth}
-		height={canvasHeight}
-	/>
+	<p>
+		Right click and save the image to download it.
+	</p>
+	{/if}
 </div>

@@ -3,14 +3,10 @@ import bayer_4_size from './bayer_4.png?size';
 
 import vertex_src from './vertex.glsl?raw';
 import fragment_src from './fragment.glsl?raw';
-import { initShaderProgram, loadTexture, setUpRect } from '../utils';
+import { createTexture, initShaderProgram, loadImageToTexture, loadTexture, setUpRect } from '../utils';
 
 export type BayerDitheringOptions = {
-    image: {
-        src: string;
-        width: number;
-        height: number;
-    }
+    image: HTMLImageElement;
     threshold: number;
     noiseIntensity: number;
     monochrome: boolean;
@@ -20,6 +16,18 @@ export type BayerDitheringOptions = {
 
 export function bayerDithering(canvas: HTMLCanvasElement, initialOptions: BayerDitheringOptions) {
     let options = initialOptions;
+
+    function loadImage() {
+        options.image.onload = () => {
+            loadImageToTexture(gl, texture, options.image);
+
+            canvas.width = options.image.width;
+            canvas.height = options.image.height;
+
+
+            gl.viewport(0, 0, options.image.width,options.image.height);
+        }    
+    }
 
     const gl = canvas.getContext('webgl')!;
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -43,8 +51,9 @@ export function bayerDithering(canvas: HTMLCanvasElement, initialOptions: BayerD
     const uDarkColor = gl.getUniformLocation(program, 'uDarkColor');
     const uLightColor = gl.getUniformLocation(program, 'uLightColor');
 
-    const texture = loadTexture(gl, options.image.src);
+    const texture = createTexture(gl);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    loadImage();
 
     const bayer_4 = loadTexture(gl, bayer_4_src);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -54,6 +63,8 @@ export function bayerDithering(canvas: HTMLCanvasElement, initialOptions: BayerD
     let frame: number;
 
     function render(now: number) {
+        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
         gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index_buffer);
 
@@ -91,7 +102,10 @@ export function bayerDithering(canvas: HTMLCanvasElement, initialOptions: BayerD
     
     return {
         update(newOptions: BayerDitheringOptions) {
+            const newImg = options.image !== newOptions.image;
             options = newOptions;
+            if(newImg)
+                loadImage();
         },
 
         destroy() {

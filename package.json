@@ -43,6 +43,7 @@
 		"typescript": "^5.0.4",
 		"vite": "^4.3.7",
 		"vite-imagetools": "^5.0.5",
+		"vite-plugin-glsl": "^1.1.2",
 		"vitest": "^0.25.8"
 	},
 	"type": "module",
