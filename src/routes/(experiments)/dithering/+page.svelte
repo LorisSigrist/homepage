@@ -1,10 +1,9 @@
 <script lang="ts">
 	import '$lib/styles/bootstrap.css';
 	import img_src from './img.jpg';
-	import size from './img.jpg?size';
 
 	import { bayerDithering } from './bayer/index';
-	import { tick } from 'svelte';
+	import { onMount, tick } from 'svelte';
 
 	let threshold = 0.33;
 	let noiseIntensity = 0.3;
@@ -23,8 +22,6 @@
 
 			image = new Image();
 			tick().then(() => {
-				console.log(image);
-
 				if (typeof reader.result !== 'string') return;
 				image.src = reader.result;
 			});
@@ -32,6 +29,12 @@
 		};
 		reader.readAsDataURL(file);
 	}
+
+
+	onMount(() => {
+		image = new Image();
+		image.src = img_src;
+	});
 </script>
 
 <div class="max-w-full px-96">
@@ -89,8 +92,6 @@
 
 	<canvas
 		class="max-w-full"
-		style:width={size.width}
-		style:height={size.height}
 		use:bayerDithering={{
 			image,
 			threshold,
