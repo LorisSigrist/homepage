@@ -1,22 +1,18 @@
-import bayer_4_src from './bayer_4.png';
-import bayer_4_size from './bayer_4.png?size';
-
 import vertex_src from './vertex.glsl?raw';
 import fragment_src from './fragment.glsl?raw';
 import { initShaderProgram, loadTexture, setUpRect } from '../utils';
 
-export type BayerDitheringOptions = {
+export type HalftoneDitheringOptions = {
     image: {
         src: string;
         width: number;
         height: number;
     }
-    threshold: number;
-    noiseIntensity: number;
-    monochrome: boolean;
+    dotSize: number;
+    overspill: number;
 }
 
-export function bayerDithering(canvas: HTMLCanvasElement, initialOptions: BayerDitheringOptions) {
+export function halftoneDithering(canvas: HTMLCanvasElement, initialOptions: HalftoneDitheringOptions) {
     let options = initialOptions;
 
     const gl = canvas.getContext('webgl')!;
@@ -32,19 +28,14 @@ export function bayerDithering(canvas: HTMLCanvasElement, initialOptions: BayerD
     gl.enableVertexAttribArray(position_attribute_location);
 
     const uSampler = gl.getUniformLocation(program, 'uSampler');
-    const uThreshold = gl.getUniformLocation(program, 'uThreshold');
-    const uNoiseSampler = gl.getUniformLocation(program, 'uNoiseSampler');
-    const uNoise = gl.getUniformLocation(program, 'uNoise');
     const uWidth = gl.getUniformLocation(program, 'uWidth');
     const uHeight = gl.getUniformLocation(program, 'uHeight');
-    const uNoiseSamplerSize = gl.getUniformLocation(program, 'uNoiseSamplerSize');
-    const uMonochrome = gl.getUniformLocation(program, 'uMonochrome');
+    const uDotSize = gl.getUniformLocation(program, 'uDotSize');
+    const uOverspill = gl.getUniformLocation(program, 'uOverspill');
 
     const texture = loadTexture(gl, options.image.src);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); //Flip the coordinates of the image upside down
 
-    const bayer_4 = loadTexture(gl, bayer_4_src);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
     gl.useProgram(program);
 
@@ -56,26 +47,16 @@ export function bayerDithering(canvas: HTMLCanvasElement, initialOptions: BayerD
 
         // Tell WebGL we want to affect texture unit 0
         gl.activeTexture(gl.TEXTURE0);
-
-        // Bind the texture to texture unit 0
         gl.bindTexture(gl.TEXTURE_2D, texture);
 
         // Tell the shader we bound the texture to texture unit 0
         gl.uniform1i(uSampler, 0);
 
-        gl.activeTexture(gl.TEXTURE1);
-        gl.bindTexture(gl.TEXTURE_2D, bayer_4);
-        gl.uniform1i(uNoiseSampler, 1);
-
-        gl.uniform2f(uNoiseSamplerSize, bayer_4_size.width, bayer_4_size.height);
-
-        gl.uniform1f(uThreshold, options.threshold);
-        gl.uniform1f(uNoise, options.noiseIntensity);
-
         gl.uniform1f(uWidth, options.image.width);
         gl.uniform1f(uHeight, options.image.height);
+        gl.uniform1f(uDotSize, options.dotSize);
+        gl.uniform1f(uOverspill, options.overspill);
 
-        gl.uniform1f(uMonochrome, options.monochrome ? 1 : 0);
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
@@ -85,7 +66,7 @@ export function bayerDithering(canvas: HTMLCanvasElement, initialOptions: BayerD
     frame = requestAnimationFrame(render);
     
     return {
-        update(newOptions: BayerDitheringOptions) {
+        update(newOptions: HalftoneDitheringOptions) {
             options = newOptions;
         },
 

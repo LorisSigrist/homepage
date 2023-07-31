@@ -2,11 +2,16 @@
 	import '$lib/styles/bootstrap.css';
 	import img_src from './img.jpg';
 	import size from './img.jpg?size';
+
 	import { bayerDithering } from './bayer/index';
+	import { halftoneDithering } from './halftone';
 
 	let threshold = 0.5;
 	let noiseIntensity = 0.5;
 	let monochrome = false;
+
+    let dotSize = 18;
+    let overspill = 1;
 
 	let canvasWidth = size.width / ('window' in globalThis ? window.devicePixelRatio : 1);
 	let canvasHeight = size.height / ('window' in globalThis ? window.devicePixelRatio : 1);
@@ -36,5 +41,25 @@
 		}}
 		width={canvasWidth}
 		height={canvasHeight}
+	/>
+
+    <input type="range" min="2" max="32" step="1" bind:value={dotSize} />
+    <input type="range" min="0.1" max="2" step="0.001" bind:value={overspill} />
+
+    <canvas
+		class="max-w-full"
+		style:width={size.width}
+		style:height={size.height}
+		use:halftoneDithering={{
+			image: {
+				src: img_src,
+				width: size.width,
+                height: size.height
+			},
+            dotSize,
+            overspill
+		}}
+		width={canvasWidth}
+        height={canvasHeight}
 	/>
 </div>

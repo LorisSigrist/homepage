@@ -30,9 +30,11 @@ void main(void) {
     color.g = color.g * (1.0 - uMonochrome) + gray * uMonochrome;
     color.b = color.b * (1.0 - uMonochrome) + gray * uMonochrome;
 
+
+
     color.rgb = vec3(
-        step(uThreshold, color.r + noise), 
-        step(uThreshold, color.g + noise), 
+        step(uThreshold, color.r + noise),
+        step(uThreshold, color.g + noise),
         step(uThreshold, color.b + noise)
     );
 
