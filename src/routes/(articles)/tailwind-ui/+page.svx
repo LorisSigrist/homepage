@@ -3,15 +3,13 @@
     import MoneyInput from "./MoneyInput.svelte";
     import MoneyInputModified from "./MoneyInputModified.svelte";
 
-	import BannerSrc from "./banner.png?format=webp"
-	import BannerSize from "./banner.png?size"
-	import BannerColor from "./banner.png?color"
+	  import BannerSrc from "./banner.png?format=webp"
+	  import BannerSize from "./banner.png?size"
+	  import BannerColor from "./banner.png?color"
     import { onMount } from "svelte";
 
     import { writable } from "svelte/store";
-
     const currency = writable("USD");
-	const variant = writable("adaptive");
 </script>
 
 <img 
@@ -111,10 +109,9 @@ I'm currently writing this on a train and I'm unable to access TUI in any way. T
 ## Is it worth it?
 I have yet to answer the ultimate question: _Is it worth it?_ I would give the usual "it depends", because it really does depend, but that's not fair. It's not fair because you have to buy it to try it and therefore can't know on which side of the fence you'll land. That's no good. 
 
+So instead I'll give a less correct but more actionable answer. _Yes, it's worth it, unless you have a reason it isn't._
 
-
-
-> TODO
+The amount of time it has saved me, even over the ostensibly many free alternatives, has been worth the price. I've been able to build beautiful sites with minimal effort. I've been able to focus on shipping, not fiddling. I believe most developers would experience these benefits if they were to buy it, and it would be worth it for them. The only reason I can think of for it not being worth it is if you have a very specific design system that TUI doesn't match. Or if you aren't getting paid, then saving time isn't very valuable.
 
 
 *[TCSS]: Tailwind CSS
