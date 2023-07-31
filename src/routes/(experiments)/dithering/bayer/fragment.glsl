@@ -9,12 +9,14 @@ uniform vec2 uNoiseSamplerSize;
 uniform float uNoise;
 uniform float uMonochrome;
 
-uniform float uWidth;
-uniform float uHeight;
+uniform vec2 uSize;
+
+uniform vec3 uDarkColor;
+uniform vec3 uLightColor;
 
 void main(void) {
     //Map the current image pixel to the noise texture
-    vec2 imgPixel = vec2(fragCoord.x * uWidth, fragCoord.y * uHeight);
+    vec2 imgPixel = vec2(fragCoord.x * uSize.x, fragCoord.y * uSize.y);
     vec2 noisePixel = vec2( mod(imgPixel.x, uNoiseSamplerSize.x),  mod(imgPixel.y, uNoiseSamplerSize.y));
     
     vec2 noiseUV = vec2(noisePixel.x / uNoiseSamplerSize.x, noisePixel.y / uNoiseSamplerSize.y);
@@ -30,14 +32,21 @@ void main(void) {
     color.g = color.g * (1.0 - uMonochrome) + gray * uMonochrome;
     color.b = color.b * (1.0 - uMonochrome) + gray * uMonochrome;
 
-
-
-    color.rgb = vec3(
+    vec3 thresholds = vec3(
         step(uThreshold, color.r + noise),
         step(uThreshold, color.g + noise),
         step(uThreshold, color.b + noise)
     );
 
+    if(uMonochrome > 0.0) {
+        color.rgb = vec3(
+            mix(uDarkColor.r, uLightColor.r, thresholds.r),
+            mix(uDarkColor.g, uLightColor.g, thresholds.g),
+            mix(uDarkColor.b, uLightColor.b, thresholds.b)
+        );
+    } else {
+        color.rgb = thresholds;
+    }
 
     gl_FragColor = color;
 }

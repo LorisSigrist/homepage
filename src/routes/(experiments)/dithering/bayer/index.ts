@@ -14,6 +14,8 @@ export type BayerDitheringOptions = {
     threshold: number;
     noiseIntensity: number;
     monochrome: boolean;
+    colorLight: string;
+    colorDark: string;
 }
 
 export function bayerDithering(canvas: HTMLCanvasElement, initialOptions: BayerDitheringOptions) {
@@ -35,10 +37,11 @@ export function bayerDithering(canvas: HTMLCanvasElement, initialOptions: BayerD
     const uThreshold = gl.getUniformLocation(program, 'uThreshold');
     const uNoiseSampler = gl.getUniformLocation(program, 'uNoiseSampler');
     const uNoise = gl.getUniformLocation(program, 'uNoise');
-    const uWidth = gl.getUniformLocation(program, 'uWidth');
-    const uHeight = gl.getUniformLocation(program, 'uHeight');
+    const uSize = gl.getUniformLocation(program, 'uSize');
     const uNoiseSamplerSize = gl.getUniformLocation(program, 'uNoiseSamplerSize');
     const uMonochrome = gl.getUniformLocation(program, 'uMonochrome');
+    const uDarkColor = gl.getUniformLocation(program, 'uDarkColor');
+    const uLightColor = gl.getUniformLocation(program, 'uLightColor');
 
     const texture = loadTexture(gl, options.image.src);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -72,10 +75,12 @@ export function bayerDithering(canvas: HTMLCanvasElement, initialOptions: BayerD
         gl.uniform1f(uThreshold, options.threshold);
         gl.uniform1f(uNoise, options.noiseIntensity);
 
-        gl.uniform1f(uWidth, options.image.width);
-        gl.uniform1f(uHeight, options.image.height);
+        gl.uniform2f(uSize, options.image.width, options.image.height);
 
         gl.uniform1f(uMonochrome, options.monochrome ? 1 : 0);
+
+        gl.uniform3f(uDarkColor, ...hexToGLSL(options.colorDark));
+        gl.uniform3f(uLightColor, ...hexToGLSL(options.colorLight));
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
@@ -93,4 +98,12 @@ export function bayerDithering(canvas: HTMLCanvasElement, initialOptions: BayerD
             cancelAnimationFrame(frame);
         }
     }
+}
+
+function hexToGLSL(hex: string) : [number, number, number] {
+    const r = parseInt(hex.slice(1, 3), 16) / 255;
+    const g = parseInt(hex.slice(3, 5), 16) / 255;
+    const b = parseInt(hex.slice(5, 7), 16) / 255;
+
+    return [r, g, b];
 }

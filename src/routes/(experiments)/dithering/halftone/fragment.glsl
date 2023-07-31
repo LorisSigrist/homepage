@@ -29,14 +29,6 @@ void main(void) {
     //Get the color of the current pixel from the image
     vec4 color = texture2D(uSampler, dotCenterUV);
 
-    // Convert to grayscale using the NTSC standard coefficients
-    float intensity = dot(color.rgb, vec3(0.299, 0.587, 0.114));  
-
-
-    //Increase contrast
-    intensity = (intensity - 0.5) * 1.5 + 0.5;
-
-
     //Use the intensity of the current dot-area to determine the radius of the dot
     //Then color the pixel black if it is insider the dot radius and white if it is outside
     //We have to do this in pixel space
@@ -51,9 +43,15 @@ void main(void) {
         fragCoord.y * uHeight
     );
 
+
+    // Convert to grayscale using the NTSC standard coefficients
+    float intensity = dot(color.rgb, vec3(0.299, 0.587, 0.114));  
+
+    //Increase contrast
+    intensity = (intensity - 0.5) * 1.5 + 0.5;
+
     float maxArea = (uDotSize * 0.5) * (uDotSize * 0.5) * PI;
     float radius = sqrt(maxArea * (1.0 - intensity) / PI);
-    
     float dist = distance(fragCoordPixel, dotCenter);
 
     float fragCol = 1.0;
