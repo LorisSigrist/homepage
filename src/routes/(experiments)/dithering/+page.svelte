@@ -15,7 +15,7 @@
 	let width = 600;
 	let aspectRatio = 1;
 
-	let mode : "bayer" | "blue_noise" = "bayer";
+	let mode : "bayer" | "blue_noise" = "blue_noise";
 
 
 	$: height = width / aspectRatio;
@@ -48,13 +48,33 @@
 		};
 		initial_image.src = img_src;
 	});
+
+
+	function save() {
+		const canvas = document.querySelector('canvas');
+		if(!canvas) return;
+
+		const intermediate = document.createElement('canvas');
+		intermediate.width = canvas.width;
+		intermediate.height = canvas.height;
+
+		const ctx = intermediate.getContext('2d');
+		if(!ctx) return;
+
+		ctx.drawImage(canvas, 0, 0, width, height);
+
+		const link = document.createElement('a');
+		link.download = 'dithered.png';
+		link.href = intermediate.toDataURL("image/png");
+		link.click();
+	}
 </script>
 
 <div class="max-w-xl mx-auto px-4">
 	<input type="file" id="image-input" accept="image/*" on:input={onInput} />
 
 	{#if loaded_image}
-	<img src={loaded_image?.src} alt="" />
+	<img src={loaded_image?.src} alt="" class="w-full pixelated" />
 	<div>
 		<label for="threshold" class="block text-sm font-medium leading-6 text-gray-900">Threshold {threshold}</label>
 		<div class="mt-2">
@@ -125,7 +145,7 @@
 	
 
 	<canvas
-		class="max-w-full w-full pixelated"
+		class="w-full pixelated"
 		use:dithering={{
 			image: loaded_image,
 			threshold,
@@ -133,7 +153,9 @@
 			monochrome,
 			colorLight,
 			colorDark,
-			mode
+			mode,
+			width,
+			height
 		}}
 
 		width={width}
@@ -143,6 +165,8 @@
 	<p>
 		Right click and save the image to download it.
 	</p>
+
+	<button on:click={save} > Save </button>
 	{/if}
 </div>
 

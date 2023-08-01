@@ -16,16 +16,26 @@ export type DitheringOptions = {
     colorLight: string;
     colorDark: string;
     mode: 'bayer' | 'blue_noise';
+    width: number;
+    height: number;
 }
 
 export function dithering(canvas: HTMLCanvasElement, initialOptions: DitheringOptions) {
     let options = initialOptions;
 
-    function loadImage() {
+    const gl = canvas.getContext('webgl', {
+        preseveDrawingBuffer: true //Needed to save the canvas as an image
+    }) as WebGLRenderingContext | null;
+    
+    if (!gl) {
+        alert('WebGL not supported')
+        return;
+    }
+    
+    const loadImage = () => {
         loadImageToTexture(gl, texture, options.image);
     }
 
-    const gl = canvas.getContext('webgl')!;
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
@@ -61,8 +71,8 @@ export function dithering(canvas: HTMLCanvasElement, initialOptions: DitheringOp
 
     let frame: number | null = null;
 
-    function render() {
-        gl.viewport(0, 0, canvas.width, canvas.height);
+    const render = () => {
+        gl.viewport(0, 0, options.width, options.height);
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
@@ -98,7 +108,7 @@ export function dithering(canvas: HTMLCanvasElement, initialOptions: DitheringOp
         gl.uniform1f(uThreshold, options.threshold);
         gl.uniform1f(uNoise, options.noiseIntensity);
 
-        gl.uniform2f(uSize, canvas.width, canvas.height);
+        gl.uniform2f(uSize, options.width, options.height);
 
         gl.uniform1f(uMonochrome, options.monochrome ? 1 : 0);
 
