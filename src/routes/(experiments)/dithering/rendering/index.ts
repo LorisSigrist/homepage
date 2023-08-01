@@ -1,32 +1,28 @@
 import bayer_4_src from './bayer_4.png';
 import bayer_4_size from './bayer_4.png?size';
 
+import blue_noise_src from './blue_noise.png';
+import blue_noise_size from './blue_noise.png?size';
+
 import vertex_src from './vertex.glsl?raw';
 import fragment_src from './fragment.glsl?raw';
 import { createTexture, initShaderProgram, loadImageToTexture, loadTexture, setUpRect } from '../utils';
 
-export type BayerDitheringOptions = {
+export type DitheringOptions = {
     image: HTMLImageElement;
     threshold: number;
     noiseIntensity: number;
     monochrome: boolean;
     colorLight: string;
     colorDark: string;
+    mode: 'bayer' | 'blue_noise';
 }
 
-export function bayerDithering(canvas: HTMLCanvasElement, initialOptions: BayerDitheringOptions) {
+export function dithering(canvas: HTMLCanvasElement, initialOptions: DitheringOptions) {
     let options = initialOptions;
 
     function loadImage() {
-        options.image.onload = () => {
-            loadImageToTexture(gl, texture, options.image);
-
-            canvas.width = options.image.width;
-            canvas.height = options.image.height;
-
-
-            gl.viewport(0, 0, options.image.width,options.image.height);
-        }    
+        loadImageToTexture(gl, texture, options.image);
     }
 
     const gl = canvas.getContext('webgl')!;
@@ -55,14 +51,18 @@ export function bayerDithering(canvas: HTMLCanvasElement, initialOptions: BayerD
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
     loadImage();
 
-    const bayer_4 = loadTexture(gl, bayer_4_src);
+    const bayer_4 = loadTexture(gl, bayer_4_src, invalidate);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
+    const blue_noise = loadTexture(gl, blue_noise_src, invalidate);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
     gl.useProgram(program);
 
-    let frame: number;
+    let frame: number | null = null;
 
-    function render(now: number) {
+    function render() {
+        gl.viewport(0, 0, canvas.width, canvas.height);
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
@@ -77,16 +77,28 @@ export function bayerDithering(canvas: HTMLCanvasElement, initialOptions: BayerD
         // Tell the shader we bound the texture to texture unit 0
         gl.uniform1i(uSampler, 0);
 
-        gl.activeTexture(gl.TEXTURE1);
-        gl.bindTexture(gl.TEXTURE_2D, bayer_4);
-        gl.uniform1i(uNoiseSampler, 1);
+        switch (options.mode) {
+            case 'bayer':
 
-        gl.uniform2f(uNoiseSamplerSize, bayer_4_size.width, bayer_4_size.height);
+                gl.activeTexture(gl.TEXTURE1);
+                gl.bindTexture(gl.TEXTURE_2D, bayer_4);
+                gl.uniform1i(uNoiseSampler, 1);
+
+                gl.uniform2f(uNoiseSamplerSize, bayer_4_size.width, bayer_4_size.height);
+                break;
+            case 'blue_noise':
+                gl.activeTexture(gl.TEXTURE1);
+                gl.bindTexture(gl.TEXTURE_2D, blue_noise);
+                gl.uniform1i(uNoiseSampler, 1);
+
+                gl.uniform2f(uNoiseSamplerSize, blue_noise_size.width, blue_noise_size.height);
+                break;
+        }
 
         gl.uniform1f(uThreshold, options.threshold);
         gl.uniform1f(uNoise, options.noiseIntensity);
 
-        gl.uniform2f(uSize, options.image.width, options.image.height);
+        gl.uniform2f(uSize, canvas.width, canvas.height);
 
         gl.uniform1f(uMonochrome, options.monochrome ? 1 : 0);
 
@@ -95,26 +107,35 @@ export function bayerDithering(canvas: HTMLCanvasElement, initialOptions: BayerD
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
-
-        frame = requestAnimationFrame(render);
     }
-    frame = requestAnimationFrame(render);
-    
+   
+    function invalidate() {
+        frame = requestAnimationFrame(() => {
+            render();
+            frame = null;
+        });
+    }
+
+    invalidate();
+
     return {
-        update(newOptions: BayerDitheringOptions) {
+        update(newOptions: DitheringOptions) {
             const newImg = options.image !== newOptions.image;
             options = newOptions;
-            if(newImg)
+            if (newImg)
                 loadImage();
+            
+            invalidate();
         },
 
         destroy() {
-            cancelAnimationFrame(frame);
+            if(frame !== null)
+                cancelAnimationFrame(frame);
         }
     }
 }
 
-function hexToGLSL(hex: string) : [number, number, number] {
+function hexToGLSL(hex: string): [number, number, number] {
     const r = parseInt(hex.slice(1, 3), 16) / 255;
     const g = parseInt(hex.slice(3, 5), 16) / 255;
     const b = parseInt(hex.slice(5, 7), 16) / 255;

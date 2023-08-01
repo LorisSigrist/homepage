@@ -43,7 +43,7 @@ export function loadShader(gl: WebGLRenderingContext, type: number, source: stri
     return shader;
 }
 
-export function loadTexture(gl: WebGLRenderingContext, url: string): WebGLTexture {
+export function loadTexture(gl: WebGLRenderingContext, url: string, onLoad: () => any = () => { }): WebGLTexture {
     const texture = gl.createTexture();
     if (!texture) throw new Error('Failed to create texture');
     gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -91,6 +91,8 @@ export function loadTexture(gl: WebGLRenderingContext, url: string): WebGLTextur
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
         }
+
+        onLoad();
     };
     image.src = url;
 
