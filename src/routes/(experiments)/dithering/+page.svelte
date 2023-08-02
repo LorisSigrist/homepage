@@ -70,6 +70,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Dithering</title>
+</svelte:head>
+
 <div class="max-w-xl mx-auto px-4">
 	<input type="file" id="image-input" accept="image/*" on:input={onInput} />
 
@@ -162,11 +166,7 @@
 		height={height}
 	/>
 
-	<p>
-		Right click and save the image to download it.
-	</p>
-
-	<button on:click={save} > Save </button>
+	<button on:click={save} class=""> Save </button>
 	{/if}
 </div>
 

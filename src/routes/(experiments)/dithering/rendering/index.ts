@@ -24,7 +24,7 @@ export function dithering(canvas: HTMLCanvasElement, initialOptions: DitheringOp
     let options = initialOptions;
 
     const gl = canvas.getContext('webgl', {
-        preseveDrawingBuffer: true //Needed to save the canvas as an image
+        preserveDrawingBuffer: true //Needed to save the canvas as an image
     }) as WebGLRenderingContext | null;
     
     if (!gl) {
