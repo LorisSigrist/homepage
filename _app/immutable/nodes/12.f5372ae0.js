@@ -1,4 +1,4 @@
-import{S as le,i as re,s as ue,k as n,q as r,a as f,l as i,m as l,r as u,h as t,c as y,n as m,b as a,G as o,H as Q}from"../chunks/index.58e89b9b.js";function he(oe){let h,w,M,H,k,S,G,_,C,P,b,T,J,q,g,N,j,p,W,E,L,R,x,v,ne=`<code class="language-yml"><span class="token key atrule">name</span><span class="token punctuation">:</span> Build and Deploy
+import{S as le,i as re,s as ue,k as n,q as r,a as f,l as i,m as l,r as u,h as t,c as y,n as m,b as a,G as o,H as Q}from"../chunks/index.919e2970.js";function he(oe){let h,w,M,H,k,S,G,_,C,P,b,T,J,q,g,N,j,p,W,E,L,R,x,v,ne=`<code class="language-yml"><span class="token key atrule">name</span><span class="token punctuation">:</span> Build and Deploy
 <span class="token key atrule">on</span><span class="token punctuation">:</span> 
   <span class="token comment"># The Schedule on which to redeploy the site (every day at midnight)</span>
   <span class="token key atrule">schedule</span><span class="token punctuation">:</span>
