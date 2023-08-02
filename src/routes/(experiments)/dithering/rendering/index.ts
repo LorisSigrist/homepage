@@ -4,6 +4,9 @@ import bayer_4_size from './bayer_4.png?size';
 import blue_noise_src from './blue_noise.png';
 import blue_noise_size from './blue_noise.png?size';
 
+import white_noise_src from './white_noise.png';
+import white_noise_size from './white_noise.png?size';
+
 import vertex_src from './vertex.glsl?raw';
 import fragment_src from './fragment.glsl?raw';
 import { createTexture, initShaderProgram, loadImageToTexture, loadTexture, setUpRect } from '../utils';
@@ -15,7 +18,7 @@ export type DitheringOptions = {
     monochrome: boolean;
     colorLight: string;
     colorDark: string;
-    mode: 'bayer' | 'blue_noise';
+    mode: 'bayer' | 'blue_noise' | "white_noise"
     width: number;
     height: number;
 }
@@ -67,6 +70,9 @@ export function dithering(canvas: HTMLCanvasElement, initialOptions: DitheringOp
     const blue_noise = loadTexture(gl, blue_noise_src, invalidate);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
+    const white_noise = loadTexture(gl, white_noise_src, invalidate);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
     gl.useProgram(program);
 
     let frame: number | null = null;
@@ -102,6 +108,14 @@ export function dithering(canvas: HTMLCanvasElement, initialOptions: DitheringOp
                 gl.uniform1i(uNoiseSampler, 1);
 
                 gl.uniform2f(uNoiseSamplerSize, blue_noise_size.width, blue_noise_size.height);
+                break;
+            
+            case 'white_noise':
+                gl.activeTexture(gl.TEXTURE1);
+                gl.bindTexture(gl.TEXTURE_2D, white_noise);
+                gl.uniform1i(uNoiseSampler, 1);
+
+                gl.uniform2f(uNoiseSamplerSize, white_noise_size.width, white_noise_size.height);
                 break;
         }
 

@@ -11,11 +11,12 @@
 	let colorLight = '#ede6cc';
 	let colorDark = '#21263f';
 
+	let css_image_rendering_pixelated = true;
 
 	let width = 600;
 	let aspectRatio = 1;
 
-	let mode : "bayer" | "blue_noise" = "blue_noise";
+	let mode : "bayer" | "blue_noise" | "white_noise" = "blue_noise";
 
 
 	$: height = width / aspectRatio;
@@ -40,6 +41,8 @@
 		reader.readAsDataURL(file);
 	}
 
+
+	
 	onMount(() => {
 		const initial_image = new Image();
 		initial_image.onload = () => {
@@ -47,6 +50,8 @@
 			aspectRatio = loaded_image.width / loaded_image.height;
 		};
 		initial_image.src = img_src;
+
+		css_image_rendering_pixelated = Number.isInteger(window.devicePixelRatio);
 	});
 
 
@@ -145,11 +150,13 @@
 	<select bind:value={mode}>
 		<option value="bayer">Bayer</option>
 		<option value="blue_noise">Blue Noise</option>
+		<option value="white_noise">White Noise</option>
 	</select>
 	
 
 	<canvas
-		class="w-full pixelated"
+		class="w-full"
+		class:pixelated={css_image_rendering_pixelated}
 		use:dithering={{
 			image: loaded_image,
 			threshold,
