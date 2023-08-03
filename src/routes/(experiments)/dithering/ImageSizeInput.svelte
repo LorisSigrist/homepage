@@ -28,7 +28,7 @@
 	}
 </script>
 
-<fieldset class="flex gap-1 items-end justify-between">
+<fieldset class="flex gap-3 items-end justify-between">
 	<div class="w-full">
 		<label for="width-{withId}" class="block text-sm font-medium leading-6 text-gray-900">Width</label>
 		<div class="relative mt-2 rounded-md shadow-sm">
@@ -52,7 +52,7 @@
 		</div>
 	</div>
 
-	<span class="text-gray-500 pb-2">
+	<span class="text-gray-500 pb-2 cursor-not-allowed">
 		<Icon src={LockClosed} class="w-4 h-4" solid />
 	</span>
 	<div class="w-full">

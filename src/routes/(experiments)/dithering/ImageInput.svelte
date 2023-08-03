@@ -1,20 +1,23 @@
 <script lang="ts">
+	import preset_src from './img.jpg';
 	export let image: HTMLImageElement | null = null;
 
 	function onInput(e: any) {
 		const file = e.target.files[0];
 		if (!file) return;
 
-        readFile(file);
+		readFile(file);
+
+		if (e.target && 'blur' in e.target && typeof e.target.blur === 'function') e.target.blur();
 	}
 
-    function readFile(file: File) {
-        if(!file.type.startsWith('image/')) {
-            alert('Please select an image file');
-            return;
-        }
+	function readFile(file: File) {
+		if (!file.type.startsWith('image/')) {
+			alert('Please select an image file');
+			return;
+		}
 
-        const reader = new FileReader();
+		const reader = new FileReader();
 		reader.onload = (e) => {
 			if (typeof reader.result !== 'string') return;
 
@@ -25,15 +28,25 @@
 			new_image.src = reader.result;
 		};
 		reader.readAsDataURL(file);
-    }
+	}
 
+	function onDrop(e: DragEvent) {
+		const file = e.dataTransfer?.files[0];
+		if (!file) return;
 
-    function onDrop(e : DragEvent) {
-        const file = e.dataTransfer?.files[0];
-        if (!file) return;
+		readFile(file);
+	}
 
-        readFile(file);
-    }
+	function loadPreset(e: MouseEvent) {
+		const new_image = new Image();
+		new_image.onload = () => {
+			image = new_image;
+		};
+		new_image.src = preset_src;
+
+		//Deselect the button after clicking
+		if (e.target && 'blur' in e.target && typeof e.target.blur === 'function') e.target.blur();
+	}
 </script>
 
 <div class="col-span-full">
@@ -44,19 +57,21 @@
 	<div class="mt-2 relative w-full">
 		{#if image}
 			<!-- svelte-ignore a11y-img-redundant-alt -->
-			<img src={image.src} alt="Your selected image" class="w-full rounded-lg" />
+			<img src={image.src} alt="Your selected image" class="w-full rounded-lg bg-gray-50" />
 		{:else}
 			<div class="flex justify-center rounded-lg border border-dashed border-gray-900/25 h-48" />
 		{/if}
 
-		<div 
-        class=" pointer-events-auto absolute inset-0 grid place-items-center rounded-lg {image ? "opacity-0 hover:opacity-100 hover:backdrop-blur-sm bg-black bg-opacity-50" : ""}"
-        on:drop|preventDefault={onDrop}
-        on:dragover|preventDefault={()=>{}}
-        >
+		<div
+			class=" pointer-events-auto absolute inset-0 grid place-items-center rounded-lg {image
+				? 'opacity-0 hover:opacity-100 focus-within:opacity-100 hover:backdrop-blur-sm bg-black bg-opacity-50'
+				: ''}"
+			on:drop|preventDefault={onDrop}
+			on:dragover|preventDefault={() => {}}
+		>
 			<div class=" text-center w-fit h-fit">
 				<svg
-					class="mx-auto h-12 w-12 {image ? "text-white" : "text-gray-300"}"
+					class="mx-auto h-12 w-12 {image ? 'text-white' : 'text-gray-300'}"
 					viewBox="0 0 24 24"
 					fill="currentColor"
 					aria-hidden="true"
@@ -67,10 +82,16 @@
 						clip-rule="evenodd"
 					/>
 				</svg>
-				<div class="mt-4 flex text-sm leading-6 {image ? "text-white" : "text-gray-600"} text-center w-fit">
+				<div
+					class="mt-4 flex text-sm leading-6 {image
+						? 'text-white'
+						: 'text-gray-600'} text-center w-fit"
+				>
 					<label
 						for="image-input"
-						class="relative cursor-pointer rounded-md font-semibold {image ? "text-indigo-500" : "text-indigo-600"} focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+						class="relative cursor-pointer rounded-md font-semibold {image
+							? 'text-indigo-500'
+							: 'text-indigo-600'} focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
 					>
 						<span>Choose an Image</span>
 						<input
@@ -83,7 +104,17 @@
 					</label>
 					<p class="pl-1">or drag and drop</p>
 				</div>
-				<p class="text-xs leading-5 {image ? "text-white" : "text-gray-600"}">PNG, JPG, GIF, etc</p>
+				<p class="text-xs leading-5 {image ? 'text-white' : 'text-gray-600'}">PNG, JPG, GIF, etc</p>
+				<p>
+					<button
+						class="font-semibold cursor-pointer text-sm {image
+							? 'text-indigo-500'
+							: 'text-indigo-600'}"
+						on:click={loadPreset}
+					>
+						Or use my cats
+					</button>
+				</p>
 			</div>
 		</div>
 	</div>

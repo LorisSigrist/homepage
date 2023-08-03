@@ -4,7 +4,7 @@
 	import ImageSizeInput from './ImageSizeInput.svelte';
 	import Select from './Select.svelte';
 	import Slider from './Slider.svelte';
-	import img_src from "./img.jpg"
+	import panzoom from 'panzoom';
 
 	import { dithering } from './rendering/index';
 	import { onMount } from 'svelte';
@@ -25,19 +25,10 @@
 	$: height = width / aspectRatio;
 
 	let loaded_image: HTMLImageElement | null = null;
-	$: aspectRatio = (loaded_image?.width && loaded_image?.height) ? loaded_image.width / loaded_image.height : 1;
-
+	$: aspectRatio =
+		loaded_image?.width && loaded_image?.height ? loaded_image.width / loaded_image.height : 1;
 
 	onMount(() => {
-		/*
-		const initial_image = new Image();
-		initial_image.onload = () => {
-			loaded_image = initial_image;
-			aspectRatio = loaded_image.width / loaded_image.height;
-		};
-		initial_image.src = img_src;
-*/
-
 		css_image_rendering_pixelated = Number.isInteger(window.devicePixelRatio);
 	});
 
@@ -59,6 +50,14 @@
 		link.href = intermediate.toDataURL('image/png');
 		link.click();
 	}
+
+
+	function panzoomAction(element : HTMLElement)  {
+		const pz = panzoom(element);
+		return {
+			destroy: () => pz.dispose()
+		}
+	}
 </script>
 
 <svelte:head>
@@ -69,7 +68,7 @@
 	<section
 		class="bg-white px-4 w-full max-w-md py-8 border-r border-gray-100 overflow-y-auto grid gap-4 shadow-md"
 	>
-		<ImageInput bind:image={loaded_image}  />
+		<ImageInput bind:image={loaded_image} />
 
 		<Select
 			label="Dither Mode"
@@ -130,32 +129,33 @@
 			class="rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 flex items-center justify-center gap-2"
 			on:click={save}
 		>
-
-				<Icon src={ArrowDownTray} class="w-4 h-4" />
-				Save
-
+			<Icon src={ArrowDownTray} class="w-4 h-4" />
+			Save
 		</button>
 	</section>
-	<section class="grid place-items-center bg-gray-300 flex-1 overflow-hidden touch-manipulation select-none">
+	<section
+		class="bg-gray-300 flex-1 overflow-hidden touch-manipulation select-none"
+	>
 		{#if loaded_image}
-			<canvas
-				class="border"
-				class:pixelated={css_image_rendering_pixelated}
-				use:dithering={{
-					image: loaded_image,
-					threshold,
-					noiseIntensity,
-					monochrome,
-					colorLight,
-					colorDark,
-					mode,
-					width,
-					height
-				}}
-				{width}
-				{height}
-				aria-label="Dithered Image"
-			/>
+			<div use:panzoomAction class="w-full h-full grid place-items-center">
+				<canvas
+					class:pixelated={css_image_rendering_pixelated}
+					use:dithering={{
+						image: loaded_image,
+						threshold,
+						noiseIntensity,
+						monochrome,
+						colorLight,
+						colorDark,
+						mode,
+						width,
+						height
+					}}
+					{width}
+					{height}
+					aria-label="Dithered Image"
+				/>
+			</div>
 		{/if}
 	</section>
 </main>
