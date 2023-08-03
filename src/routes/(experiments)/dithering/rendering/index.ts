@@ -7,8 +7,8 @@ import blue_noise_size from './blue_noise.png?size';
 import white_noise_src from './white_noise.png';
 import white_noise_size from './white_noise.png?size';
 
-import vertex_src from './vertex.glsl?raw';
-import fragment_src from './fragment.glsl?raw';
+import vertex_src from './vertex.glsl';
+import fragment_src from './fragment.glsl';
 import { createTexture, initShaderProgram, loadImageToTexture, loadTexture, setUpRect } from '../utils';
 
 export type DitheringOptions = {

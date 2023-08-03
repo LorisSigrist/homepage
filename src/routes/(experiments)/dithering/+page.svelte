@@ -4,7 +4,7 @@
 	import ImageSizeInput from './ImageSizeInput.svelte';
 	import Select from './Select.svelte';
 	import Slider from './Slider.svelte';
-	import panzoom from 'panzoom';
+	import panzoom, { type PanZoomOptions } from 'panzoom';
 
 	import { dithering } from './rendering/index';
 	import { onMount } from 'svelte';
@@ -52,8 +52,8 @@
 	}
 
 
-	function panzoomAction(element : HTMLElement)  {
-		const pz = panzoom(element);
+	function panzoomAction(element : HTMLElement, options?: PanZoomOptions)  {
+		const pz = panzoom(element, options);
 		return {
 			destroy: () => pz.dispose()
 		}
