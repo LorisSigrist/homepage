@@ -16,6 +16,8 @@
 	let colorLight = '#ede6cc';
 	let colorDark = '#21263f';
 
+	let canvas : HTMLCanvasElement | null = null;
+
 	let css_image_rendering_pixelated = true;
 
 	let width = 600;
@@ -32,13 +34,10 @@
 		css_image_rendering_pixelated = Number.isInteger(window.devicePixelRatio);
 	});
 
-	function save() {
-		const canvas = document.querySelector('canvas');
+	async function save() {
 		if (!canvas) return;
 
-		const intermediate = document.createElement('canvas');
-		intermediate.width = canvas.width;
-		intermediate.height = canvas.height;
+		const intermediate = new OffscreenCanvas(canvas.width, canvas.height);
 
 		const ctx = intermediate.getContext('2d');
 		if (!ctx) return;
@@ -47,8 +46,16 @@
 
 		const link = document.createElement('a');
 		link.download = 'dithered.png';
-		link.href = intermediate.toDataURL('image/png');
+		const blob = await intermediate.convertToBlob({
+			"type": "image/png",
+			"quality": 1
+		});
+
+		link.href = URL.createObjectURL(blob);
+		console.log(link.href);
 		link.click();
+
+		URL.revokeObjectURL(link.href);
 	}
 
 
@@ -151,6 +158,7 @@
 						width,
 						height
 					}}
+					bind:this={canvas}
 					{width}
 					{height}
 					aria-label="Dithered Image"
