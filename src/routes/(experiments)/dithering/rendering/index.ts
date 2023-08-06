@@ -9,7 +9,9 @@ import white_noise_size from './white_noise.png?size';
 
 import vertex_src from './vertex.glsl';
 import fragment_src from './fragment.glsl';
-import { createTexture, initShaderProgram, loadImageToTexture, loadTexture, setUpRect } from '../utils';
+import { createTexture, initShaderProgram, loadImageToTexture, loadTexture, setUpRect } from './utils';
+
+export type DitherMode = 'bayer' | 'blue_noise' | "white_noise"
 
 export type DitheringOptions = {
     image: HTMLImageElement;
@@ -18,7 +20,7 @@ export type DitheringOptions = {
     monochrome: boolean;
     colorLight: string;
     colorDark: string;
-    mode: 'bayer' | 'blue_noise' | "white_noise"
+    mode: DitherMode
     width: number;
     height: number;
 }

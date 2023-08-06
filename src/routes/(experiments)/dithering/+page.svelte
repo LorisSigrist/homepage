@@ -6,9 +6,10 @@
 	import Slider from './Slider.svelte';
 	import panzoom, { type PanZoomOptions } from 'panzoom';
 
-	import { dithering } from './rendering/index';
+	import { dithering, type DitherMode } from './rendering/index';
 	import ImageInput from './ImageInput.svelte';
 	import Button from './Button.svelte';
+	import { saveCanvasAsImage } from './utils';
 
 	let threshold = 0.33;
 	let noiseIntensity = 0.3;
@@ -20,7 +21,7 @@
 
 	let width = 600;
 
-	let mode: 'bayer' | 'blue_noise' | 'white_noise' = 'blue_noise';
+	let mode: DitherMode = 'blue_noise';
 
 	$: height = width / aspectRatio;
 
@@ -30,26 +31,7 @@
 
 	async function save() {
 		if (!canvas) return;
-
-		const intermediate = new OffscreenCanvas(canvas.width, canvas.height);
-
-		const ctx = intermediate.getContext('2d');
-		if (!ctx) return;
-
-		ctx.drawImage(canvas, 0, 0, width, height);
-
-		const link = document.createElement('a');
-		link.download = 'dithered.png';
-		const blob = await intermediate.convertToBlob({
-			type: 'image/png',
-			quality: 1
-		});
-
-		link.href = URL.createObjectURL(blob);
-		console.log(link.href);
-		link.click();
-
-		URL.revokeObjectURL(link.href);
+		await saveCanvasAsImage(canvas, 'dithered', 'png');
 	}
 
 	function panzoomAction(element: HTMLElement, options?: PanZoomOptions) {
@@ -58,6 +40,21 @@
 			destroy: () => pz.dispose()
 		};
 	}
+
+	const ditherModeOptions = [
+		{
+			name: 'Bayer',
+			value: 'bayer'
+		},
+		{
+			name: 'Blue Noise',
+			value: 'blue_noise'
+		},
+		{
+			name: 'White Noise',
+			value: 'white_noise'
+		}
+	] as const;
 </script>
 
 <svelte:head>
@@ -72,24 +69,7 @@
 		<section class="grid gap-4 overflow-y-auto overflow-x-visible py-8 px-4">
 			<ImageInput bind:image={loaded_image} />
 
-			<Select
-				label="Dither Mode"
-				options={[
-					{
-						name: 'Bayer',
-						value: 'bayer'
-					},
-					{
-						name: 'Blue Noise',
-						value: 'blue_noise'
-					},
-					{
-						name: 'White Noise',
-						value: 'white_noise'
-					}
-				]}
-				bind:selected={mode}
-			/>
+			<Select label="Dither Mode" options={ditherModeOptions} bind:selected={mode} />
 
 			<Slider label="Threshold ({threshold})" min={0} max={1} step={0.01} bind:value={threshold} />
 
@@ -156,6 +136,10 @@
 					{height}
 					aria-label="Dithered Image"
 				/>
+			</div>
+		{:else}
+			<div class="w-full h-full grid place-items-center">
+				<p class="text-2xl text-gray-500">Load an Image First</p>
 			</div>
 		{/if}
 	</section>

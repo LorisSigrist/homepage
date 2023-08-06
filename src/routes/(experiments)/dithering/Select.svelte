@@ -1,10 +1,11 @@
-<script lang="ts">
-	export let options: {
-		name: string;
-		value: string;
-	}[];
+<script lang="ts" context="module">
+	type Option = { name: string; value: string };
+</script>
 
-	export let selected: string;
+<script lang="ts" generics="O extends readonly Option[]">
+	export let options: O;
+
+	export let selected: O[number]['value'];
 	export let label: string;
 	export let name: string | undefined = undefined;
 
