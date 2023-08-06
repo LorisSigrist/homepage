@@ -9,7 +9,7 @@
 	import { dithering, type DitherMode } from './rendering/index';
 	import ImageInput from './ImageInput.svelte';
 	import Button from './Button.svelte';
-	import { saveCanvasAsImage } from './utils';
+	import { loadImageFile, saveCanvasAsImage } from './utils';
 
 	let threshold = 0.33;
 	let noiseIntensity = 0.3;
@@ -55,11 +55,30 @@
 			value: 'white_noise'
 		}
 	] as const;
+
+	async function onDrop(e: DragEvent) {
+		const file = e.dataTransfer?.files[0];
+		if (!file) return;
+
+		if (!file.type.startsWith('image/')) {
+			alert('Please drop an image file');
+			return;
+		}
+
+		try {
+			loaded_image = await loadImageFile(file);
+		} catch (e) {
+			alert('Failed to load image');
+			console.error(e);
+		}
+	}
 </script>
 
 <svelte:head>
 	<title>Dithering</title>
 </svelte:head>
+
+<svelte:body on:drop|preventDefault={onDrop} on:dragover|preventDefault={() => {}} />
 
 <main class="w-screen max-w-screen h-screen max-h-screen flex">
 	<!--Sidebar-->
@@ -139,7 +158,7 @@
 			</div>
 		{:else}
 			<div class="w-full h-full grid place-items-center">
-				<p class="text-2xl text-gray-500">Load an Image First</p>
+				<p class="text-2xl text-gray-500">Load Image to Start</p>
 			</div>
 		{/if}
 	</section>

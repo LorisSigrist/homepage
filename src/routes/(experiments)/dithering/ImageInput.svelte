@@ -1,40 +1,23 @@
 <script lang="ts">
 	import preset_src from './img.jpg';
+	import { loadImageFile } from './utils';
 	export let image: HTMLImageElement | null = null;
 
-	function onInput(e: any) {
+	async function onInput(e: any) {
 		const file = e.target.files[0];
 		if (!file) return;
 
-		readFile(file);
+		image = await loadImageFile(file);
 
 		if (e.target && 'blur' in e.target && typeof e.target.blur === 'function') e.target.blur();
 	}
 
-	function readFile(file: File) {
-		if (!file.type.startsWith('image/')) {
-			alert('Please select an image file');
-			return;
-		}
 
-		const reader = new FileReader();
-		reader.onload = (e) => {
-			if (typeof reader.result !== 'string') return;
-
-			const new_image = new Image();
-			new_image.onload = () => {
-				image = new_image;
-			};
-			new_image.src = reader.result;
-		};
-		reader.readAsDataURL(file);
-	}
-
-	function onDrop(e: DragEvent) {
+	async function onDrop(e: DragEvent) {
 		const file = e.dataTransfer?.files[0];
 		if (!file) return;
 
-		readFile(file);
+		image = await loadImageFile(file);
 	}
 
 	function loadPreset(e: MouseEvent) {
