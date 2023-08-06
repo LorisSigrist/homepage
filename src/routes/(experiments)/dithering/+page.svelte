@@ -11,7 +11,7 @@
 	import Button from './Button.svelte';
 	import { loadImageFile, saveCanvasAsImage } from './utils';
 
-	let threshold = 0.33;
+	let threshold = 0.5;
 	let noiseIntensity = 0.3;
 	let monochrome = false;
 	let colorLight = '#ede6cc';
@@ -21,7 +21,7 @@
 
 	let width = 600;
 
-	let mode: DitherMode = 'blue_noise';
+	let mode: DitherMode = "bayer";
 
 	$: height = width / aspectRatio;
 
@@ -85,45 +85,64 @@
 	<aside
 		class="bg-white w-full max-w-md border-r border-gray-100 z-50 overflow-y-hidden h-full shadow-lg flex flex-col divide-y divide-gray-200 justify-between"
 	>
-		<section class="grid gap-4 overflow-y-auto overflow-x-visible py-8 px-4">
+		<section class="grid gap-5 overflow-y-auto overflow-x-visible py-8 px-4">
+			<div class="grid gap-3">
+				<h2 class="text-base font-semibold leading-7 text-black mb-2">Input Options</h2>
 			<ImageInput bind:image={loaded_image} />
-
-			<Select label="Dither Mode" options={ditherModeOptions} bind:selected={mode} />
-
-			<Slider label="Threshold ({threshold})" min={0} max={1} step={0.01} bind:value={threshold} />
-
-			<Slider
-				label="Noise Intensity ({noiseIntensity})"
-				min={0}
-				max={1.5}
-				step={0.01}
-				bind:value={noiseIntensity}
-			/>
-
-			<div class="relative flex items-start">
-				<div class="flex h-6 items-center">
-					<input
-						type="checkbox"
-						bind:checked={monochrome}
-						class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-					/>
-				</div>
-				<div class="ml-3 text-sm leading-6">
-					<label for="comments" class="font-medium text-gray-900">Monochrome</label>
-					<p id="comments-description" class="text-gray-500">
-						If the dither should be monochrome, or in color
-					</p>
-				</div>
 			</div>
+			<div class="border-t border-gray-100 py-4 grid gap-3">
+				<h2 class="text-base font-semibold leading-7 text-black mb-2">Dithering Options</h2>
 
-			{#if monochrome}
-				<fieldset>
-					<input type="color" name="color-light" bind:value={colorLight} />
-					<input type="color" name="color-dark" bind:value={colorDark} />
-				</fieldset>
-			{/if}
+				<Select label="Dither Mode" options={ditherModeOptions} bind:selected={mode} />
 
-			<ImageSizeInput bind:width bind:aspectRatio />
+				<Slider
+					label="Threshold ({threshold})"
+					min={0}
+					max={1}
+					step={0.01}
+					bind:value={threshold}
+				/>
+
+				<Slider
+					label="Noise Intensity ({noiseIntensity})"
+					min={0}
+					max={1.5}
+					step={0.01}
+					bind:value={noiseIntensity}
+				/>
+
+				<div class="relative flex items-start">
+					<div class="flex h-6 items-center">
+						<input
+							type="checkbox"
+							id="monochrome"
+							bind:checked={monochrome}
+							class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+						/>
+					</div>
+					<div class="ml-3 text-sm leading-6">
+						<label for="monochrome" class="font-medium text-gray-900">Monochrome</label>
+					</div>
+				</div>
+
+				{#if monochrome}
+					<fieldset>
+						<div class="flex gap-3">
+							<input type="color" name="color-light" id="color-light" bind:value={colorLight} />
+							<label for="color-light" class="font-medium text-gray-900">Light</label>
+						</div>
+						<div class="flex gap-3">
+							<input type="color" name="color-dark" id="color-dark" bind:value={colorDark} />
+							<label for="color-dark" class="font-medium text-gray-900">Dark</label>
+						</div>
+					</fieldset>
+				{/if}
+			</div>
+			<div class="border-t border-gray-100 py-4">
+				<h2 class="text-base font-semibold leading-7 text-black mb-4">Output Options</h2>
+
+				<ImageSizeInput bind:width bind:aspectRatio />
+			</div>
 		</section>
 		<footer class="py-4 px-4 flex-shrink-0">
 			<Button on:click={save} disabled={!loaded_image}>
@@ -158,7 +177,7 @@
 			</div>
 		{:else}
 			<div class="w-full h-full grid place-items-center">
-				<p class="text-2xl text-gray-500">Load Image to Start</p>
+				<p class="text-2xl text-gray-500">Drag & Drop Image to Start</p>
 			</div>
 		{/if}
 	</section>

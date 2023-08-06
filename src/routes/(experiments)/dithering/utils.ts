@@ -18,6 +18,7 @@ export async function saveCanvasAsImage(canvas: HTMLCanvasElement, name: string,
     link.click();
 
     URL.revokeObjectURL(link.href);
+    link.remove();
 }
 
 /**

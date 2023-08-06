@@ -44,7 +44,7 @@
 
 <div class="col-span-full">
 	<label for="cover-photo" class="block text-sm font-medium leading-6 text-gray-900"
-		>Input Image</label
+		>Image</label
 	>
 
 	<div class="mt-2 relative w-full">
