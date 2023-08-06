@@ -67,9 +67,9 @@
 <main class="w-screen max-w-screen h-screen max-h-screen flex">
 	<!--Sidebar-->
 	<aside
-		class="bg-white w-full max-w-md border-r border-gray-100 overflow-y-hidden h-full shadow-md flex flex-col"
+		class="bg-white w-full max-w-md border-r border-gray-100 z-50 overflow-y-hidden h-full shadow-lg flex flex-col divide-y divide-gray-200 justify-between"
 	>
-		<section class="grid gap-4 flex-1 h-0 overflow-y-auto overflow-x-visible py-8 px-4">
+		<section class="grid gap-4 overflow-y-auto overflow-x-visible py-8 px-4">
 			<ImageInput bind:image={loaded_image} />
 
 			<Select
@@ -126,7 +126,7 @@
 
 			<ImageSizeInput bind:width bind:aspectRatio />
 		</section>
-		<footer class="border-t border-gray-300 py-4 px-4">
+		<footer class="py-4 px-4 flex-shrink-0">
 			<Button on:click={save} disabled={!loaded_image}>
 				<Icon src={ArrowDownTray} class="w-4 h-4" />
 				Save
