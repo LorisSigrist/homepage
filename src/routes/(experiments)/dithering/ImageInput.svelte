@@ -7,7 +7,12 @@
 		const file = e.target.files[0];
 		if (!file) return;
 
-		image = await loadImageFile(file);
+		try {
+			image = await loadImageFile(file);
+		} catch (e) {
+			alert('Failed to load image');
+			console.error(e);
+		}
 
 		if (e.target && 'blur' in e.target && typeof e.target.blur === 'function') e.target.blur();
 	}
@@ -17,7 +22,12 @@
 		const file = e.dataTransfer?.files[0];
 		if (!file) return;
 
-		image = await loadImageFile(file);
+		try {
+			image = await loadImageFile(file);
+		} catch (e) {
+			alert('Failed to load image');
+			console.error(e);
+		}
 	}
 
 	function loadPreset(e: MouseEvent) {
