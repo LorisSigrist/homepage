@@ -1,0 +1,1 @@
+import{w as a}from"./index.4955bcb3.js";const e="theme";let l="light";"localStorage"in globalThis&&(l=localStorage.getItem(e)==="dark"?"dark":"light");const o=a(l);o.subscribe(t=>{"localStorage"in globalThis&&(localStorage.setItem(e,t),document.documentElement.classList.toggle("dark",t==="dark"))});export{o as t};
