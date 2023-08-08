@@ -5,20 +5,20 @@ export async function saveCanvasAsImage(canvas: HTMLCanvasElement, name: string,
     if (!ctx) return;
 
     ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height);
-
-    const link = document.createElement('a');
-    link.download = `${name}.${format}`;
     const blob = await intermediate.convertToBlob({
         type: 'image/' + format,
         quality: 1
     });
 
-    link.href = URL.createObjectURL(blob);
-    console.log(link.href);
-    link.click();
+    const objectURL = URL.createObjectURL(blob);
 
-    URL.revokeObjectURL(link.href);
+    const link = document.createElement('a');
+    link.download = `${name}.${format}`;
+    link.href = objectURL;
+    link.click();
     link.remove();
+
+    URL.revokeObjectURL(objectURL);
 }
 
 /**

@@ -80,10 +80,10 @@
 
 <svelte:body on:drop|preventDefault={onDrop} on:dragover|preventDefault={() => {}} />
 
-<main class="w-screen max-w-screen h-screen max-h-screen flex">
+<main class="w-screen max-w-screen h-screen max-h-screen flex md:flex-row flex-col-reverse bg-gray-300">
 	<!--Sidebar-->
 	<aside
-		class="bg-white w-full max-w-md border-r border-gray-100 z-50 overflow-y-hidden h-full shadow-lg flex flex-col divide-y divide-gray-200 justify-between"
+		class="bg-white w-full md:max-w-md border-t md:border-t-0 md:border-r border-r-0 border-gray-100 z-50 overflow-y-hidden md:h-full flex-1 shadow-lg flex flex-col divide-y divide-gray-200 justify-between"
 	>
 		<section class="grid gap-5 overflow-y-auto overflow-x-visible py-8 px-4">
 			<div class="grid gap-3">
@@ -153,7 +153,7 @@
 	</aside>
 
 	<!--Main content-->
-	<section class="bg-gray-300 flex-1 overflow-hidden touch-manipulation select-none">
+	<section class="flex-1 overflow-hidden touch-manipulation select-none">
 		{#if loaded_image}
 			<div use:panzoomAction class="w-full h-full grid place-items-center">
 				<canvas
