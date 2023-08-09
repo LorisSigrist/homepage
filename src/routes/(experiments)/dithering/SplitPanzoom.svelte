@@ -16,6 +16,9 @@
 			const startX = event.clientX;
 			const startSplit = split;
 
+			const previousCursor = document.body.style.cursor;
+			document.body.style.cursor = 'col-resize';
+
 			const mousemove = (event: MouseEvent) => {
 				const containerWidth = container ? container.clientWidth : window.innerWidth;
 				const dx = event.clientX - startX;
@@ -24,7 +27,7 @@
 			};
 
 			const mouseup = () => {
-                console.log('pointerup');
+				document.body.style.cursor = previousCursor;
 				window.removeEventListener('pointermove', mousemove);
 				window.removeEventListener('pointerup', mouseup);
 			};

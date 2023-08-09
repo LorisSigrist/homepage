@@ -1,10 +1,9 @@
 <script lang="ts">
 	import '$lib/styles/bootstrap.css';
-	import { ArrowDownTray, Icon } from 'svelte-hero-icons';
+	import { ArrowDownTray, Icon, XMark } from 'svelte-hero-icons';
 	import ImageSizeInput from './ImageSizeInput.svelte';
 	import Select from './Select.svelte';
 	import Slider from './Slider.svelte';
-	import panzoom, { type PanZoomOptions } from 'panzoom';
 
 	import { dithering, type DitherMode } from './rendering/index';
 	import ImageInput from './ImageInput.svelte';
@@ -174,7 +173,7 @@
 	</aside>
 
 	<!--Main content-->
-	<section class="flex-1 overflow-hidden touch-manipulation select-none">
+	<section class="flex-1 overflow-hidden select-none">
 		{#if loaded_image}
 			<div class="w-full h-full relative">
 				<SplitPanzoom>
@@ -206,6 +205,9 @@
 						aria-label="Dithered Image"
 					/>
 				</SplitPanzoom>
+				<button class="absolute top-0 right-0 m-4 p-2 bg-black bg-opacity-40 rounded-full" on:click={() => (loaded_image = null)}>
+					<Icon src={XMark} class="w-5 h-5 text-white" />
+				</button>
 			</div>
 		{:else}
 			<div class="w-full h-full grid place-items-center">

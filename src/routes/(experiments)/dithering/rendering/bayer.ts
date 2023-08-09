@@ -20,8 +20,6 @@ export function generateBayerTexture(gl: WebGLRenderingContext, level : number):
         }
     }
 
-    document.body.appendChild(canvas);
-
     return textureFromCanvas2D(gl, ctx);
 }
 
