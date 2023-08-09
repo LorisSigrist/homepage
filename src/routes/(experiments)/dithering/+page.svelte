@@ -10,6 +10,7 @@
 	import ImageInput from './ImageInput.svelte';
 	import Button from './Button.svelte';
 	import { loadImageFile, saveCanvasAsImage } from './utils';
+	import SplitPanzoom from './SplitPanzoom.svelte';
 
 	let threshold = 0.5;
 	let noiseIntensity = 0.3;
@@ -21,11 +22,10 @@
 
 	let width = 600;
 
-
-	let selected : "bayer" | "blue_noise" | "white_noise" = "blue_noise"
+	let selected: 'bayer' | 'blue_noise' | 'white_noise' = 'blue_noise';
 	let bayer_level = 3;
 
-	$: mode = (selected === "bayer" ? `bayer_${bayer_level}` : selected) satisfies DitherMode
+	$: mode = (selected === 'bayer' ? `bayer_${bayer_level}` : selected) satisfies DitherMode;
 
 	$: height = width / aspectRatio;
 
@@ -36,13 +36,6 @@
 	async function save() {
 		if (!canvas) return;
 		await saveCanvasAsImage(canvas, 'dithered', 'png');
-	}
-
-	function panzoomAction(element: HTMLElement, options?: PanZoomOptions) {
-		const pz = panzoom(element, options);
-		return {
-			destroy: () => pz.dispose()
-		};
 	}
 
 	const ditherModeOptions = [
@@ -57,7 +50,7 @@
 		{
 			name: 'White Noise',
 			value: 'white_noise'
-		},
+		}
 	] as const;
 
 	async function onDrop(e: DragEvent) {
@@ -76,6 +69,18 @@
 			console.error(e);
 		}
 	}
+	
+	async function onInput(e: any) {
+		const file = e.target.files[0];
+		if (!file) return;
+
+		try {
+			loaded_image = await loadImageFile(file);
+		} catch (e) {
+			alert('Failed to load image');
+			console.error(e);
+		}
+	}
 </script>
 
 <svelte:head>
@@ -84,7 +89,9 @@
 
 <svelte:body on:drop|preventDefault={onDrop} on:dragover|preventDefault={() => {}} />
 
-<main class="w-screen max-w-screen h-screen max-h-screen flex md:flex-row flex-col-reverse bg-gray-300">
+<main
+	class="w-screen max-w-screen h-screen max-h-screen flex md:flex-row flex-col-reverse bg-gray-300"
+>
 	<!--Sidebar-->
 	<aside
 		class="bg-white w-full md:max-w-md border-t md:border-t-0 md:border-r border-r-0 border-gray-100 z-50 overflow-y-hidden md:h-full flex-1 shadow-lg flex flex-col divide-y divide-gray-200 justify-between"
@@ -92,14 +99,14 @@
 		<section class="grid gap-5 overflow-y-auto overflow-x-visible py-8 px-4">
 			<div class="grid gap-3">
 				<h2 class="text-base font-semibold leading-7 text-black mb-2">Input Options</h2>
-			<ImageInput bind:image={loaded_image} />
+				<ImageInput bind:image={loaded_image} />
 			</div>
 			<div class="border-t border-gray-100 py-4 grid gap-3">
 				<h2 class="text-base font-semibold leading-7 text-black mb-2">Dithering Options</h2>
 
-				<Select label="Dither Mode" options={ditherModeOptions} bind:selected={selected} />
+				<Select label="Dither Mode" options={ditherModeOptions} bind:selected />
 
-				{#if selected === "bayer"}
+				{#if selected === 'bayer'}
 					<Slider
 						label="Bayer Level ({bayer_level})"
 						min={0}
@@ -169,25 +176,36 @@
 	<!--Main content-->
 	<section class="flex-1 overflow-hidden touch-manipulation select-none">
 		{#if loaded_image}
-			<div use:panzoomAction class="w-full h-full grid place-items-center">
-				<canvas
-					class="pixelated"
-					use:dithering={{
-						image: loaded_image,
-						threshold,
-						noiseIntensity,
-						monochrome,
-						colorLight,
-						colorDark,
-						mode,
-						width,
-						height
-					}}
-					bind:this={canvas}
-					{width}
-					{height}
-					aria-label="Dithered Image"
-				/>
+			<div class="w-full h-full relative">
+				<SplitPanzoom>
+					<img
+						slot="left"
+						src={loaded_image.src}
+						alt=""
+						style={`width: ${width}px; height: ${height}px`}
+						class="pixelated max-w-none"
+					/>
+					<canvas
+						class="pixelated"
+						slot="right"
+						style={`width: ${width}px; height: ${height}px`}
+						use:dithering={{
+							image: loaded_image,
+							threshold,
+							noiseIntensity,
+							monochrome,
+							colorLight,
+							colorDark,
+							mode,
+							width,
+							height
+						}}
+						bind:this={canvas}
+						{width}
+						{height}
+						aria-label="Dithered Image"
+					/>
+				</SplitPanzoom>
 			</div>
 		{:else}
 			<div class="w-full h-full grid place-items-center">
