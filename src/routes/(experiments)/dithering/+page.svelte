@@ -21,7 +21,11 @@
 
 	let width = 600;
 
-	let mode: DitherMode = "bayer";
+
+	let selected : "bayer" | "blue_noise" | "white_noise" = "blue_noise"
+	let bayer_level = 3;
+
+	$: mode = (selected === "bayer" ? `bayer_${bayer_level}` : selected) satisfies DitherMode
 
 	$: height = width / aspectRatio;
 
@@ -53,7 +57,7 @@
 		{
 			name: 'White Noise',
 			value: 'white_noise'
-		}
+		},
 	] as const;
 
 	async function onDrop(e: DragEvent) {
@@ -93,7 +97,17 @@
 			<div class="border-t border-gray-100 py-4 grid gap-3">
 				<h2 class="text-base font-semibold leading-7 text-black mb-2">Dithering Options</h2>
 
-				<Select label="Dither Mode" options={ditherModeOptions} bind:selected={mode} />
+				<Select label="Dither Mode" options={ditherModeOptions} bind:selected={selected} />
+
+				{#if selected === "bayer"}
+					<Slider
+						label="Bayer Level ({bayer_level})"
+						min={0}
+						max={5}
+						step={1}
+						bind:value={bayer_level}
+					/>
+				{/if}
 
 				<Slider
 					label="Threshold ({threshold})"

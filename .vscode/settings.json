@@ -4,6 +4,7 @@
         "overreliance",
         "panzoom",
         "Symfony",
-        "TCSS"
+        "TCSS",
+        "unnormalized"
     ]
 }

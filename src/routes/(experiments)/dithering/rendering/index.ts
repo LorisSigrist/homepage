@@ -1,6 +1,3 @@
-import bayer_4_src from './bayer_4.png';
-import bayer_4_size from './bayer_4.png?size';
-
 import blue_noise_src from './blue_noise.png';
 import blue_noise_size from './blue_noise.png?size';
 
@@ -10,8 +7,9 @@ import white_noise_size from './white_noise.png?size';
 import vertex_src from './vertex.glsl';
 import fragment_src from './fragment.glsl';
 import { createTexture, initShaderProgram, loadImageToTexture, loadTexture, setUpRect } from './utils';
+import { generateBayerTexture } from './bayer';
 
-export type DitherMode = 'bayer' | 'blue_noise' | "white_noise"
+export type DitherMode = `bayer_${number}` | 'blue_noise' | "white_noise";
 
 export type DitheringOptions = {
     image: HTMLImageElement;
@@ -31,14 +29,14 @@ export function dithering(canvas: HTMLCanvasElement, initialOptions: DitheringOp
     const gl = canvas.getContext('webgl', {
         preserveDrawingBuffer: true //Needed to save the canvas as an image
     }) as WebGLRenderingContext | null;
-    
+
     if (!gl) {
         alert('WebGL not supported')
         return;
     }
-    
+
     const loadImage = () => {
-        loadImageToTexture(gl, texture, options.image);
+        loadImageToTexture(gl, imageTexture, options.image);
     }
 
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -62,22 +60,52 @@ export function dithering(canvas: HTMLCanvasElement, initialOptions: DitheringOp
     const uDarkColor = gl.getUniformLocation(program, 'uDarkColor');
     const uLightColor = gl.getUniformLocation(program, 'uLightColor');
 
-    const texture = createTexture(gl);
+    const imageTexture = createTexture(gl);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
     loadImage();
 
-    const bayer_4 = loadTexture(gl, bayer_4_src, invalidate);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-
-    const blue_noise = loadTexture(gl, blue_noise_src, invalidate);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-
-    const white_noise = loadTexture(gl, white_noise_src, invalidate);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    let maskTexture: WebGLTexture;
+    let maskTextureSize: { width: number, height: number };
 
     gl.useProgram(program);
-
     let frame: number | null = null;
+
+    const loadMask = () => {
+        if (options.mode === "blue_noise") {
+            const blue_noise = loadTexture(gl, blue_noise_src, invalidate);
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
+
+            maskTexture = blue_noise;
+            maskTextureSize = blue_noise_size;
+            return;
+        }
+
+        if (options.mode === "white_noise") {
+            const white_noise = loadTexture(gl, white_noise_src, invalidate);
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
+
+            maskTexture = white_noise;
+            maskTextureSize = white_noise_size;
+            return;
+        }
+
+        if (options.mode.startsWith('bayer_')) {
+            const level = Number(options.mode.slice('bayer_'.length));
+            if (isNaN(level)) throw new Error(`Invalid bayer level: "${options.mode}"`);
+            const bayerGenerated = generateBayerTexture(gl, level);
+            const bayerGeneratedSize = Math.pow(2, level + 1);
+
+            maskTexture = bayerGenerated;
+            maskTextureSize = { width: bayerGeneratedSize, height: bayerGeneratedSize };
+            return;
+        }
+
+        throw new Error(`Unknown mode: "${options.mode}"`);
+    }
+
+    loadMask();
 
     const render = () => {
         gl.viewport(0, 0, options.width, options.height);
@@ -90,36 +118,16 @@ export function dithering(canvas: HTMLCanvasElement, initialOptions: DitheringOp
         gl.activeTexture(gl.TEXTURE0);
 
         // Bind the texture to texture unit 0
-        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.bindTexture(gl.TEXTURE_2D, imageTexture);
 
         // Tell the shader we bound the texture to texture unit 0
         gl.uniform1i(uSampler, 0);
 
-        switch (options.mode) {
-            case 'bayer':
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, maskTexture);
+        gl.uniform1i(uNoiseSampler, 1);
 
-                gl.activeTexture(gl.TEXTURE1);
-                gl.bindTexture(gl.TEXTURE_2D, bayer_4);
-                gl.uniform1i(uNoiseSampler, 1);
-
-                gl.uniform2f(uNoiseSamplerSize, bayer_4_size.width, bayer_4_size.height);
-                break;
-            case 'blue_noise':
-                gl.activeTexture(gl.TEXTURE1);
-                gl.bindTexture(gl.TEXTURE_2D, blue_noise);
-                gl.uniform1i(uNoiseSampler, 1);
-
-                gl.uniform2f(uNoiseSamplerSize, blue_noise_size.width, blue_noise_size.height);
-                break;
-            
-            case 'white_noise':
-                gl.activeTexture(gl.TEXTURE1);
-                gl.bindTexture(gl.TEXTURE_2D, white_noise);
-                gl.uniform1i(uNoiseSampler, 1);
-
-                gl.uniform2f(uNoiseSamplerSize, white_noise_size.width, white_noise_size.height);
-                break;
-        }
+        gl.uniform2f(uNoiseSamplerSize, maskTextureSize.width, maskTextureSize.height);
 
         gl.uniform1f(uThreshold, options.threshold);
         gl.uniform1f(uNoise, options.noiseIntensity);
@@ -134,7 +142,7 @@ export function dithering(canvas: HTMLCanvasElement, initialOptions: DitheringOp
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
     }
-   
+
     function invalidate() {
         frame = requestAnimationFrame(() => {
             render();
@@ -146,16 +154,24 @@ export function dithering(canvas: HTMLCanvasElement, initialOptions: DitheringOp
 
     return {
         update(newOptions: DitheringOptions) {
-            const newImg = options.image !== newOptions.image;
+            const imageHasBeenChanged = options.image !== newOptions.image;
+            const modeHasBeenChanged = options.mode !== newOptions.mode;
+
+
             options = newOptions;
-            if (newImg)
+            if (imageHasBeenChanged)
                 loadImage();
-            
+
+            if (modeHasBeenChanged)
+                loadMask();
+
+
+
             invalidate();
         },
 
         destroy() {
-            if(frame !== null)
+            if (frame !== null)
                 cancelAnimationFrame(frame);
         }
     }

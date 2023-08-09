@@ -60,7 +60,7 @@ export function loadTexture(gl: WebGLRenderingContext, url: string, onLoad: () =
     const border = 0;
     const srcFormat = gl.RGBA;
     const srcType = gl.UNSIGNED_BYTE;
-    const pixel = new Uint8Array([0, 0, 255, 255]); // opaque blue
+    const pixel = new Uint8Array([128, 128, 128, 255]);
     gl.texImage2D(
         gl.TEXTURE_2D,
         level,
