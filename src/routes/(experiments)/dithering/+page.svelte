@@ -1,15 +1,18 @@
 <script lang="ts">
 	import '$lib/styles/bootstrap.css';
-	import { ArrowDownTray, Icon, XMark } from 'svelte-hero-icons';
+	import { ArrowDownTray, Icon, Plus, XMark } from 'svelte-hero-icons';
 	import ImageSizeInput from './ImageSizeInput.svelte';
 	import Select from './Select.svelte';
 	import Slider from './Slider.svelte';
 
 	import { dithering, type DitherMode } from './rendering/index';
-	import ImageInput from './ImageInput.svelte';
 	import Button from './Button.svelte';
 	import { loadImageFile, saveCanvasAsImage } from './utils';
 	import SplitPanzoom from './SplitPanzoom.svelte';
+	import cat_img_src from './images/cat.jpg';
+	import gradient_img_src from './images/gradient.avif';
+
+	const imagePresets = [cat_img_src, gradient_img_src];
 
 	let threshold = 0.5;
 	let noiseIntensity = 0.3;
@@ -68,7 +71,7 @@
 			console.error(e);
 		}
 	}
-	
+
 	async function onInput(e: any) {
 		const file = e.target.files[0];
 		if (!file) return;
@@ -79,6 +82,14 @@
 			alert('Failed to load image');
 			console.error(e);
 		}
+	}
+
+	async function loadFromSrc(url: string) {
+		const new_image = new Image();
+		new_image.onload = () => {
+			loaded_image = new_image;
+		};
+		new_image.src = url;
 	}
 </script>
 
@@ -97,10 +108,6 @@
 	>
 		<section class="grid gap-5 overflow-y-auto overflow-x-visible py-8 px-4">
 			<div class="grid gap-3">
-				<h2 class="text-base font-semibold leading-7 text-black mb-2">Input Options</h2>
-				<ImageInput bind:image={loaded_image} />
-			</div>
-			<div class="border-t border-gray-100 py-4 grid gap-3">
 				<h2 class="text-base font-semibold leading-7 text-black mb-2">Dithering Options</h2>
 
 				<Select label="Dither Mode" options={ditherModeOptions} bind:selected />
@@ -205,13 +212,50 @@
 						aria-label="Dithered Image"
 					/>
 				</SplitPanzoom>
-				<button class="absolute top-0 right-0 m-4 p-2 bg-black bg-opacity-40 rounded-full" on:click={() => (loaded_image = null)}>
+				<button
+					class="absolute top-0 right-0 m-4 p-2 bg-black bg-opacity-40 rounded-full"
+					on:click={() => (loaded_image = null)}
+					title="Close Image & Reset"
+				>
 					<Icon src={XMark} class="w-5 h-5 text-white" />
 				</button>
 			</div>
 		{:else}
 			<div class="w-full h-full grid place-items-center">
-				<p class="text-2xl text-gray-500">Drag & Drop Image to Start</p>
+				<div class="grid gap-4">
+					<p class="text-2xl text-gray-500">Select or Drop an Image to Start</p>
+
+					<div class="flex gap-3 justify-center">
+						{#each imagePresets as url}
+							<button on:click={() => loadFromSrc(url)} class="hover:opacity-75 transition-opacity">
+								<img
+									class="aspect-square h-24 w-24 object-cover rounded-md shadow-md border-2 border-white"
+									src={url}
+									alt=""
+								/>
+							</button>
+						{/each}
+
+						<label
+							for="image-input"
+							class="block spect-square h-24 w-24 object-cover rounded-md shadow-md border-2 border-white bg-white hover:bg-gray-100"
+						>
+							<div class="grid place-items-center h-full w-full">
+								<Icon src={Plus} class="w-12 h-12 text-gray-400" />
+							</div>
+
+							<span class="sr-only">Choose an Image</span>
+
+							<input
+								type="file"
+								class="sr-only"
+								id="image-input"
+								accept="image/*"
+								on:input={onInput}
+							/>
+						</label>
+					</div>
+				</div>
 			</div>
 		{/if}
 	</section>
