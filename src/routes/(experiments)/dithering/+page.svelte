@@ -11,8 +11,9 @@
 	import SplitPanzoom from './SplitPanzoom.svelte';
 	import cat_img_src from './images/cat.jpg';
 	import gradient_img_src from './images/gradient.avif';
+	import david_img_src from './images/david.png';
 
-	const imagePresets = [cat_img_src, gradient_img_src];
+	const imagePresets = [cat_img_src, gradient_img_src, david_img_src];
 
 	let threshold = 0.5;
 	let noiseIntensity = 0.3;
