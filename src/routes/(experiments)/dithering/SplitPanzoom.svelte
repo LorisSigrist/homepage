@@ -20,7 +20,7 @@
 				const containerWidth = container ? container.clientWidth : window.innerWidth;
 				const dx = event.clientX - startX;
                 const inherentSplit = startSplit + (dx / containerWidth) * 100;
-				split = clamp(inherentSplit, 5, 95);
+				split = clamp(inherentSplit, 0, 100);
 			};
 
 			const mouseup = () => {
@@ -102,7 +102,8 @@
         touch-action: none;
 		top: 0;
 		bottom: 0;
-		left: calc(var(--split-point) - 4.5px);
+		left: var(--split-point);
+		transform: translateX(-50%);
 		width: 4px;
 		background: rgba(0, 0, 0, 1);
 
