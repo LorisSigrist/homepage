@@ -100,11 +100,92 @@
 <svelte:body on:drop|preventDefault={onDrop} on:dragover|preventDefault={() => {}} />
 
 <main
-	class="w-screen max-w-screen h-screen max-h-screen flex md:flex-row flex-col-reverse bg-gray-300"
+	class="w-screen max-w-screen h-screen max-h-screen flex md:flex-row flex-col bg-gray-300"
 >
+		<!--Main content-->
+		<section class="flex-1 overflow-hidden select-none">
+			{#if loaded_image}
+				<div class="w-full h-full relative">
+					<SplitPanzoom>
+						<img
+							slot="left"
+							src={loaded_image.src}
+							alt=""
+							style={`width: ${width}px; height: ${height}px`}
+							class="pixelated max-w-none"
+						/>
+						<canvas
+							class="pixelated"
+							slot="right"
+							style={`width: ${width}px; height: ${height}px`}
+							use:dithering={{
+								image: loaded_image,
+								threshold,
+								noiseIntensity,
+								monochrome,
+								colorLight,
+								colorDark,
+								mode,
+								width,
+								height
+							}}
+							bind:this={canvas}
+							{width}
+							{height}
+							aria-label="Dithered Image"
+						/>
+					</SplitPanzoom>
+					<button
+						class="absolute top-0 right-0 m-4 p-2 bg-black bg-opacity-40 rounded-full"
+						on:click={() => (loaded_image = null)}
+						title="Close Image & Reset"
+					>
+						<Icon src={XMark} class="w-5 h-5 text-white" />
+					</button>
+				</div>
+			{:else}
+				<div class="w-full h-full grid place-items-center">
+					<div class="grid gap-4">
+						<p class="text-2xl text-gray-500">Select or Drop an Image to Start</p>
+	
+						<div class="flex gap-3 justify-center">
+							{#each imagePresets as url}
+								<button on:click={() => loadFromSrc(url)} class="hover:opacity-75 transition-opacity">
+									<img
+										class="aspect-square h-24 w-24 object-cover rounded-md shadow-md border-2 border-white"
+										src={url}
+										alt=""
+									/>
+								</button>
+							{/each}
+	
+							<label
+								for="image-input"
+								class="block spect-square h-24 w-24 object-cover rounded-md shadow-md border-2 border-white bg-white hover:bg-gray-100"
+							>
+								<div class="grid place-items-center h-full w-full">
+									<Icon src={Plus} class="w-12 h-12 text-gray-400" />
+								</div>
+	
+								<span class="sr-only">Choose an Image</span>
+	
+								<input
+									type="file"
+									class="sr-only"
+									id="image-input"
+									accept="image/*"
+									on:input={onInput}
+								/>
+							</label>
+						</div>
+					</div>
+				</div>
+			{/if}
+		</section>
+
 	<!--Sidebar-->
 	<aside
-		class="bg-white w-full md:max-w-md border-t md:border-t-0 md:border-r border-r-0 border-gray-100 z-50 overflow-y-hidden md:h-full flex-1 shadow-lg flex flex-col divide-y divide-gray-200 justify-between"
+		class="bg-white w-full md:max-w-md border-t md:border-t-0 md:border-l border-l-0 border-gray-100 z-50 overflow-y-hidden md:h-full flex-1 shadow-lg flex flex-col divide-y divide-gray-200 justify-between"
 	>
 		<section class="grid gap-5 overflow-y-auto overflow-x-visible py-8 px-4">
 			<div class="grid gap-3">
@@ -178,87 +259,6 @@
 			</Button>
 		</footer>
 	</aside>
-
-	<!--Main content-->
-	<section class="flex-1 overflow-hidden select-none">
-		{#if loaded_image}
-			<div class="w-full h-full relative">
-				<SplitPanzoom>
-					<img
-						slot="left"
-						src={loaded_image.src}
-						alt=""
-						style={`width: ${width}px; height: ${height}px`}
-						class="pixelated max-w-none"
-					/>
-					<canvas
-						class="pixelated"
-						slot="right"
-						style={`width: ${width}px; height: ${height}px`}
-						use:dithering={{
-							image: loaded_image,
-							threshold,
-							noiseIntensity,
-							monochrome,
-							colorLight,
-							colorDark,
-							mode,
-							width,
-							height
-						}}
-						bind:this={canvas}
-						{width}
-						{height}
-						aria-label="Dithered Image"
-					/>
-				</SplitPanzoom>
-				<button
-					class="absolute top-0 right-0 m-4 p-2 bg-black bg-opacity-40 rounded-full"
-					on:click={() => (loaded_image = null)}
-					title="Close Image & Reset"
-				>
-					<Icon src={XMark} class="w-5 h-5 text-white" />
-				</button>
-			</div>
-		{:else}
-			<div class="w-full h-full grid place-items-center">
-				<div class="grid gap-4">
-					<p class="text-2xl text-gray-500">Select or Drop an Image to Start</p>
-
-					<div class="flex gap-3 justify-center">
-						{#each imagePresets as url}
-							<button on:click={() => loadFromSrc(url)} class="hover:opacity-75 transition-opacity">
-								<img
-									class="aspect-square h-24 w-24 object-cover rounded-md shadow-md border-2 border-white"
-									src={url}
-									alt=""
-								/>
-							</button>
-						{/each}
-
-						<label
-							for="image-input"
-							class="block spect-square h-24 w-24 object-cover rounded-md shadow-md border-2 border-white bg-white hover:bg-gray-100"
-						>
-							<div class="grid place-items-center h-full w-full">
-								<Icon src={Plus} class="w-12 h-12 text-gray-400" />
-							</div>
-
-							<span class="sr-only">Choose an Image</span>
-
-							<input
-								type="file"
-								class="sr-only"
-								id="image-input"
-								accept="image/*"
-								on:input={onInput}
-							/>
-						</label>
-					</div>
-				</div>
-			</div>
-		{/if}
-	</section>
 </main>
 
 <style>
