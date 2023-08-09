@@ -25,7 +25,11 @@ export function generateBayerTexture(gl: WebGLRenderingContext, level : number):
     return textureFromCanvas2D(gl, ctx);
 }
 
+const computedBayerLevels : Map<number, number[][]> = new Map();
+
 function generateUnnormalizedBayerLevel(level: number): number[][] {
+    if (computedBayerLevels.has(level)) return computedBayerLevels.get(level)!;
+
     if (level === 0) return [[0, 2], [3, 1]];
     
     const prev = generateUnnormalizedBayerLevel(level - 1);
@@ -40,6 +44,7 @@ function generateUnnormalizedBayerLevel(level: number): number[][] {
         }
     }
 
+    computedBayerLevels.set(level, next);
     return next;
 }
 
