@@ -1,7 +1,8 @@
 <script lang="ts">
-	import type { PanZoom, PanZoomOptions, Transform } from 'panzoom';
 	import panzoom from 'panzoom';
 	import { ArrowsRightLeft, Icon } from 'svelte-hero-icons';
+
+	let container : HTMLDivElement | null = null;
 
 	//The percentage of the screen that the split is at
 	let split = 50;
@@ -16,9 +17,9 @@
 			const startSplit = split;
 
 			const mousemove = (event: MouseEvent) => {
-                console.log('pointermove');
+				const containerWidth = container ? container.clientWidth : window.innerWidth;
 				const dx = event.clientX - startX;
-                const inherentSplit = startSplit + (dx / window.innerWidth) * 100;
+                const inherentSplit = startSplit + (dx / containerWidth) * 100;
 				split = clamp(inherentSplit, 5, 95);
 			};
 
@@ -52,7 +53,7 @@
 	}
 </script>
 
-<div class="container" style:--split-point={split + '%'} >
+<div class="container" style:--split-point={split + '%'} bind:this={container}>
 	<div class="w-full h-full grid place-items-center" use:panzoomAction>
 		<div class="left">
 			<div style={transformCss}>
