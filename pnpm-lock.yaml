@@ -20,9 +20,9 @@ dependencies:
   node-chrono:
     specifier: ^0.0.3
     version: 0.0.3
-  panzoom:
-    specifier: ^9.4.3
-    version: 9.4.3
+  pointer-tracker:
+    specifier: ^2.5.3
+    version: 2.5.3
   satori:
     specifier: ^0.7.4
     version: 0.7.4
@@ -38,6 +38,9 @@ dependencies:
   topology-renderer:
     specifier: ^0.1.4
     version: 0.1.4
+  typescript-event-target:
+    specifier: ^1.0.5
+    version: 1.0.5
   zod:
     specifier: ^3.21.4
     version: 3.21.4
@@ -927,12 +930,6 @@ packages:
       uri-js: 4.4.1
     dev: true
 
-  /amator@1.1.0:
-    resolution: {integrity: sha512-V5+aH8pe+Z3u/UG3L3pG3BaFQGXAyXHVQDroRwjPHdh08bcUEchAVsU1MCuJSCaU5o60wTK6KaE6te5memzgYw==}
-    dependencies:
-      bezier-easing: 2.1.0
-    dev: false
-
   /ansi-regex@5.0.1:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
     engines: {node: '>=8'}
@@ -1035,10 +1032,6 @@ packages:
     dependencies:
       tweetnacl: 0.14.5
     dev: true
-
-  /bezier-easing@2.1.0:
-    resolution: {integrity: sha512-gbIqZ/eslnUFC1tjEvtz0sgx+xTK20wDnYMIA27VA04R7w6xxXQPZDbibjA9DTWZRA2CXtwHykkVzlCaAJAZig==}
-    dev: false
 
   /binary-extensions@2.2.0:
     resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==}
@@ -2252,10 +2245,6 @@ packages:
       is-buffer: 1.1.6
     dev: true
 
-  /ngraph.events@1.2.2:
-    resolution: {integrity: sha512-JsUbEOzANskax+WSYiAPETemLWYXmixuPAlmZmhIbIj6FH/WDgEGCGnRwUQBK0GjOnVm8Ui+e5IJ+5VZ4e32eQ==}
-    dev: false
-
   /no-case@2.3.2:
     resolution: {integrity: sha512-rmTZ9kz+f3rCvK2TD1Ue/oZlns7OGoIWP4fc3llxxRXlOkHKoWPPWJOfFYpITabSow43QJbRIoHQXtt10VldyQ==}
     dependencies:
@@ -2346,14 +2335,6 @@ packages:
     resolution: {integrity: sha512-NUcwaKxUxWrZLpDG+z/xZaCgQITkA/Dv4V/T6bw7VON6l1Xz/VnrBqrYjZQ12TamKHzITTfOEIYUj48y2KXImA==}
     dev: false
 
-  /panzoom@9.4.3:
-    resolution: {integrity: sha512-xaxCpElcRbQsUtIdwlrZA90P90+BHip4Vda2BC8MEb4tkI05PmR6cKECdqUCZ85ZvBHjpI9htJrZBxV5Gp/q/w==}
-    dependencies:
-      amator: 1.1.0
-      ngraph.events: 1.2.2
-      wheel: 1.0.0
-    dev: false
-
   /param-case@2.1.1:
     resolution: {integrity: sha512-eQE845L6ot89sk2N8liD8HAuH4ca6Vvr7VWAWwt7+kvvG5aBcPmmphQ68JsEG2qa9n1TykS2DLeMt363AAH8/w==}
     dependencies:
@@ -2435,6 +2416,10 @@ packages:
     resolution: {integrity: sha512-NCrCHhWmnQklfH4MtJMRjZ2a8c80qXeMlQMv2uVp9ISJMTt562SbGd6n2oq0PaPgKm7Z6pL9E2UlLIhC+SHL3w==}
     engines: {node: '>=4.0.0'}
     dev: true
+
+  /pointer-tracker@2.5.3:
+    resolution: {integrity: sha512-LiJUeIbzk4dXq678YeyrZ++mdY17q4n/2sBHfU9wIuvmSzdiPgMvmvWN2g8mY4J7YwYOIrqrZUWP/MfFHVwYtg==}
+    dev: false
 
   /postcss-import@15.1.0(postcss@8.4.23):
     resolution: {integrity: sha512-hpr+J05B2FVYUAXHeK1YyI267J/dDDhMU6B6civm8hSY1jYJnBXxzKDKDswzJmtLHryrjhnDjqqp/49t8FALew==}
@@ -3272,6 +3257,10 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
+  /typescript-event-target@1.0.5:
+    resolution: {integrity: sha512-XA12H04oaUBcrD7El9L65to5gKe1gcvi5hzgLOez0Fn2EgGRZvPhGXyhnF1GX9YHBM+soY88zQ8IXOsg+cnqTg==}
+    dev: false
+
   /typescript@5.0.4:
     resolution: {integrity: sha512-cW9T5W9xY37cc+jfEnaUvX91foxtHkza3Nw3wkoF4sSlKn0MONdkdEndig/qPBWXNkmplh3NzayQzCiHM4/hqw==}
     engines: {node: '>=12.20'}
@@ -3545,10 +3534,6 @@ packages:
 
   /vscode-textmate@5.2.0:
     resolution: {integrity: sha512-Uw5ooOQxRASHgu6C7GVvUxisKXfSgW4oFlO+aa+PAkgmH89O3CXxEEzNRNtHSqtXFTl0nAC1uYj0GMSH27uwtQ==}
-    dev: false
-
-  /wheel@1.0.0:
-    resolution: {integrity: sha512-XiCMHibOiqalCQ+BaNSwRoZ9FDTAvOsXxGHXChBugewDj7HC8VBIER71dEOiRH1fSdLbRCQzngKTSiZ06ZQzeA==}
     dev: false
 
   /which@2.0.2:

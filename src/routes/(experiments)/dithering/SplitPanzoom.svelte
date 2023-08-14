@@ -1,108 +1,113 @@
 <script lang="ts">
-	import panzoom from 'panzoom';
 	import { ArrowsRightLeft, Icon } from 'svelte-hero-icons';
+	import { Panzoom, type TransformChangeEvent } from './panzoom';
 
-	let container : HTMLDivElement | null = null;
+	let container: HTMLDivElement | null = null;
 
 	//The percentage of the screen that the split is at
 	let split = 50;
 
-    function clamp(value: number, min: number, max: number) {
-        return Math.min(Math.max(value, min), max);
-    }
+	function clamp(value: number, min: number, max: number) {
+		return Math.min(Math.max(value, min), max);
+	}
 
 	function drag(element: HTMLElement) {
-		element.addEventListener('pointerdown', (event: MouseEvent) => {
+		element.addEventListener('pointerdown', (event) => {
 			const startX = event.clientX;
 			const startSplit = split;
 
 			const previousCursor = document.body.style.cursor;
 			document.body.style.cursor = 'col-resize';
 
-			const mousemove = (event: MouseEvent) => {
+			const pointermove = (event: PointerEvent) => {
 				const containerWidth = container ? container.clientWidth : window.innerWidth;
 				const dx = event.clientX - startX;
-                const inherentSplit = startSplit + (dx / containerWidth) * 100;
+				const inherentSplit = startSplit + (dx / containerWidth) * 100;
 				split = clamp(inherentSplit, 0, 100);
 			};
 
-			const mouseup = () => {
+			const pointerup = () => {
 				document.body.style.cursor = previousCursor;
-				window.removeEventListener('pointermove', mousemove);
-				window.removeEventListener('pointerup', mouseup);
+				window.removeEventListener('pointermove', pointermove);
+				window.removeEventListener('pointerup', pointerup);
 			};
 
-			window.addEventListener('pointermove', mousemove);
-			window.addEventListener('pointerup', mouseup);
+			window.addEventListener('pointermove', pointermove);
+			window.addEventListener('pointerup', pointerup);
 		});
 	}
 
-	let transformCss = '';
+	let left : HTMLElement;
+	let right : HTMLElement;
 
 	function panzoomAction(element: HTMLElement) {
+		const pz = new Panzoom(element);
 
-		const pz = panzoom(element, {
-			controller: {
-				applyTransform: (transform) => {
-					transformCss = `transform: translate(${transform.x}px, ${transform.y}px) scale(${transform.scale})`;
-				},
-				getOwner: () => element
-			},
-		});
+		function panzoomChange(e: TransformChangeEvent) {
+			const { x, y, scale, matrix } = e.detail;
+			right.style.transform = matrix as any as string;
+			left.style.transform = matrix as any as string;
+
+		}
+
+		pz.addEventListener("panzoom:change", panzoomChange)
 
 		return {
-			destroy: () => pz.dispose()
-		};
+			destroy() {
+				pz.removeEventListener("panzoom:change", panzoomChange);
+				pz.destroy();
+			}
+		}
 	}
 </script>
 
-<div class="container" style:--split-point={split + '%'} bind:this={container}>
+<div class="pz-container" style:--split-point={split + '%'} bind:this={container}>
 	<div class="w-full h-full grid place-items-center" use:panzoomAction>
 		<div class="left">
-			<div style={transformCss}>
+			<div bind:this={left} class="w-full h-full origin-top-left grid place-items-center">
 				<slot name="left" />
 			</div>
 		</div>
 
 		<div class="right">
-			<div style={transformCss}>
+			<div bind:this={right} class="w-full h-full origin-top-left grid place-items-center">
 				<slot name="right" />
 			</div>
 		</div>
 	</div>
-	<div class="handle relative shadow-lg" use:drag on:pointercancel|preventDefault={()=>{}}>
-        <div class="w-12 h-12 rounded-full bg-black  absolute top-1/2 -translate-x-1/2 left-1/2 grid place-items-center">
-            <Icon src={ArrowsRightLeft} class="w-6 h-6 text-white" />
-        </div>
-    </div>
+	<div class="handle relative shadow-lg" use:drag on:pointercancel|preventDefault={() => {}}>
+		<div
+			class="w-12 h-12 rounded-full bg-black absolute top-1/2 -translate-x-1/2 left-1/2 grid place-items-center"
+		>
+			<Icon src={ArrowsRightLeft} class="w-6 h-6 text-white" />
+		</div>
+	</div>
 </div>
 
 <style>
-    .container {
-        position: relative;
-        width: 100%;
-        height: 100%;
-    }
+	.pz-container {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		touch-action: none;
+	}
 
 	.left {
 		position: absolute;
 		inset: 0;
-        display: grid;
-        place-items: center;
 		clip-path: inset(0 calc(100% - var(--split-point)) 0 0);
 	}
 
 	.right {
 		position: absolute;
 		inset: 0;
-        display: grid;
-        place-items: center;
 		clip-path: inset(0 0 0 var(--split-point));
 	}
 
+
 	.handle {
 		position: absolute;
-        touch-action: none;
+		touch-action: none;
 		top: 0;
 		bottom: 0;
 		left: var(--split-point);
