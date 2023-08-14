@@ -5,7 +5,7 @@
 	import Select from './Select.svelte';
 	import Slider from './Slider.svelte';
 
-	import { dithering } from './rendering/index';
+	import { orderedDithering } from './rendering/index';
 	import Button from './Button.svelte';
 	import { loadImageFile, saveCanvasAsImage } from './utils';
 	import SplitPanzoom from './SplitPanzoom.svelte';
@@ -150,7 +150,7 @@
 						class="pixelated"
 						slot="right"
 						style={`width: ${width}px; height: ${height}px`}
-						use:dithering={{
+						use:orderedDithering={{
 							image: loaded_image,
 							threshold,
 							noiseIntensity,

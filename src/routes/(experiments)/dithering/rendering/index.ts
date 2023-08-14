@@ -15,7 +15,7 @@ export type DitheringOptions = {
     output_height: number;
 }
 
-export function dithering(canvas: HTMLCanvasElement, initialOptions: DitheringOptions) {
+export function orderedDithering(canvas: HTMLCanvasElement, initialOptions: DitheringOptions) {
     let options = initialOptions;
 
     const gl = canvas.getContext('webgl', {
@@ -63,12 +63,10 @@ export function dithering(canvas: HTMLCanvasElement, initialOptions: DitheringOp
     let frame: number | null = null;
 
     const loadThresholdMap = () => {
-        //Delete the old texture if it exists
-        /* - Enable after rendering works again, and see if it works
         if (thresholdMapTexture) {
             gl.deleteTexture(thresholdMapTexture); 
         }
-        */
+        
         thresholdMapTexture = textureFromImageData(gl, options.thresholdMap);
         thresholdMapSize = { width: options.thresholdMap.width, height: options.thresholdMap.height };
     }
