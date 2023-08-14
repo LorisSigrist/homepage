@@ -186,8 +186,9 @@ export function textureFromImageData(gl: WebGLRenderingContext, imageData: Image
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
 
     if (isPowerOf2(imageData.width) && isPowerOf2(imageData.height)) {
-        // Yes, it's a power of 2. Generate mips.
-        gl.generateMipmap(gl.TEXTURE_2D);
+        // Use nearest neighbor sampling
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     } else {
         // No, it's not a power of 2. Turn off mips and set
         // wrapping to clamp to edge
