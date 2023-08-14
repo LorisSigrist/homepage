@@ -30,10 +30,12 @@
 				document.body.style.cursor = previousCursor;
 				window.removeEventListener('pointermove', pointermove);
 				window.removeEventListener('pointerup', pointerup);
+				window.removeEventListener('pointercancel', pointerup);
 			};
 
 			window.addEventListener('pointermove', pointermove);
 			window.addEventListener('pointerup', pointerup);
+			window.addEventListener('pointercancel', pointerup);
 		});
 	}
 
