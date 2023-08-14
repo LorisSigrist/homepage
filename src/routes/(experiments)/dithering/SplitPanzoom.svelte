@@ -37,17 +37,14 @@
 		});
 	}
 
-	let left : HTMLElement;
-	let right : HTMLElement;
+	let pzTransform: string = 'transform: none;';
 
 	function panzoomAction(element: HTMLElement) {
 		const pz = new Panzoom(element);
 
 		function panzoomChange(e: TransformChangeEvent) {
 			const { x, y, scale, matrix } = e.detail;
-			right.style.transform = matrix as any as string;
-			left.style.transform = matrix as any as string;
-
+			pzTransform = `transform: translate(${x}px, ${y}px) scale(${scale})`;
 		}
 
 		pz.addEventListener("panzoom:change", panzoomChange)
@@ -63,14 +60,14 @@
 
 <div class="pz-container" style:--split-point={split + '%'} bind:this={container}>
 	<div class="w-full h-full grid place-items-center" use:panzoomAction>
-		<div class="left">
-			<div bind:this={left} class="w-full h-full origin-top-left grid place-items-center">
+		<div class="mask-left">
+			<div style="{pzTransform}" class="w-full h-full origin-top-left grid place-items-center">
 				<slot name="left" />
 			</div>
 		</div>
 
-		<div class="right">
-			<div bind:this={right} class="w-full h-full origin-top-left grid place-items-center">
+		<div class="mask-right">
+			<div style="{pzTransform}" class="w-full h-full origin-top-left grid place-items-center">
 				<slot name="right" />
 			</div>
 		</div>
@@ -92,13 +89,13 @@
 		touch-action: none;
 	}
 
-	.left {
+	.mask-left {
 		position: absolute;
 		inset: 0;
 		clip-path: inset(0 calc(100% - var(--split-point)) 0 0);
 	}
 
-	.right {
+	.mask-right {
 		position: absolute;
 		inset: 0;
 		clip-path: inset(0 0 0 var(--split-point));

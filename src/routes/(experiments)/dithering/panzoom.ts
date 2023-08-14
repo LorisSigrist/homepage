@@ -162,7 +162,6 @@ export class Panzoom extends TypedEventTarget<PanzoomEventMap> {
         scaleTransform.multiplySelf(panTransform);
         scaleTransform.multiplySelf(this.transform);
 
-
         const scale = scaleTransform.a;
         const x = scaleTransform.e;
         const y = scaleTransform.f;
