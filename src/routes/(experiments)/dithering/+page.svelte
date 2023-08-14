@@ -31,7 +31,7 @@
 	let white_noise_width = 256;
 	$: white_noise_height = white_noise_width;
 
-	let width = 600;
+	let width = 300;
 	$: height = width / aspectRatio;
 
 	let loaded_image: HTMLImageElement | null = null;
@@ -220,14 +220,8 @@
 		class="bg-white w-full md:max-w-md border-t md:border-t-0 md:border-l border-l-0 border-gray-100 z-50 overflow-y-hidden md:h-full flex-1 shadow-lg flex flex-col divide-y divide-gray-200 justify-between"
 	>
 		<section class="grid gap-5 overflow-y-auto overflow-x-visible py-8 px-4">
-			{#if thresholdMap}
-				<div class="w-full aspect-square rounded-lg bg-gray-100 p-8 grid place-items-center">
-					<ImageDataViewer imageData={thresholdMap} />
-				</div>
-			{/if}
-
 			<div class="grid gap-3">
-				<h2 class="text-base font-semibold leading-7 text-black mb-2">Dithering Options</h2>
+				<h2 class="text-base font-semibold leading-7 text-black mb-2">Threshold Map</h2>
 
 				<Select label="Dither Mode" options={ditherModeOptions} bind:selected />
 
@@ -244,6 +238,16 @@
 				{#if selected === 'white_noise'}
 					<DimensionsInput bind:width={white_noise_width} aspectRatio={1} />
 				{/if}
+
+				{#if thresholdMap}
+					<div class="w-full aspect-square rounded-lg bg-gray-100 p-8 grid place-items-center">
+						<ImageDataViewer imageData={thresholdMap} />
+					</div>
+				{/if}
+			</div>
+
+			<div class="grid gap-3">
+				<h2 class="text-base font-semibold leading-7 text-black mb-2">Dithering Options</h2>
 
 				<Slider
 					label="Threshold ({threshold})"
