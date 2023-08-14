@@ -1,26 +1,18 @@
-import blue_noise_src from './blue_noise.png';
-import blue_noise_size from './blue_noise.png?size';
-
-import white_noise_src from './white_noise.png';
-import white_noise_size from './white_noise.png?size';
-
 import vertex_src from './vertex.glsl';
 import fragment_src from './fragment.glsl';
-import { createTexture, initShaderProgram, loadImageToTexture, loadTexture, setUpRect } from './utils';
-import { generateBayerTexture } from './bayer';
+import { createTexture, initShaderProgram, loadImageToTexture, setUpRect, textureFromImageData } from './utils';
 
-export type DitherMode = `bayer_${number}` | 'blue_noise' | "white_noise";
 
 export type DitheringOptions = {
     image: HTMLImageElement;
+    thresholdMap: ImageData;
     threshold: number;
     noiseIntensity: number;
     monochrome: boolean;
     colorLight: string;
     colorDark: string;
-    mode: DitherMode
-    width: number;
-    height: number;
+    output_width: number;
+    output_height: number;
 }
 
 export function dithering(canvas: HTMLCanvasElement, initialOptions: DitheringOptions) {
@@ -64,51 +56,27 @@ export function dithering(canvas: HTMLCanvasElement, initialOptions: DitheringOp
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
     loadImage();
 
-    let maskTexture: WebGLTexture;
-    let maskTextureSize: { width: number, height: number };
+    let thresholdMapTexture: WebGLTexture;
+    let thresholdMapSize: { width: number, height: number };
 
     gl.useProgram(program);
     let frame: number | null = null;
 
-    const loadMask = () => {
-        if (options.mode === "blue_noise") {
-            const blue_noise = loadTexture(gl, blue_noise_src, invalidate);
-            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-
-
-            maskTexture = blue_noise;
-            maskTextureSize = blue_noise_size;
-            return;
+    const loadThresholdMap = () => {
+        //Delete the old texture if it exists
+        /* - Enable after rendering works again, and see if it works
+        if (thresholdMapTexture) {
+            gl.deleteTexture(thresholdMapTexture); 
         }
-
-        if (options.mode === "white_noise") {
-            const white_noise = loadTexture(gl, white_noise_src, invalidate);
-            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-
-
-            maskTexture = white_noise;
-            maskTextureSize = white_noise_size;
-            return;
-        }
-
-        if (options.mode.startsWith('bayer_')) {
-            const level = Number(options.mode.slice('bayer_'.length));
-            if (isNaN(level)) throw new Error(`Invalid bayer level: "${options.mode}"`);
-            const bayerGenerated = generateBayerTexture(gl, level);
-            const bayerGeneratedSize = Math.pow(2, level + 1);
-
-            maskTexture = bayerGenerated;
-            maskTextureSize = { width: bayerGeneratedSize, height: bayerGeneratedSize };
-            return;
-        }
-
-        throw new Error(`Unknown mode: "${options.mode}"`);
+        */
+        thresholdMapTexture = textureFromImageData(gl, options.thresholdMap);
+        thresholdMapSize = { width: options.thresholdMap.width, height: options.thresholdMap.height };
     }
 
-    loadMask();
+    loadThresholdMap();
 
     const render = () => {
-        gl.viewport(0, 0, options.width, options.height);
+        gl.viewport(0, 0, options.output_width, options.output_height);
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
@@ -124,15 +92,15 @@ export function dithering(canvas: HTMLCanvasElement, initialOptions: DitheringOp
         gl.uniform1i(uSampler, 0);
 
         gl.activeTexture(gl.TEXTURE1);
-        gl.bindTexture(gl.TEXTURE_2D, maskTexture);
+        gl.bindTexture(gl.TEXTURE_2D, thresholdMapTexture);
         gl.uniform1i(uNoiseSampler, 1);
 
-        gl.uniform2f(uNoiseSamplerSize, maskTextureSize.width, maskTextureSize.height);
+        gl.uniform2f(uNoiseSamplerSize, thresholdMapSize.width, thresholdMapSize.height);
 
         gl.uniform1f(uThreshold, options.threshold);
         gl.uniform1f(uNoise, options.noiseIntensity);
 
-        gl.uniform2f(uSize, options.width, options.height);
+        gl.uniform2f(uSize, options.output_width, options.output_height);
 
         gl.uniform1f(uMonochrome, options.monochrome ? 1 : 0);
 
@@ -155,22 +123,24 @@ export function dithering(canvas: HTMLCanvasElement, initialOptions: DitheringOp
     return {
         update(newOptions: DitheringOptions) {
             const imageHasBeenChanged = options.image !== newOptions.image;
-            const modeHasBeenChanged = options.mode !== newOptions.mode;
+            const thresholdMapChanged = options.thresholdMap !== newOptions.thresholdMap;
 
-
+            //Use the new options
             options = newOptions;
+
+            //Run lifecycle methods if needed
             if (imageHasBeenChanged)
                 loadImage();
 
-            if (modeHasBeenChanged)
-                loadMask();
+            if (thresholdMapChanged)
+                loadThresholdMap();
 
-
-
+            //Schedule a rerender
             invalidate();
         },
 
         destroy() {
+            //Cancel any pending rerenders
             if (frame !== null)
                 cancelAnimationFrame(frame);
         }

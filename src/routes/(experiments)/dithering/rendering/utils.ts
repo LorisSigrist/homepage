@@ -177,3 +177,24 @@ export function setUpRect(gl: WebGLRenderingContext) {
 
     return { vertex_buffer, index_buffer };
 }
+
+export function textureFromImageData(gl: WebGLRenderingContext, imageData: ImageData): WebGLTexture {
+    const texture = gl.createTexture();
+    if (!texture) throw new Error('Failed to create texture');
+
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imageData);
+
+    if (isPowerOf2(imageData.width) && isPowerOf2(imageData.height)) {
+        // Yes, it's a power of 2. Generate mips.
+        gl.generateMipmap(gl.TEXTURE_2D);
+    } else {
+        // No, it's not a power of 2. Turn off mips and set
+        // wrapping to clamp to edge
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    }
+
+    return texture;
+}

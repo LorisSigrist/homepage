@@ -1,17 +1,19 @@
 <script lang="ts">
 	import '$lib/styles/bootstrap.css';
 	import { ArrowDownTray, Icon, Plus, XMark } from 'svelte-hero-icons';
-	import ImageSizeInput from './ImageSizeInput.svelte';
+	import DimensionsInput from './ImageSizeInput.svelte';
 	import Select from './Select.svelte';
 	import Slider from './Slider.svelte';
 
-	import { dithering, type DitherMode } from './rendering/index';
+	import { dithering } from './rendering/index';
 	import Button from './Button.svelte';
 	import { loadImageFile, saveCanvasAsImage } from './utils';
 	import SplitPanzoom from './SplitPanzoom.svelte';
 	import cat_img_src from './images/cat.jpg';
 	import gradient_img_src from './images/gradient.avif';
 	import david_img_src from './images/david.png';
+	import { generateThresholdMap, type ThresholdMapOptions } from './thresholdMap';
+	import ImageDataViewer from './ImageDataViewer.svelte';
 
 	const imagePresets = [cat_img_src, gradient_img_src, david_img_src];
 
@@ -23,13 +25,13 @@
 
 	let canvas: HTMLCanvasElement | null = null;
 
-	let width = 600;
-
-	let selected: 'bayer' | 'blue_noise' | 'white_noise' = 'blue_noise';
+	type DitherMode = `bayer` | 'blue_noise' | 'white_noise';
+	let selected: DitherMode = 'blue_noise';
 	let bayer_level = 3;
+	let white_noise_width = 256;
+	$: white_noise_height = white_noise_width;
 
-	$: mode = (selected === 'bayer' ? `bayer_${bayer_level}` : selected) satisfies DitherMode;
-
+	let width = 600;
 	$: height = width / aspectRatio;
 
 	let loaded_image: HTMLImageElement | null = null;
@@ -92,6 +94,37 @@
 		};
 		new_image.src = url;
 	}
+
+	let thresholdMap: ImageData | null = null;
+
+	$: {
+		if ('ImageData' in globalThis) {
+			let options: ThresholdMapOptions;
+
+			switch (selected) {
+				case 'bayer':
+					options = {
+						mode: 'bayer',
+						level: bayer_level
+					};
+					break;
+				case 'blue_noise':
+					options = {
+						mode: 'blue_noise'
+					};
+					break;
+				case 'white_noise':
+					options = {
+						mode: 'white_noise',
+						width: white_noise_width,
+						height: white_noise_height
+					};
+					break;
+			}
+
+			generateThresholdMap(options).then((map) => (thresholdMap = map));
+		}
+	}
 </script>
 
 <svelte:head>
@@ -100,95 +133,99 @@
 
 <svelte:body on:drop|preventDefault={onDrop} on:dragover|preventDefault={() => {}} />
 
-<main
-	class="w-screen max-w-screen h-screen max-h-screen flex md:flex-row flex-col bg-gray-300"
->
-		<!--Main content-->
-		<section class="flex-1 overflow-hidden select-none">
-			{#if loaded_image}
-				<div class="w-full h-full relative">
-					<SplitPanzoom>
-						<img
-							slot="left"
-							src={loaded_image.src}
-							alt=""
-							style={`width: ${width}px; height: ${height}px`}
-							class="pixelated max-w-none"
-						/>
-						<canvas
-							class="pixelated"
-							slot="right"
-							style={`width: ${width}px; height: ${height}px`}
-							use:dithering={{
-								image: loaded_image,
-								threshold,
-								noiseIntensity,
-								monochrome,
-								colorLight,
-								colorDark,
-								mode,
-								width,
-								height
-							}}
-							bind:this={canvas}
-							{width}
-							{height}
-							aria-label="Dithered Image"
-						/>
-					</SplitPanzoom>
-					<button
-						class="absolute top-0 right-0 m-4 p-2 bg-black bg-opacity-40 rounded-full"
-						on:click={() => (loaded_image = null)}
-						title="Close Image & Reset"
-					>
-						<Icon src={XMark} class="w-5 h-5 text-white" />
-					</button>
-				</div>
-			{:else}
-				<div class="w-full h-full grid place-items-center">
-					<div class="grid gap-4">
-						<p class="text-2xl text-gray-500">Select or Drop an Image to Start</p>
-	
-						<div class="flex gap-3 justify-center">
-							{#each imagePresets as url}
-								<button on:click={() => loadFromSrc(url)} class="hover:opacity-75 transition-opacity">
-									<img
-										class="aspect-square h-24 w-24 object-cover rounded-md shadow-md border-2 border-white"
-										src={url}
-										alt=""
-									/>
-								</button>
-							{/each}
-	
-							<label
-								for="image-input"
-								class="block spect-square h-24 w-24 object-cover rounded-md shadow-md border-2 border-white bg-white hover:bg-gray-100"
-							>
-								<div class="grid place-items-center h-full w-full">
-									<Icon src={Plus} class="w-12 h-12 text-gray-400" />
-								</div>
-	
-								<span class="sr-only">Choose an Image</span>
-	
-								<input
-									type="file"
-									class="sr-only"
-									id="image-input"
-									accept="image/*"
-									on:input={onInput}
+<main class="w-screen max-w-screen h-screen max-h-screen flex md:flex-row flex-col bg-gray-300">
+	<!--Main content-->
+	<section class="flex-1 overflow-hidden select-none">
+		{#if loaded_image && thresholdMap}
+			<div class="w-full h-full relative">
+				<SplitPanzoom>
+					<img
+						slot="left"
+						src={loaded_image.src}
+						alt=""
+						style={`width: ${width}px; height: ${height}px`}
+						class="pixelated max-w-none"
+					/>
+					<canvas
+						class="pixelated"
+						slot="right"
+						style={`width: ${width}px; height: ${height}px`}
+						use:dithering={{
+							image: loaded_image,
+							threshold,
+							noiseIntensity,
+							monochrome,
+							colorLight,
+							colorDark,
+							output_width: width,
+							output_height: height,
+							thresholdMap
+						}}
+						bind:this={canvas}
+						{width}
+						{height}
+						aria-label="Dithered Image"
+					/>
+				</SplitPanzoom>
+				<button
+					class="absolute top-0 right-0 m-4 p-2 bg-black bg-opacity-40 rounded-full"
+					on:click={() => (loaded_image = null)}
+					title="Close Image & Reset"
+				>
+					<Icon src={XMark} class="w-5 h-5 text-white" />
+				</button>
+			</div>
+		{:else}
+			<div class="w-full h-full grid place-items-center">
+				<div class="grid gap-4">
+					<p class="text-2xl text-gray-500">Select or Drop an Image to Start</p>
+
+					<div class="flex gap-3 justify-center">
+						{#each imagePresets as url}
+							<button on:click={() => loadFromSrc(url)} class="hover:opacity-75 transition-opacity">
+								<img
+									class="aspect-square h-24 w-24 object-cover rounded-md shadow-md border-2 border-white"
+									src={url}
+									alt=""
 								/>
-							</label>
-						</div>
+							</button>
+						{/each}
+
+						<label
+							for="image-input"
+							class="block spect-square h-24 w-24 object-cover rounded-md shadow-md border-2 border-white bg-white hover:bg-gray-100"
+						>
+							<div class="grid place-items-center h-full w-full">
+								<Icon src={Plus} class="w-12 h-12 text-gray-400" />
+							</div>
+
+							<span class="sr-only">Choose an Image</span>
+
+							<input
+								type="file"
+								class="sr-only"
+								id="image-input"
+								accept="image/*"
+								on:input={onInput}
+							/>
+						</label>
 					</div>
 				</div>
-			{/if}
-		</section>
+			</div>
+		{/if}
+	</section>
 
 	<!--Sidebar-->
 	<aside
 		class="bg-white w-full md:max-w-md border-t md:border-t-0 md:border-l border-l-0 border-gray-100 z-50 overflow-y-hidden md:h-full flex-1 shadow-lg flex flex-col divide-y divide-gray-200 justify-between"
 	>
 		<section class="grid gap-5 overflow-y-auto overflow-x-visible py-8 px-4">
+			{#if thresholdMap}
+				<div class="w-full aspect-square rounded-lg bg-gray-100 p-8 grid place-items-center">
+					<ImageDataViewer imageData={thresholdMap} />
+				</div>
+			{/if}
+
 			<div class="grid gap-3">
 				<h2 class="text-base font-semibold leading-7 text-black mb-2">Dithering Options</h2>
 
@@ -202,6 +239,10 @@
 						step={1}
 						bind:value={bayer_level}
 					/>
+				{/if}
+
+				{#if selected === 'white_noise'}
+					<DimensionsInput bind:width={white_noise_width} aspectRatio={1} />
 				{/if}
 
 				<Slider
@@ -250,11 +291,11 @@
 			<div class="border-t border-gray-100 py-4">
 				<h2 class="text-base font-semibold leading-7 text-black mb-4">Output Options</h2>
 
-				<ImageSizeInput bind:width bind:aspectRatio />
+				<DimensionsInput bind:width bind:aspectRatio />
 			</div>
 		</section>
 		<footer class="py-4 px-4 flex-shrink-0">
-			<Button on:click={save} disabled={!loaded_image}>
+			<Button on:click={save} disabled={!(loaded_image && thresholdMap)}>
 				<Icon src={ArrowDownTray} class="w-4 h-4" />
 				Save
 			</Button>

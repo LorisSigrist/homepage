@@ -54,3 +54,18 @@ export function loadImageFile(file: File): Promise<HTMLImageElement> {
         reader.readAsDataURL(file);
     });
 }
+
+export async function loadImage(src: string): Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+        const new_image = new Image();
+        new_image.onload = () => {
+            resolve(new_image);
+        };
+
+        new_image.onerror = (e) => {
+            reject(e);
+        };
+
+        new_image.src = src;
+    });
+}

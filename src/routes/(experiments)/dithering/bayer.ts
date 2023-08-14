@@ -1,4 +1,4 @@
-import { isPowerOf2 } from "./utils";
+import { isPowerOf2 } from "./rendering/utils";
 
 export function generateBayerTexture(gl: WebGLRenderingContext, level : number): WebGLTexture {
     const canvas = document.createElement('canvas');
@@ -24,6 +24,13 @@ export function generateBayerTexture(gl: WebGLRenderingContext, level : number):
 }
 
 const computedBayerLevels : Map<number, number[][]> = new Map();
+
+export function generateNormalizedBayerMatrix(level: number): number[][] {
+    const unnormalizedBayerMatrix = generateUnnormalizedBayerLevel(level);
+    const normalizationFactor = Math.pow(2, 2 * level);
+    const bayerMatrix = unnormalizedBayerMatrix.map(row => row.map(value => value / normalizationFactor));
+    return bayerMatrix;
+}
 
 function generateUnnormalizedBayerLevel(level: number): number[][] {
     if (computedBayerLevels.has(level)) return computedBayerLevels.get(level)!;
