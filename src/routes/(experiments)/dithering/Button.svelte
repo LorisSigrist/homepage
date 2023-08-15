@@ -10,7 +10,7 @@
 <button
     {disabled}
 	type="button"
-	class="{appearance[disabled ? "disabled" : "normal"]} rounded-md w-full px-2.5 py-1.5 text-sm font-semibold  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 flex items-center justify-center gap-2"
+	class="{appearance[disabled ? "disabled" : "normal"]} rounded-md px-2.5 py-1.5 text-sm font-semibold  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 flex items-center justify-center gap-2"
 	on:click
 >
 	<slot />

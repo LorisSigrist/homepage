@@ -237,6 +237,10 @@ export class Panzoom extends TypedEventTarget<PanzoomEventMap> {
         return isSafari;
     }
 
+    public reset() {
+        this.updateTransform(1, 0, 0);
+    }
+
 
     /**
      * Remove all _internal_ event listeners and cleanup.

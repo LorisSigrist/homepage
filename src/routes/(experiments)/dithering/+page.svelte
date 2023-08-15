@@ -126,6 +126,9 @@
 			generateThresholdMap(options).then((map) => (thresholdMap = map));
 		}
 	}
+
+
+	let show_sidebar = true;
 </script>
 
 <svelte:head>
@@ -145,10 +148,10 @@
 						src={loaded_image.src}
 						alt=""
 						style={`width: ${width}px; height: ${height}px`}
-						class="pixelated max-w-none"
+						class="pixelated max-w-none shadow-lg"
 					/>
 					<canvas
-						class="pixelated"
+						class="pixelated shadow-lg"
 						slot="right"
 						style={`width: ${width}px; height: ${height}px`}
 						use:orderedDithering={{
@@ -169,7 +172,7 @@
 					/>
 				</SplitPanzoom>
 				<button
-					class="absolute top-0 right-0 m-4 p-2 bg-black bg-opacity-40 rounded-full"
+					class="absolute top-0 left-0 m-4 p-2 bg-black bg-opacity-40 rounded-full"
 					on:click={() => (loaded_image = null)}
 					title="Close Image & Reset"
 				>
@@ -177,11 +180,11 @@
 				</button>
 			</div>
 		{:else}
-			<div class="w-full h-full grid place-items-center">
+			<div class="w-full h-full grid place-items-center px-8">
 				<div class="grid gap-4">
-					<p class="text-2xl text-gray-500">Select or Drop an Image to Start</p>
+					<p class="text-2xl text-gray-500 text-center">Select or Drop an Image to Start</p>
 
-					<div class="flex gap-3 justify-center">
+					<div class="flex gap-3 justify-center flex-wrap">
 						{#each imagePresets as url}
 							<button on:click={() => loadFromSrc(url)} class="hover:opacity-75 transition-opacity">
 								<img
@@ -216,11 +219,21 @@
 		{/if}
 	</section>
 
+	{#if show_sidebar}
 	<!--Sidebar-->
 	<aside
 		class="bg-white w-full md:max-w-md border-t md:border-t-0 md:border-l border-l-0 border-gray-100 z-50 overflow-y-hidden md:h-full flex-1 shadow-lg flex flex-col divide-y divide-gray-200 justify-between"
 	>
-		<section class="grid gap-5 overflow-y-auto overflow-x-visible py-8 px-4">
+		<header class="py-4 px-4 flex-shrink-0 shadow-sm z-10 flex gap-2 items-center justify-between">
+			<h1 class="font-bold">
+				Dither Studio
+			</h1>
+			<Button on:click={save} disabled={!(loaded_image && thresholdMap)}>
+				<Icon src={ArrowDownTray} class="w-4 h-4" />
+				Save
+			</Button>
+		</header>
+		<section class="grid gap-5 overflow-y-auto overflow-x-visible pt-8 px-4 safe-padding-bottom ">
 			<div class="grid gap-3">
 				<h2 class="text-base font-semibold leading-7 text-black mb-2">Threshold Map</h2>
 
@@ -313,17 +326,16 @@
 				/>
 			</div>
 		</section>
-		<footer class="py-4 px-4 flex-shrink-0">
-			<Button on:click={save} disabled={!(loaded_image && thresholdMap)}>
-				<Icon src={ArrowDownTray} class="w-4 h-4" />
-				Save
-			</Button>
-		</footer>
 	</aside>
+	{/if}
 </main>
 
 <style>
 	.pixelated {
 		image-rendering: pixelated;
+	}
+
+	.safe-padding-bottom {
+		padding-bottom: max(env(safe-area-inset-bottom), 2rem);
 	}
 </style>

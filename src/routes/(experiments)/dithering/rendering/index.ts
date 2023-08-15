@@ -67,7 +67,7 @@ export function orderedDithering(canvas: HTMLCanvasElement, initialOptions: Dith
             gl.deleteTexture(thresholdMapTexture); 
         }
         
-        thresholdMapTexture = textureFromImageData(gl, options.thresholdMap);
+        thresholdMapTexture = textureFromImageData(gl, options.thresholdMap, gl.NEAREST);
         thresholdMapSize = { width: options.thresholdMap.width, height: options.thresholdMap.height };
     }
 
