@@ -18,7 +18,7 @@ type WhiteNoiseOptions = {
     height: number
 }
 
-export async function generateThresholdMapImageData(options: ThresholdMapOptions) : Promise<ImageData> {
+export async function generateThresholdMapImageData(options: ThresholdMapOptions): Promise<ImageData> {
     switch (options.mode) {
         case "bayer":
             return await generateBayer(options);
@@ -42,7 +42,7 @@ async function generateWhiteNoise(options: WhiteNoiseOptions): Promise<ImageData
     return imageData;
 }
 
-let blue_noise : ImageBitmap | null = null;
+let blue_noise: ImageBitmap | null = null;
 
 async function generateBlueNoise(): Promise<ImageData> {
     if (!blue_noise) {

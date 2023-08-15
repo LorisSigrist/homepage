@@ -4,7 +4,7 @@ import { createTexture, initShaderProgram, loadImageToTexture, setUpRect, textur
 
 
 export type DitheringOptions = {
-    image: HTMLImageElement;
+    image: ImageData;
     thresholdMap: ImageData;
     threshold: number;
     noiseIntensity: number;
@@ -25,10 +25,6 @@ export function orderedDithering(canvas: HTMLCanvasElement, initialOptions: Dith
     if (!gl) {
         alert('WebGL not supported')
         return;
-    }
-
-    const loadImage = () => {
-        loadImageToTexture(gl, imageTexture, options.image);
     }
 
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -52,8 +48,17 @@ export function orderedDithering(canvas: HTMLCanvasElement, initialOptions: Dith
     const uDarkColor = gl.getUniformLocation(program, 'uDarkColor');
     const uLightColor = gl.getUniformLocation(program, 'uLightColor');
 
-    const imageTexture = createTexture(gl);
+    let imageTexture: WebGLTexture;
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
+    const loadImage = () => {
+        if (imageTexture) {
+            gl.deleteTexture(imageTexture);
+        }
+
+        imageTexture = textureFromImageData(gl, options.image, gl.LINEAR);
+    }
+
     loadImage();
 
     let thresholdMapTexture: WebGLTexture;
