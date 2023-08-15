@@ -27,7 +27,7 @@ const computedBayerLevels : Map<number, number[][]> = new Map();
 
 export function generateNormalizedBayerMatrix(level: number): number[][] {
     const unnormalizedBayerMatrix = generateUnnormalizedBayerLevel(level);
-    const normalizationFactor = Math.pow(2, 2 * level);
+    const normalizationFactor = Math.pow(2, 2 * level + 2);
     const bayerMatrix = unnormalizedBayerMatrix.map(row => row.map(value => value / normalizationFactor));
     return bayerMatrix;
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ArrowsRightLeft, Icon } from 'svelte-hero-icons';
-	import { Panzoom, type TransformChangeEvent } from './panzoom';
+	import { Panzoom, type TransformChangeEvent } from '$lib/interactions/panzoom';
 
 	let container: HTMLDivElement | null = null;
 
