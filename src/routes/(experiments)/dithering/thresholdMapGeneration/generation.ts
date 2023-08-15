@@ -1,8 +1,5 @@
 import { generateNormalizedBayerMatrix } from './bayer';
 import blue_noise_src from './blue_noise.png';
-import blue_noise_size from './blue_noise.png?size';
-import { loadImage } from './utils';
-
 
 export type ThresholdMapOptions = BayerOptions | BlueNoiseOptions | WhiteNoiseOptions
 
@@ -21,7 +18,7 @@ type WhiteNoiseOptions = {
     height: number
 }
 
-export async function generateThresholdMap(options: ThresholdMapOptions) : Promise<ImageData> {
+export async function generateThresholdMapImageData(options: ThresholdMapOptions) : Promise<ImageData> {
     switch (options.mode) {
         case "bayer":
             return await generateBayer(options);
@@ -45,16 +42,20 @@ async function generateWhiteNoise(options: WhiteNoiseOptions): Promise<ImageData
     return imageData;
 }
 
-let blue_noise : HTMLImageElement | null = null;
+let blue_noise : ImageBitmap | null = null;
 
 async function generateBlueNoise(): Promise<ImageData> {
-    if (!blue_noise)
-        blue_noise = await loadImage(blue_noise_src);
+    if (!blue_noise) {
+        const response = await fetch(blue_noise_src);
+        const blue_noise_blob = await response.blob();
+        blue_noise = await createImageBitmap(blue_noise_blob);
+    }
 
-    const canvas = new OffscreenCanvas(blue_noise_size.width, blue_noise_size.height);
+    const canvas = new OffscreenCanvas(blue_noise.width, blue_noise.height);
     const ctx = canvas.getContext('2d') as OffscreenCanvasRenderingContext2D;
     ctx.drawImage(blue_noise, 0, 0);
-    return ctx.getImageData(0, 0, blue_noise_size.width, blue_noise_size.height);
+
+    return ctx.getImageData(0, 0, blue_noise.width, blue_noise.height);
 }
 
 async function generateBayer(options: BayerOptions): Promise<ImageData> {

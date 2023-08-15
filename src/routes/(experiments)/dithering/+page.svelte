@@ -12,7 +12,8 @@
 	import cat_img_src from './images/cat.jpg';
 	import gradient_img_src from './images/gradient.avif';
 	import david_img_src from './images/david.png';
-	import { generateThresholdMap, type ThresholdMapOptions } from './thresholdMap';
+	import { generateThresholdMap} from './thresholdMapGeneration/main';
+	import type { ThresholdMapOptions } from './thresholdMapGeneration/generation';
 	import ImageDataViewer from './ImageDataViewer.svelte';
 
 	const imagePresets = [cat_img_src, gradient_img_src, david_img_src];

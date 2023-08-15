@@ -51,6 +51,7 @@
 		"@resvg/resvg-js": "^2.4.1",
 		"@sveltejs/kit": "^1.17.0",
 		"chrono-node": "^2.6.4",
+		"comlink": "^4.4.1",
 		"image-size": "^1.0.2",
 		"node-chrono": "^0.0.3",
 		"pointer-tracker": "^2.5.3",

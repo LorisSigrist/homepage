@@ -1,4 +1,4 @@
-import { isPowerOf2 } from "./rendering/utils";
+import { isPowerOf2 } from "../rendering/utils";
 
 export function generateBayerTexture(gl: WebGLRenderingContext, level : number): WebGLTexture {
     const canvas = document.createElement('canvas');
