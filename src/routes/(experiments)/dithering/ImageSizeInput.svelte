@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Icon, LockClosed } from 'svelte-hero-icons';
-	import { clamp } from '$lib/math/clamp';
 
 	export let width: number;
 	export let aspectRatio: number;
