@@ -1,18 +1,8 @@
 import { clamp } from "$lib/math/clamp";
+import type { ErrorDiffusionDitheringOptions } from ".";
+import * as Comlink from "comlink";
 
-export type ErrorDiffusionDitheringOptions = {
-    image: ImageData,
-    output_width: number,
-    output_height: number,
-    monochrome: boolean;
-    colorLight: string;
-    colorDark: string;
-    diffusionStrength: number;
-    diffusionMatrix: number[][];
-    diffusionMatrixOriginX: number;
-}
-
-export function errorDiffusionDithering(canvas: HTMLCanvasElement, options: ErrorDiffusionDitheringOptions) {
+function errorDiffusionDithering(canvas: OffscreenCanvas, options: ErrorDiffusionDitheringOptions) {
 
     let frame : number | null = null;
 
@@ -26,21 +16,10 @@ export function errorDiffusionDithering(canvas: HTMLCanvasElement, options: Erro
 
     loadImage();
 
-    /*
-    const errorDiffusionMatrix = [
-        [0, 0.5],
-        [0.5, 0],
-    ]
-
-    //The X index of the matrix on which the current pixel sits
-    const errorDiffusionMatrixOriginX = 0;
-    */
-
 
     const ctx = canvas.getContext('2d')!;
 
     const render = () => {
-
         ctx.drawImage(image, 0, 0, options.output_width, options.output_height);
 
         const dithered = ctx.getImageData(0, 0, options.output_width, options.output_height);
@@ -82,9 +61,9 @@ export function errorDiffusionDithering(canvas: HTMLCanvasElement, options: Erro
 
                         const errorMultiplier = options.diffusionMatrix[matrixY][matrixX];
 
-                        dithered.data[errorIndex + 0] = clamp( dithered.data[errorIndex + 0] + error_r * errorMultiplier, 0, 255);
-                        dithered.data[errorIndex + 1] = clamp( dithered.data[errorIndex + 1] + error_g * errorMultiplier, 0, 255);
-                        dithered.data[errorIndex + 2] = clamp( dithered.data[errorIndex + 2] + error_b * errorMultiplier, 0, 255);
+                        dithered.data[errorIndex + 0] = clamp( dithered.data[errorIndex + 0] + error_r * errorMultiplier * options.diffusionStrength, 0, 255);
+                        dithered.data[errorIndex + 1] = clamp( dithered.data[errorIndex + 1] + error_g * errorMultiplier * options.diffusionStrength, 0, 255);
+                        dithered.data[errorIndex + 2] = clamp( dithered.data[errorIndex + 2] + error_b * errorMultiplier * options.diffusionStrength, 0, 255);
                     }
                 }
             }
@@ -106,23 +85,36 @@ export function errorDiffusionDithering(canvas: HTMLCanvasElement, options: Erro
 
     invalidate();
 
-    return {
-        update(newOptions: ErrorDiffusionDitheringOptions) {
-            const imageChanged = newOptions.image !== options.image;
-            options = newOptions;
 
-            if(imageChanged)
-                loadImage();
+    const update = (newOptions: ErrorDiffusionDitheringOptions) => {
+        const imageChanged = newOptions.image !== options.image;
+        options = newOptions;
 
-            invalidate();
-        },
-        destroy() {
-            if(frame !== null)
-                cancelAnimationFrame(frame!);
-        }
+        canvas.width = options.output_width;
+        canvas.height = options.output_height;
+
+        if(imageChanged)
+            loadImage();
+
+        invalidate();
     }
+
+    const destroy = () => {
+        if (frame !== null)
+            cancelAnimationFrame(frame!);
+    }
+
+    return Comlink.proxy({
+        update,
+        destroy
+    })
 }
 
+export const ErrorDiffusionWorker = {
+    errorDiffusionDithering : errorDiffusionDithering
+}
+
+Comlink.expose(ErrorDiffusionWorker);
 
 function hexToRGB(hex: string): [number, number, number] {
     const r = parseInt(hex.slice(1, 3), 16);

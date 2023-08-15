@@ -15,7 +15,7 @@
 	import { generateThresholdMap } from './thresholdMapGeneration/main';
 	import type { ThresholdMapOptions } from './thresholdMapGeneration/generation';
 	import ImageDataViewer from './ImageDataViewer.svelte';
-	import { errorDiffusionDithering } from './errorDiffusion/errorDiffusion';
+	import { errorDiffusionDithering } from './errorDiffusion';
 
 	const imagePresets = [cat_img_src, gradient_img_src, david_img_src];
 
@@ -144,6 +144,21 @@
 	}
 
 	let show_sidebar = true;
+
+	let diffusionStrength = 1;
+	const floydSteinbergDither = [
+		[0, 0, 7 / 16],
+		[3 / 16, 5 / 16, 1 / 16]
+	];
+
+	const floydSteinbergOriginX = 1;
+
+	const atkinsonDither = [
+		[0, 0, 1 / 8, 1 / 8],
+		[1 / 8, 1 / 8, 1 / 8, 0],
+		[0, 1 / 8, 0, 0]
+	];
+	const atkinsonOriginX = 1;
 </script>
 
 <svelte:head>
@@ -179,12 +194,9 @@
 									monochrome,
 									colorLight,
 									colorDark,
-									diffusionStrength: 1,
-									diffusionMatrix: [
-										[0, 0.5],
-										[0.5, 0]
-									],
-									diffusionMatrixOriginX: 0
+									diffusionStrength,
+									diffusionMatrix: atkinsonDither,
+									diffusionMatrixOriginX: atkinsonOriginX
 								}}
 								{width}
 								{height}
@@ -308,6 +320,14 @@
 
 				<div class="grid gap-3">
 					<h2 class="text-base font-semibold leading-7 text-black mb-2">Dithering Options</h2>
+
+					<Slider
+						label="Diffusion Strength ({diffusionStrength})"
+						min={0}
+						max={2}
+						step={0.01}
+						bind:value={diffusionStrength}
+					/>
 
 					<Slider
 						label="Threshold ({threshold})"
