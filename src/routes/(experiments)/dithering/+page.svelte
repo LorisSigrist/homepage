@@ -16,6 +16,7 @@
 	import type { ThresholdMapOptions } from './thresholdMapGeneration/generation';
 	import ImageDataViewer from './ImageDataViewer.svelte';
 	import { errorDiffusionDithering } from './errorDiffusion';
+	import ErrorDiffusionOptions from './ErrorDiffusionOptions.svelte';
 
 	const imagePresets = [cat_img_src, gradient_img_src, david_img_src];
 
@@ -34,7 +35,7 @@
 	$: white_noise_height = white_noise_width;
 
 	let width = 300;
-	$: height = width / aspectRatio;
+	$: height = Math.round(width / aspectRatio);
 
 	let loaded_image: HTMLImageElement | null = null;
 	let image_data: ImageData | null = null;
@@ -143,22 +144,9 @@
 		}
 	}
 
-	let show_sidebar = true;
-
 	let diffusionStrength = 1;
-	const floydSteinbergDither = [
-		[0, 0, 7 / 16],
-		[3 / 16, 5 / 16, 1 / 16]
-	];
-
-	const floydSteinbergOriginX = 1;
-
-	const atkinsonDither = [
-		[0, 0, 1 / 8, 1 / 8],
-		[1 / 8, 1 / 8, 1 / 8, 0],
-		[0, 1 / 8, 0, 0]
-	];
-	const atkinsonOriginX = 1;
+	let diffusionMatrix = [[1]];
+	let diffusionMatrixOriginX = 0;
 </script>
 
 <svelte:head>
@@ -195,8 +183,8 @@
 									colorLight,
 									colorDark,
 									diffusionStrength,
-									diffusionMatrix: atkinsonDither,
-									diffusionMatrixOriginX: atkinsonOriginX
+									diffusionMatrix,
+									diffusionMatrixOriginX
 								}}
 								{width}
 								{height}
@@ -271,122 +259,116 @@
 			</div>
 		{/if}
 	</section>
+	<!--Sidebar-->
+	<aside
+		class="bg-white w-full md:max-w-md border-t md:border-t-0 md:border-l border-l-0 border-gray-100 z-50 overflow-y-hidden md:h-full flex-1 shadow-lg flex flex-col divide-y divide-gray-200 justify-start"
+	>
+		<header class="py-4 px-4 flex-shrink-0 shadow-sm z-10 flex gap-2 items-center justify-between">
+			<h1 class="font-bold">Dither Studio</h1>
+			<Button on:click={save} disabled={!loaded_image}>
+				<Icon src={ArrowDownTray} class="w-4 h-4" />
+				Save
+			</Button>
+		</header>
+		<section class="grid gap-5 overflow-y-auto overflow-x-visible pt-8 px-4 safe-padding-bottom">
+			<div class="border-b border-gray-100 pb-4">
+				<h2 class="text-base font-semibold leading-7 text-black mb-4">Output Options</h2>
 
-	{#if show_sidebar}
-		<!--Sidebar-->
-		<aside
-			class="bg-white w-full md:max-w-md border-t md:border-t-0 md:border-l border-l-0 border-gray-100 z-50 overflow-y-hidden md:h-full flex-1 shadow-lg flex flex-col divide-y divide-gray-200 justify-start"
-		>
-			<header
-				class="py-4 px-4 flex-shrink-0 shadow-sm z-10 flex gap-2 items-center justify-between"
-			>
-				<h1 class="font-bold">Dither Studio</h1>
-				<Button on:click={save} disabled={!loaded_image}>
-					<Icon src={ArrowDownTray} class="w-4 h-4" />
-					Save
-				</Button>
-			</header>
-			<section class="grid gap-5 overflow-y-auto overflow-x-visible pt-8 px-4 safe-padding-bottom">
-				<div class="grid gap-3">
-					<h2 class="text-base font-semibold leading-7 text-black mb-2">Threshold Map</h2>
+				<DimensionsInput
+					bind:width
+					bind:aspectRatio
+					minWidth={12}
+					minHeight={12}
+					maxHeight={5000}
+					maxWidth={5000}
+				/>
+			</div>
 
-					<Select label="Dither Mode" options={ditherModeOptions} bind:selected={mode} />
+			<ErrorDiffusionOptions
+				bind:diffusionStrength
+				bind:diffusionMatrix
+				bind:diffusionOriginX={diffusionMatrixOriginX}
+			/>
 
-					{#if mode === 'bayer'}
-						<Slider
-							label="Bayer Level ({bayer_level})"
-							min={0}
-							max={5}
-							step={1}
-							bind:value={bayer_level}
-						/>
-					{/if}
+			<div class="grid gap-3">
+				<h2 class="text-base font-semibold leading-7 text-black mb-2">Threshold Map</h2>
 
-					{#if mode === 'white_noise'}
-						<DimensionsInput
-							bind:width={white_noise_width}
-							aspectRatio={1}
-							minWidth={1}
-							minHeight={1}
-							maxHeight={3000}
-							maxWidth={3000}
-						/>
-					{/if}
+				<Select label="Dither Mode" options={ditherModeOptions} bind:selected={mode} />
 
-					<ImageDataViewer imageData={thresholdMap}>
-						<span slot="placeholder">Loading Threshold Map</span>
-					</ImageDataViewer>
-				</div>
-
-				<div class="grid gap-3">
-					<h2 class="text-base font-semibold leading-7 text-black mb-2">Dithering Options</h2>
-
+				{#if mode === 'bayer'}
 					<Slider
-						label="Diffusion Strength ({diffusionStrength})"
+						label="Bayer Level ({bayer_level})"
 						min={0}
-						max={2}
-						step={0.01}
-						bind:value={diffusionStrength}
+						max={5}
+						step={1}
+						bind:value={bayer_level}
 					/>
+				{/if}
 
-					<Slider
-						label="Threshold ({threshold})"
-						min={0}
-						max={1}
-						step={0.01}
-						bind:value={threshold}
-					/>
-
-					<Slider
-						label="Noise Intensity ({noiseIntensity})"
-						min={0}
-						max={1.5}
-						step={0.01}
-						bind:value={noiseIntensity}
-					/>
-
-					<div class="relative flex items-start">
-						<div class="flex h-6 items-center">
-							<input
-								type="checkbox"
-								id="monochrome"
-								bind:checked={monochrome}
-								class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-							/>
-						</div>
-						<div class="ml-3 text-sm leading-6">
-							<label for="monochrome" class="font-medium text-gray-900">Monochrome</label>
-						</div>
-					</div>
-
-					{#if monochrome}
-						<fieldset>
-							<div class="flex gap-3">
-								<input type="color" name="color-light" id="color-light" bind:value={colorLight} />
-								<label for="color-light" class="font-medium text-gray-900">Light</label>
-							</div>
-							<div class="flex gap-3">
-								<input type="color" name="color-dark" id="color-dark" bind:value={colorDark} />
-								<label for="color-dark" class="font-medium text-gray-900">Dark</label>
-							</div>
-						</fieldset>
-					{/if}
-				</div>
-				<div class="border-t border-gray-100 py-4">
-					<h2 class="text-base font-semibold leading-7 text-black mb-4">Output Options</h2>
-
+				{#if mode === 'white_noise'}
 					<DimensionsInput
-						bind:width
-						bind:aspectRatio
-						minWidth={12}
-						minHeight={12}
-						maxHeight={5000}
-						maxWidth={5000}
+						bind:width={white_noise_width}
+						aspectRatio={1}
+						minWidth={1}
+						minHeight={1}
+						maxHeight={3000}
+						maxWidth={3000}
 					/>
+				{/if}
+
+				<ImageDataViewer imageData={thresholdMap}>
+					<span slot="placeholder">Loading Threshold Map</span>
+				</ImageDataViewer>
+			</div>
+
+			<div class="grid gap-3">
+				<h2 class="text-base font-semibold leading-7 text-black mb-2">Dithering Options</h2>
+
+				<Slider
+					label="Threshold ({threshold})"
+					min={0}
+					max={1}
+					step={0.01}
+					bind:value={threshold}
+				/>
+
+				<Slider
+					label="Noise Intensity ({noiseIntensity})"
+					min={0}
+					max={1.5}
+					step={0.01}
+					bind:value={noiseIntensity}
+				/>
+
+				<div class="relative flex items-start">
+					<div class="flex h-6 items-center">
+						<input
+							type="checkbox"
+							id="monochrome"
+							bind:checked={monochrome}
+							class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+						/>
+					</div>
+					<div class="ml-3 text-sm leading-6">
+						<label for="monochrome" class="font-medium text-gray-900">Monochrome</label>
+					</div>
 				</div>
-			</section>
-		</aside>
-	{/if}
+
+				{#if monochrome}
+					<fieldset>
+						<div class="flex gap-3">
+							<input type="color" name="color-light" id="color-light" bind:value={colorLight} />
+							<label for="color-light" class="font-medium text-gray-900">Light</label>
+						</div>
+						<div class="flex gap-3">
+							<input type="color" name="color-dark" id="color-dark" bind:value={colorDark} />
+							<label for="color-dark" class="font-medium text-gray-900">Dark</label>
+						</div>
+					</fieldset>
+				{/if}
+			</div>
+		</section>
+	</aside>
 </main>
 
 <style>

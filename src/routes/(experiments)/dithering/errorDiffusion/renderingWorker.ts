@@ -4,7 +4,7 @@ import * as Comlink from "comlink";
 
 function errorDiffusionDithering(canvas: OffscreenCanvas, options: ErrorDiffusionDitheringOptions) {
 
-    let frame : number | null = null;
+    let frame: number | null = null;
 
     let image: OffscreenCanvas;
 
@@ -16,6 +16,8 @@ function errorDiffusionDithering(canvas: OffscreenCanvas, options: ErrorDiffusio
 
     loadImage();
 
+    let colorLight = hexToRGB(options.colorLight);
+    let colorDark = hexToRGB(options.colorDark);
 
     const ctx = canvas.getContext('2d')!;
 
@@ -33,9 +35,21 @@ function errorDiffusionDithering(canvas: OffscreenCanvas, options: ErrorDiffusio
                 const g = dithered.data[index + 1];
                 const b = dithered.data[index + 2];
 
-                const r3 = r > 127 ? 255 : 0;
-                const g3 = g > 127 ? 255 : 0;
-                const b3 = b > 127 ? 255 : 0;
+                let r3;
+                let g3;
+                let b3;
+
+                if (options.monochrome) {
+                    const gray = (r + g + b) / 3;
+                    
+                    r3 = gray > 127 ? colorLight[0] : colorDark[0];
+                    g3 = gray > 127 ? colorLight[1] : colorDark[1];
+                    b3 = gray > 127 ? colorLight[2] : colorDark[2];
+                } else {
+                    r3 = r > 127 ? 255 : 0;
+                    g3 = g > 127 ? 255 : 0;
+                    b3 = b > 127 ? 255 : 0;
+                }
 
                 const error_r = (r - r3) * options.diffusionStrength / 2;
                 const error_g = (g - g3) * options.diffusionStrength / 2;
@@ -61,9 +75,9 @@ function errorDiffusionDithering(canvas: OffscreenCanvas, options: ErrorDiffusio
 
                         const errorMultiplier = options.diffusionMatrix[matrixY][matrixX];
 
-                        dithered.data[errorIndex + 0] = clamp( dithered.data[errorIndex + 0] + error_r * errorMultiplier * options.diffusionStrength, 0, 255);
-                        dithered.data[errorIndex + 1] = clamp( dithered.data[errorIndex + 1] + error_g * errorMultiplier * options.diffusionStrength, 0, 255);
-                        dithered.data[errorIndex + 2] = clamp( dithered.data[errorIndex + 2] + error_b * errorMultiplier * options.diffusionStrength, 0, 255);
+                        dithered.data[errorIndex + 0] = clamp(dithered.data[errorIndex + 0] + error_r * errorMultiplier * options.diffusionStrength, 0, 255);
+                        dithered.data[errorIndex + 1] = clamp(dithered.data[errorIndex + 1] + error_g * errorMultiplier * options.diffusionStrength, 0, 255);
+                        dithered.data[errorIndex + 2] = clamp(dithered.data[errorIndex + 2] + error_b * errorMultiplier * options.diffusionStrength, 0, 255);
                     }
                 }
             }
@@ -93,7 +107,10 @@ function errorDiffusionDithering(canvas: OffscreenCanvas, options: ErrorDiffusio
         canvas.width = options.output_width;
         canvas.height = options.output_height;
 
-        if(imageChanged)
+        colorLight = hexToRGB(options.colorLight);
+        colorDark = hexToRGB(options.colorDark);
+
+        if (imageChanged)
             loadImage();
 
         invalidate();
@@ -111,7 +128,7 @@ function errorDiffusionDithering(canvas: OffscreenCanvas, options: ErrorDiffusio
 }
 
 export const ErrorDiffusionWorker = {
-    errorDiffusionDithering : errorDiffusionDithering
+    errorDiffusionDithering: errorDiffusionDithering
 }
 
 Comlink.expose(ErrorDiffusionWorker);
