@@ -178,7 +178,13 @@
 									output_height: height,
 									monochrome,
 									colorLight,
-									colorDark
+									colorDark,
+									diffusionStrength: 1,
+									diffusionMatrix: [
+										[0, 0.5],
+										[0.5, 0]
+									],
+									diffusionMatrixOriginX: 0
 								}}
 								{width}
 								{height}
@@ -263,7 +269,7 @@
 				class="py-4 px-4 flex-shrink-0 shadow-sm z-10 flex gap-2 items-center justify-between"
 			>
 				<h1 class="font-bold">Dither Studio</h1>
-				<Button on:click={save} disabled={!(loaded_image)}>
+				<Button on:click={save} disabled={!loaded_image}>
 					<Icon src={ArrowDownTray} class="w-4 h-4" />
 					Save
 				</Button>
