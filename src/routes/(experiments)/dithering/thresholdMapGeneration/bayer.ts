@@ -1,27 +1,4 @@
-import { isPowerOf2 } from "../rendering/utils";
-
-export function generateBayerTexture(gl: WebGLRenderingContext, level : number): WebGLTexture {
-    const canvas = document.createElement('canvas');
-
-    canvas.width = Math.pow(2, level + 1);
-    canvas.height = Math.pow(2, level + 1);
-
-    const unnormalizedBayerMatrix = generateUnnormalizedBayerLevel(level);
-    const normalizationFactor = Math.pow(2, 2 * level );
-    const bayerMatrix = unnormalizedBayerMatrix.map(row => row.map(value => value / normalizationFactor));
-
-    const ctx = canvas.getContext('2d')!;
-
-    for (let y = 0; y < bayerMatrix.length; y++) {
-        for (let x = 0; x < bayerMatrix[y].length; x++) {
-            const value = bayerMatrix[y][x] * 255 / 4;
-            ctx.fillStyle = `rgb(${value}, ${value}, ${value})`;
-            ctx.fillRect(x, y, 1, 1);
-        }
-    }
-
-    return textureFromCanvas2D(gl, ctx);
-}
+import { isPowerOf2 } from "$lib/math/power2";
 
 const computedBayerLevels : Map<number, number[][]> = new Map();
 

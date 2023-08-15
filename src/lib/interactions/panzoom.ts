@@ -1,8 +1,8 @@
 import { TypedEventTarget } from 'typescript-event-target';
 import PointerTracker, { type Pointer } from 'pointer-tracker';
+import { clamp } from '$lib/math/clamp';
 
 export type TransformChangeEvent = CustomEvent<{ x: number, y: number, scale: number, matrix : DOMMatrix }>;
-
 
 interface PanzoomEventMap {
     'panzoom:change': TransformChangeEvent;
@@ -34,10 +34,6 @@ function getMidpoint(a: Point, b?: Point): Point {
         clientX: (a.clientX + b.clientX) / 2,
         clientY: (a.clientY + b.clientY) / 2,
     };
-}
-
-function clamp(value: number, min: number, max: number) {
-    return Math.min(Math.max(value, min), max);
 }
 
 export class Panzoom extends TypedEventTarget<PanzoomEventMap> {

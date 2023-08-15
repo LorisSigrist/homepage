@@ -1,3 +1,5 @@
+import { isPowerOf2 } from "$lib/math/power2";
+
 export function initShaderProgram(
     gl: WebGLRenderingContext,
     vsSource: string,
@@ -152,12 +154,6 @@ export function loadImageToTexture(gl: WebGLRenderingContext, texture: WebGLText
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     }
 }
-
-export function isPowerOf2(value: number) {
-    return (value & (value - 1)) === 0;
-}
-
-
 
 export function setUpRect(gl: WebGLRenderingContext) {
     //Initialize and Bind Vertex Buffer for Quad

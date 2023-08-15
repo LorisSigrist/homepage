@@ -59,17 +59,15 @@ async function generateBlueNoise(): Promise<ImageData> {
 }
 
 async function generateBayer(options: BayerOptions): Promise<ImageData> {
-    const canvas = new OffscreenCanvas(Math.pow(2, options.level + 1), Math.pow(2, options.level + 1));
-
+    const size = Math.pow(2, options.level + 1);
     const bayerMatrix = generateNormalizedBayerMatrix(options.level);
-    const ctx = canvas.getContext('2d')!;
 
-    const imageData = ctx.createImageData(canvas.width, canvas.height);
+    const imageData = new ImageData(size, size)
 
     for (let y = 0; y < bayerMatrix.length; y++) {
         for (let x = 0; x < bayerMatrix[y].length; x++) {
             const value = bayerMatrix[y][x] * 255;
-            const index = (y * canvas.width + x) * 4;
+            const index = (y * imageData.width + x) * 4;
             imageData.data[index] = value;
             imageData.data[index + 1] = value;
             imageData.data[index + 2] = value;

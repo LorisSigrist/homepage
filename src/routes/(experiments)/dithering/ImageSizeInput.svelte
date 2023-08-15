@@ -1,12 +1,22 @@
 <script lang="ts">
 	import { Icon, LockClosed } from 'svelte-hero-icons';
+	import { clamp } from '$lib/math/clamp';
 
 	export let width: number;
 	export let aspectRatio: number;
 
+
+	export let maxWidth: number | null = null;
+	export let maxHeight: number | null = null;
+
+	export let minWidth: number | null = null;
+	export let minHeight: number | null = null;
+
 	function onWidthInput(e: any) {
         const newWidth = e.target.value;
         if(!newWidth) return;
+		if(minWidth !== null && newWidth < minWidth) return;
+		if(maxWidth !== null && newWidth > maxWidth) return;
 		width = newWidth;
 	}
 
@@ -15,6 +25,8 @@
 	function onHeightInput(e: any) {
 		const height = e.target.value;
         if(!height) return;
+		if(minHeight !== null && height < minHeight) return;
+		if(maxHeight !== null && height > maxHeight) return;
 		width = Math.round(aspectRatio * height);
 	}
 
@@ -36,8 +48,8 @@
 				name="width"
 				id="width-{withId}"
 				type="number"
-				min="12"
-				max="3000"
+				min={minWidth}
+				max={maxWidth}
 				step="1"
 				value={width}
 				on:input={onWidthInput}
@@ -62,8 +74,8 @@
 				type="number"
                 id="height-{heightId}"
                 name="height"
-				min="12"
-				max="3000"
+				min={minHeight}
+				max={maxHeight}
 				step="1"
 				value={height}
 				on:input={onHeightInput}

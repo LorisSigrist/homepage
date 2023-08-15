@@ -12,7 +12,7 @@
 	import cat_img_src from './images/cat.jpg';
 	import gradient_img_src from './images/gradient.avif';
 	import david_img_src from './images/david.png';
-	import { generateThresholdMap} from './thresholdMapGeneration/main';
+	import { generateThresholdMap } from './thresholdMapGeneration/main';
 	import type { ThresholdMapOptions } from './thresholdMapGeneration/generation';
 	import ImageDataViewer from './ImageDataViewer.svelte';
 
@@ -237,7 +237,14 @@
 				{/if}
 
 				{#if selected === 'white_noise'}
-					<DimensionsInput bind:width={white_noise_width} aspectRatio={1} />
+					<DimensionsInput
+						bind:width={white_noise_width}
+						aspectRatio={1}
+						minWidth={1}
+						minHeight={1}
+						maxHeight={1000}
+						maxWidth={1000}
+					/>
 				{/if}
 
 				{#if thresholdMap}
@@ -296,7 +303,14 @@
 			<div class="border-t border-gray-100 py-4">
 				<h2 class="text-base font-semibold leading-7 text-black mb-4">Output Options</h2>
 
-				<DimensionsInput bind:width bind:aspectRatio />
+				<DimensionsInput
+					bind:width
+					bind:aspectRatio
+					minWidth={12}
+					minHeight={12}
+					maxHeight={5000}
+					maxWidth={5000}
+				/>
 			</div>
 		</section>
 		<footer class="py-4 px-4 flex-shrink-0">

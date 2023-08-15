@@ -1,15 +1,12 @@
 <script lang="ts">
 	import { ArrowsRightLeft, Icon } from 'svelte-hero-icons';
 	import { Panzoom, type TransformChangeEvent } from '$lib/interactions/panzoom';
+	import { clamp } from '$lib/math/clamp';
 
 	let container: HTMLDivElement | null = null;
 
 	//The percentage of the screen that the split is at
 	let split = 50;
-
-	function clamp(value: number, min: number, max: number) {
-		return Math.min(Math.max(value, min), max);
-	}
 
 	function drag(element: HTMLElement) {
 		element.addEventListener('pointerdown', (event) => {
@@ -45,8 +42,8 @@
 		const pz = new Panzoom(element);
 
 		function panzoomChange(e: TransformChangeEvent) {
-			const { x, y, scale, matrix } = e.detail;
-			pzTransform = `transform: translate(${x}px, ${y}px) scale(${scale})`;
+			const { matrix } = e.detail;
+			pzTransform = `transform: ${matrix.toString()};` //matrix(${scale}, 0, 0, ${scale}, ${x}, ${y});`
 		}
 
 		pz.addEventListener("panzoom:change", panzoomChange)
