@@ -1,8 +1,16 @@
 <script lang="ts" context="module">
 	type Option = { name: string; value: string };
+
+
+	export type Options<Value extends string> = readonly ({
+		name: string;
+		value: Value;
+	})[]
+
+	type AnyOptions = Options<string>;
 </script>
 
-<script lang="ts" generics="O extends readonly Option[]">
+<script lang="ts" generics="O extends AnyOptions">
 	export let options: O;
 
 	export let selected: O[number]['value'];

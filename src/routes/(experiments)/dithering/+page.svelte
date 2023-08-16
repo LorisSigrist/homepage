@@ -2,8 +2,6 @@
 	import '$lib/styles/bootstrap.css';
 	import { ArrowDownTray, Icon, Plus, XMark } from 'svelte-hero-icons';
 	import DimensionsInput from './ImageSizeInput.svelte';
-	import Select from './Select.svelte';
-	import Slider from './Slider.svelte';
 
 	import { orderedDithering } from './rendering/index';
 	import Button from './Button.svelte';
@@ -12,27 +10,18 @@
 	import cat_img_src from './images/cat.jpg';
 	import gradient_img_src from './images/gradient.avif';
 	import david_img_src from './images/david.png';
-	import { generateThresholdMap } from './thresholdMapGeneration/main';
-	import type { ThresholdMapOptions } from './thresholdMapGeneration/generation';
-	import ImageDataViewer from './ImageDataViewer.svelte';
 	import { errorDiffusionDithering } from './errorDiffusion';
 	import ErrorDiffusionOptions from './ErrorDiffusionOptions.svelte';
+	import Tabs from './Tabs.svelte';
+	import OrderedDitheringOptions from './OrderedDitheringOptions.svelte';
 
 	const imagePresets = [cat_img_src, gradient_img_src, david_img_src];
 
-	let threshold = 0.5;
-	let noiseIntensity = 0.3;
 	let monochrome = false;
 	let colorLight = '#ede6cc';
 	let colorDark = '#21263f';
 
 	let canvas: HTMLCanvasElement | null = null;
-
-	type DitherMode = `bayer` | 'blue_noise' | 'white_noise' | 'basic_error_diffusion';
-	let mode: DitherMode = 'blue_noise';
-	let bayer_level = 3;
-	let white_noise_width = 256;
-	$: white_noise_height = white_noise_width;
 
 	let width = 300;
 	$: height = Math.round(width / aspectRatio);
@@ -52,25 +41,6 @@
 		if (!canvas) return;
 		await saveCanvasAsImage(canvas, 'dithered', 'png');
 	}
-
-	const ditherModeOptions = [
-		{
-			name: 'Bayer',
-			value: 'bayer'
-		},
-		{
-			name: 'Blue Noise',
-			value: 'blue_noise'
-		},
-		{
-			name: 'White Noise',
-			value: 'white_noise'
-		},
-		{
-			name: 'Basic Error Diffusion',
-			value: 'basic_error_diffusion'
-		}
-	] as const;
 
 	async function onDrop(e: DragEvent) {
 		const file = e.dataTransfer?.files[0];
@@ -109,40 +79,11 @@
 		new_image.src = url;
 	}
 
+	let mode: 'ordered' | 'error_diffusion' = 'ordered';
+
 	let thresholdMap: ImageData | null = null;
-
-	$: {
-		if ('ImageData' in globalThis) {
-			if (mode === 'basic_error_diffusion') {
-				thresholdMap = null;
-			} else {
-				let options: ThresholdMapOptions;
-
-				switch (mode) {
-					case 'bayer':
-						options = {
-							mode: 'bayer',
-							level: bayer_level
-						};
-						break;
-					case 'blue_noise':
-						options = {
-							mode: 'blue_noise'
-						};
-						break;
-					case 'white_noise':
-						options = {
-							mode: 'white_noise',
-							width: white_noise_width,
-							height: white_noise_height
-						};
-						break;
-				}
-
-				generateThresholdMap(options).then((map) => (thresholdMap = map));
-			}
-		}
-	}
+	let threshold = 0.5;
+	let noiseIntensity = 0.3;
 
 	let diffusionStrength = 1;
 	let diffusionMatrix = [[1]];
@@ -170,7 +111,7 @@
 					/>
 
 					<svelte:fragment slot="right">
-						{#if mode === 'basic_error_diffusion'}
+						{#if mode === 'error_diffusion'}
 							<canvas
 								class="pixelated shadow-lg"
 								style={`width: ${width}px; height: ${height}px`}
@@ -271,7 +212,7 @@
 			</Button>
 		</header>
 		<section class="grid gap-5 overflow-y-auto overflow-x-visible pt-8 px-4 safe-padding-bottom">
-			<div class="border-b border-gray-100 pb-4">
+			<div>
 				<h2 class="text-base font-semibold leading-7 text-black mb-4">Output Options</h2>
 
 				<DimensionsInput
@@ -284,61 +225,26 @@
 				/>
 			</div>
 
-			<ErrorDiffusionOptions
-				bind:diffusionStrength
-				bind:diffusionMatrix
-				bind:diffusionOriginX={diffusionMatrixOriginX}
+			<Tabs
+				tabs={[
+					{ label: 'Ordered', value: 'ordered' },
+					{ label: 'Error Diffusion', value: 'error_diffusion' }
+				]}
+				bind:selected={mode}
 			/>
 
-			<div class="grid gap-3">
-				<h2 class="text-base font-semibold leading-7 text-black mb-2">Threshold Map</h2>
-
-				<Select label="Dither Mode" options={ditherModeOptions} bind:selected={mode} />
-
-				{#if mode === 'bayer'}
-					<Slider
-						label="Bayer Level ({bayer_level})"
-						min={0}
-						max={5}
-						step={1}
-						bind:value={bayer_level}
-					/>
-				{/if}
-
-				{#if mode === 'white_noise'}
-					<DimensionsInput
-						bind:width={white_noise_width}
-						aspectRatio={1}
-						minWidth={1}
-						minHeight={1}
-						maxHeight={3000}
-						maxWidth={3000}
-					/>
-				{/if}
-
-				<ImageDataViewer imageData={thresholdMap}>
-					<span slot="placeholder">Loading Threshold Map</span>
-				</ImageDataViewer>
-			</div>
+			{#if mode === 'error_diffusion'}
+				<ErrorDiffusionOptions
+					bind:diffusionStrength
+					bind:diffusionMatrix
+					bind:diffusionOriginX={diffusionMatrixOriginX}
+				/>
+			{:else if mode === 'ordered'}
+				<OrderedDitheringOptions bind:thresholdMap bind:noiseIntensity bind:threshold />
+			{/if}
 
 			<div class="grid gap-3">
 				<h2 class="text-base font-semibold leading-7 text-black mb-2">Dithering Options</h2>
-
-				<Slider
-					label="Threshold ({threshold})"
-					min={0}
-					max={1}
-					step={0.01}
-					bind:value={threshold}
-				/>
-
-				<Slider
-					label="Noise Intensity ({noiseIntensity})"
-					min={0}
-					max={1.5}
-					step={0.01}
-					bind:value={noiseIntensity}
-				/>
 
 				<div class="relative flex items-start">
 					<div class="flex h-6 items-center">

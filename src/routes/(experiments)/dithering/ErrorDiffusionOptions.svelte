@@ -8,7 +8,7 @@
 
 	type ErrorDiffusionMode = 'basic' | 'floyd_steinberg' | 'atkinson' | 'jarvis_judice_ninke';
 
-	let errorDiffusionMode: ErrorDiffusionMode = 'basic';
+	let errorDiffusionMode: ErrorDiffusionMode = 'floyd_steinberg';
 
 	const errorDiffusionOptions = [
 		{
