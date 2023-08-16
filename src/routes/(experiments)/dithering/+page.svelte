@@ -14,6 +14,7 @@
 	import ErrorDiffusionOptions from './ErrorDiffusionOptions.svelte';
 	import Tabs from './Tabs.svelte';
 	import OrderedDitheringOptions from './OrderedDitheringOptions.svelte';
+	import { onMount } from 'svelte';
 
 	const imagePresets = [cat_img_src, gradient_img_src, david_img_src];
 
@@ -88,6 +89,27 @@
 	let diffusionStrength = 1;
 	let diffusionMatrix = [[1]];
 	let diffusionMatrixOriginX = 0;
+
+
+	let splitDirection : "horizontal" | "vertical" = "horizontal"
+
+	onMount(()=>{
+		const mediaQuery = window.matchMedia('(min-width: 768px)')
+
+		function handleOrientationChange(e: MediaQueryListEvent | MediaQueryList) {
+			if (e.matches) {
+				splitDirection = "horizontal"
+			} else {
+				splitDirection = "vertical"
+			}
+		}
+
+		mediaQuery.addEventListener("change", handleOrientationChange)
+		handleOrientationChange(mediaQuery)
+
+		return () => mediaQuery.removeEventListener("change", handleOrientationChange)
+	})
+
 </script>
 
 <svelte:head>
@@ -101,7 +123,7 @@
 	<section class="flex-1 overflow-hidden select-none">
 		{#if image_data && loaded_image}
 			<div class="w-full h-full relative">
-				<SplitPanzoom>
+				<SplitPanzoom direction={splitDirection}>
 					<img
 						slot="left"
 						src={loaded_image.src}
