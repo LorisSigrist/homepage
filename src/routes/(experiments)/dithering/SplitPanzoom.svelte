@@ -8,7 +8,7 @@
 	let container: HTMLDivElement | null = null;
 
 	//The percentage of the screen that the split is at
-	let split = 50;
+	export let split = 50;
 
 	function drag(element: HTMLElement) {
 		element.addEventListener('pointerdown', (event) => {

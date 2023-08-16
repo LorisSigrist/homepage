@@ -91,26 +91,26 @@
 	let diffusionMatrix = [[1]];
 	let diffusionMatrixOriginX = 0;
 
+	let splitDirection: 'horizontal' | 'vertical' = 'horizontal';
 
-	let splitDirection : "horizontal" | "vertical" = "horizontal"
+	let options_open = false;
 
-	onMount(()=>{
-		const mediaQuery = window.matchMedia('(min-width: 768px)')
+	onMount(() => {
+		const mediaQuery = window.matchMedia('(min-width: 768px)');
 
 		function handleOrientationChange(e: MediaQueryListEvent | MediaQueryList) {
-			if (e.matches) {
-				splitDirection = "horizontal"
-			} else {
-				splitDirection = "vertical"
-			}
+			//Change split direction on mobile
+			splitDirection = e.matches ? 'horizontal' : 'vertical';
+
+			//Automatically open options on desktop
+			options_open = mediaQuery.matches;
 		}
 
-		mediaQuery.addEventListener("change", handleOrientationChange)
-		handleOrientationChange(mediaQuery)
+		mediaQuery.addEventListener('change', handleOrientationChange);
+		handleOrientationChange(mediaQuery);
 
-		return () => mediaQuery.removeEventListener("change", handleOrientationChange)
-	})
-
+		return () => mediaQuery.removeEventListener('change', handleOrientationChange);
+	});
 </script>
 
 <svelte:head>
@@ -236,86 +236,84 @@
 	<aside
 		class="md:w-96 w-full max-h-full absolute bottom-0 left-0 right-0 top-0 md:left-auto z-50 p-2 grid place-items-end touch-none pointer-events-none"
 	>
-		<Collapsible>
-		<svelte:fragment slot="header">
-			<h1 class="font-bold">
-				Dithering
-			</h1>
-			<Button on:click={save} disabled={!loaded_image}>
-				<Icon src={ArrowDownTray} class="w-4 h-4" />
-				Save
-			</Button>
-		</svelte:fragment>
-		<section class="grid gap-8 pt-8 px-4 safe-padding-bottom">
-			<div>
-				<h2 class="text-base font-semibold leading-7 text-black mb-4">Output Options</h2>
+		<Collapsible open={options_open}>
+			<svelte:fragment slot="header">
+				<h1 class="font-bold">Options</h1>
+				<Button on:click={save} disabled={!loaded_image}>
+					<Icon src={ArrowDownTray} class="w-4 h-4" />
+					Save
+				</Button>
+			</svelte:fragment>
+			<section class="grid gap-8 pt-8 px-4 safe-padding-bottom">
+				<div>
+					<h2 class="text-base font-semibold leading-7 text-black mb-4">Output Options</h2>
 
-				<DimensionsInput
-					bind:width
-					bind:aspectRatio
-					minWidth={12}
-					minHeight={12}
-					maxHeight={5000}
-					maxWidth={5000}
-				/>
-			</div>
-
-			<div class="grid gap-4">
-				<h2 class="text-base font-semibold leading-7 text-black mb-2">Dithering Options</h2>
-
-				<Tabs
-					tabs={[
-						{ label: 'None', value: 'none' },
-						{ label: 'Ordered', value: 'ordered' },
-						{ label: 'Error Diffusion', value: 'error_diffusion' }
-					]}
-					bind:selected={mode}
-				/>
-				
-				<div class={mode === 'error_diffusion' ? 'contents' : 'hidden'}>
-					<ErrorDiffusionOptions
-						bind:diffusionStrength
-						bind:diffusionMatrix
-						bind:diffusionOriginX={diffusionMatrixOriginX}
+					<DimensionsInput
+						bind:width
+						bind:aspectRatio
+						minWidth={12}
+						minHeight={12}
+						maxHeight={5000}
+						maxWidth={5000}
 					/>
 				</div>
-				<div class={mode === 'ordered' ? 'contents' : 'hidden'}>
-					<OrderedDitheringOptions bind:thresholdMap bind:noiseIntensity bind:threshold />
-				</div>
-			</div>
 
-			<div class="grid gap-3">
-				<h2 class="text-base font-semibold leading-7 text-black mb-2">Palette</h2>
+				<div class="grid gap-4">
+					<h2 class="text-base font-semibold leading-7 text-black mb-2">Dithering Options</h2>
 
-				<div class="relative flex items-start">
-					<div class="flex h-6 items-center">
-						<input
-							type="checkbox"
-							id="monochrome"
-							bind:checked={monochrome}
-							class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+					<Tabs
+						tabs={[
+							{ label: 'None', value: 'none' },
+							{ label: 'Ordered', value: 'ordered' },
+							{ label: 'Error Diffusion', value: 'error_diffusion' }
+						]}
+						bind:selected={mode}
+					/>
+
+					<div class={mode === 'error_diffusion' ? 'contents' : 'hidden'}>
+						<ErrorDiffusionOptions
+							bind:diffusionStrength
+							bind:diffusionMatrix
+							bind:diffusionOriginX={diffusionMatrixOriginX}
 						/>
 					</div>
-					<div class="ml-3 text-sm leading-6">
-						<label for="monochrome" class="font-medium text-gray-900">Monochrome</label>
+					<div class={mode === 'ordered' ? 'contents' : 'hidden'}>
+						<OrderedDitheringOptions bind:thresholdMap bind:noiseIntensity bind:threshold />
 					</div>
 				</div>
 
-				{#if monochrome}
-					<fieldset>
-						<div class="flex gap-3">
-							<input type="color" name="color-light" id="color-light" bind:value={colorLight} />
-							<label for="color-light" class="font-medium text-gray-900">Light</label>
+				<div class="grid gap-3">
+					<h2 class="text-base font-semibold leading-7 text-black mb-2">Palette</h2>
+
+					<div class="relative flex items-start">
+						<div class="flex h-6 items-center">
+							<input
+								type="checkbox"
+								id="monochrome"
+								bind:checked={monochrome}
+								class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+							/>
 						</div>
-						<div class="flex gap-3">
-							<input type="color" name="color-dark" id="color-dark" bind:value={colorDark} />
-							<label for="color-dark" class="font-medium text-gray-900">Dark</label>
+						<div class="ml-3 text-sm leading-6">
+							<label for="monochrome" class="font-medium text-gray-900">Monochrome</label>
 						</div>
-					</fieldset>
-				{/if}
-			</div>
-		</section>
-	</Collapsible>
+					</div>
+
+					{#if monochrome}
+						<fieldset>
+							<div class="flex gap-3">
+								<input type="color" name="color-light" id="color-light" bind:value={colorLight} />
+								<label for="color-light" class="font-medium text-gray-900">Light</label>
+							</div>
+							<div class="flex gap-3">
+								<input type="color" name="color-dark" id="color-dark" bind:value={colorDark} />
+								<label for="color-dark" class="font-medium text-gray-900">Dark</label>
+							</div>
+						</fieldset>
+					{/if}
+				</div>
+			</section>
+		</Collapsible>
 	</aside>
 </main>
 

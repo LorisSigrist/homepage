@@ -203,7 +203,7 @@ export class Panzoom extends TypedEventTarget<PanzoomEventMap> {
         x: number,
         y: number,
     ) {
-        scale = clamp(scale, Panzoom.MIN_SCALE, Panzoom.MAX_SCALE);
+        if(scale < Panzoom.MIN_SCALE || scale > Panzoom.MAX_SCALE) return;
 
         // Return if there's no change
         if (

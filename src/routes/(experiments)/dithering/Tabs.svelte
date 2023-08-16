@@ -20,7 +20,7 @@
                 bind:group={selected}
                 class="sr-only"
             >
-            <div class="flex items-center justify-center py-2 text-sm font-medium text-gray-700 bg-white border-b {tab.value === selected ? "border-indigo-500 border-b-2" : "border-gray-300"} cursor-pointer hover:bg-gray-50">
+            <div class="flex items-center justify-center py-2 text-sm font-medium text-gray-700 border-b {tab.value === selected ? "border-indigo-500 border-b-2" : "border-gray-300"} cursor-pointer hover:bg-gray-900 hover:bg-opacity-5">
                 {tab.label}
             </div>
         </label>
