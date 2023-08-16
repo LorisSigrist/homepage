@@ -79,7 +79,7 @@
 		new_image.src = url;
 	}
 
-	let mode: 'ordered' | 'error_diffusion' = 'ordered';
+	let mode: 'ordered' | 'error_diffusion' | 'none' = 'ordered';
 
 	let thresholdMap: ImageData | null = null;
 	let threshold = 0.5;
@@ -113,7 +113,7 @@
 					<svelte:fragment slot="right">
 						{#if mode === 'error_diffusion'}
 							<canvas
-								class="pixelated shadow-lg"
+								class="pixelated shadow-lg bg-gray-200"
 								style={`width: ${width}px; height: ${height}px`}
 								bind:this={canvas}
 								use:errorDiffusionDithering={{
@@ -130,25 +130,34 @@
 								{width}
 								{height}
 							/>
-						{:else if thresholdMap}
-							<canvas
-								class="pixelated shadow-lg"
+						{:else if mode === 'ordered'}
+							{#if thresholdMap}
+								<canvas
+									class="pixelated shadow-lg"
+									style={`width: ${width}px; height: ${height}px`}
+									use:orderedDithering={{
+										image: image_data,
+										threshold,
+										noiseIntensity,
+										monochrome,
+										colorLight,
+										colorDark,
+										output_width: width,
+										output_height: height,
+										thresholdMap
+									}}
+									bind:this={canvas}
+									{width}
+									{height}
+									aria-label="Dithered Image"
+								/>
+							{/if}
+						{:else if mode === 'none'}
+							<img
+								src={loaded_image.src}
+								alt=""
 								style={`width: ${width}px; height: ${height}px`}
-								use:orderedDithering={{
-									image: image_data,
-									threshold,
-									noiseIntensity,
-									monochrome,
-									colorLight,
-									colorDark,
-									output_width: width,
-									output_height: height,
-									thresholdMap
-								}}
-								bind:this={canvas}
-								{width}
-								{height}
-								aria-label="Dithered Image"
+								class="pixelated max-w-none shadow-lg"
 							/>
 						{/if}
 					</svelte:fragment>
@@ -211,7 +220,7 @@
 				Save
 			</Button>
 		</header>
-		<section class="grid gap-5 overflow-y-auto overflow-x-visible pt-8 px-4 safe-padding-bottom">
+		<section class="grid gap-8 overflow-y-auto overflow-x-visible pt-8 px-4 safe-padding-bottom">
 			<div>
 				<h2 class="text-base font-semibold leading-7 text-black mb-4">Output Options</h2>
 
@@ -225,26 +234,32 @@
 				/>
 			</div>
 
-			<Tabs
-				tabs={[
-					{ label: 'Ordered', value: 'ordered' },
-					{ label: 'Error Diffusion', value: 'error_diffusion' }
-				]}
-				bind:selected={mode}
-			/>
+			<div class="grid gap-4">
+				<h2 class="text-base font-semibold leading-7 text-black mb-2">Dithering Options</h2>
 
-			{#if mode === 'error_diffusion'}
-				<ErrorDiffusionOptions
-					bind:diffusionStrength
-					bind:diffusionMatrix
-					bind:diffusionOriginX={diffusionMatrixOriginX}
+				<Tabs
+					tabs={[
+						{ label: 'None', value: 'none' },
+						{ label: 'Ordered', value: 'ordered' },
+						{ label: 'Error Diffusion', value: 'error_diffusion' }
+					]}
+					bind:selected={mode}
 				/>
-			{:else if mode === 'ordered'}
-				<OrderedDitheringOptions bind:thresholdMap bind:noiseIntensity bind:threshold />
-			{/if}
+				
+				<div class={mode === 'error_diffusion' ? 'contents' : 'hidden'}>
+					<ErrorDiffusionOptions
+						bind:diffusionStrength
+						bind:diffusionMatrix
+						bind:diffusionOriginX={diffusionMatrixOriginX}
+					/>
+				</div>
+				<div class={mode === 'ordered' ? 'contents' : 'hidden'}>
+					<OrderedDitheringOptions bind:thresholdMap bind:noiseIntensity bind:threshold />
+				</div>
+			</div>
 
 			<div class="grid gap-3">
-				<h2 class="text-base font-semibold leading-7 text-black mb-2">Dithering Options</h2>
+				<h2 class="text-base font-semibold leading-7 text-black mb-2">Palette</h2>
 
 				<div class="relative flex items-start">
 					<div class="flex h-6 items-center">
