@@ -282,7 +282,8 @@
 					</div>
 				</div>
 
-				<div class="grid gap-3">
+				<!--Color Palette-->
+				<div class="grid gap-3" class:hidden={mode === "none"}>
 					<h2 class="text-base font-semibold leading-7 text-black mb-2">Palette</h2>
 
 					<div class="relative flex items-start">
