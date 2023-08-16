@@ -15,6 +15,7 @@
 	import Tabs from './Tabs.svelte';
 	import OrderedDitheringOptions from './OrderedDitheringOptions.svelte';
 	import { onMount } from 'svelte';
+	import Collapsible from './Collapsible.svelte';
 
 	const imagePresets = [cat_img_src, gradient_img_src, david_img_src];
 
@@ -118,9 +119,9 @@
 
 <svelte:body on:drop|preventDefault={onDrop} on:dragover|preventDefault={() => {}} />
 
-<main class="w-screen max-w-screen h-screen max-h-screen flex md:flex-row flex-col bg-gray-300">
+<main class="w-screen max-w-screen h-screen max-h-screen relative bg-gray-300">
 	<!--Main content-->
-	<section class="flex-1 overflow-hidden select-none">
+	<section class="overflow-hidden select-none fixed inset-0">
 		{#if image_data && loaded_image}
 			<div class="w-full h-full relative">
 				<SplitPanzoom direction={splitDirection}>
@@ -233,16 +234,19 @@
 	</section>
 	<!--Sidebar-->
 	<aside
-		class="bg-white w-full md:max-w-md border-t md:border-t-0 md:border-l border-l-0 border-gray-100 z-50 overflow-y-hidden md:h-full flex-1 shadow-lg flex flex-col divide-y divide-gray-200 justify-start"
+		class="md:w-96 w-full max-h-full absolute bottom-0 left-0 right-0 top-0 md:left-auto z-50 p-2 grid place-items-end touch-none pointer-events-none"
 	>
-		<header class="py-4 px-4 flex-shrink-0 shadow-sm z-10 flex gap-2 items-center justify-between">
-			<h1 class="font-bold">Dither Studio</h1>
+		<Collapsible>
+		<svelte:fragment slot="header">
+			<h1 class="font-bold">
+				Dithering
+			</h1>
 			<Button on:click={save} disabled={!loaded_image}>
 				<Icon src={ArrowDownTray} class="w-4 h-4" />
 				Save
 			</Button>
-		</header>
-		<section class="grid gap-8 overflow-y-auto overflow-x-visible pt-8 px-4 safe-padding-bottom">
+		</svelte:fragment>
+		<section class="grid gap-8 pt-8 px-4 safe-padding-bottom">
 			<div>
 				<h2 class="text-base font-semibold leading-7 text-black mb-4">Output Options</h2>
 
@@ -311,6 +315,7 @@
 				{/if}
 			</div>
 		</section>
+	</Collapsible>
 	</aside>
 </main>
 
@@ -318,7 +323,6 @@
 	.pixelated {
 		image-rendering: pixelated;
 	}
-
 	.safe-padding-bottom {
 		padding-bottom: max(env(safe-area-inset-bottom), 2rem);
 	}
