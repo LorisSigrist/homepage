@@ -16,6 +16,10 @@
 	import OrderedDitheringOptions from './OrderedDitheringOptions.svelte';
 	import { onMount } from 'svelte';
 	import Collapsible from './Collapsible.svelte';
+	import Metadata from '$lib/metadata/Metadata.svelte';
+
+	import logo_src from "$lib/assets/dither-studio-logo.png"
+	import og_src from "$lib/assets/dither-studio-og.webp"
 
 	const imagePresets = [cat_img_src, gradient_img_src, david_img_src];
 
@@ -113,9 +117,7 @@
 	});
 </script>
 
-<svelte:head>
-	<title>Dithering</title>
-</svelte:head>
+<Metadata icon={logo_src} og_image={og_src} />
 
 <svelte:body on:drop|preventDefault={onDrop} on:dragover|preventDefault={() => {}} />
 
