@@ -84,16 +84,15 @@
 	let mode: 'ordered' | 'error_diffusion' | 'none' = 'ordered';
 
 	let thresholdMap: ImageData | null = null;
-	let threshold = 0.5;
-	let noiseIntensity = 0.3;
+	let noiseIntensity = 0;
 
 	let diffusionStrength = 1;
 	let diffusionMatrix = [[1]];
 	let diffusionMatrixOriginX = 0;
 
-	let monochrome = false;
-	let colorLight = '#ede6cc';
-	let colorDark = '#21263f';
+	let monochrome = true;
+	let colorLight = '#ffffff';
+	let colorDark = '#000000';
 
 	let splitDirection: 'horizontal' | 'vertical' = 'horizontal';
 	let options_open = false;
@@ -184,17 +183,14 @@
 								/>
 							{/if}
 						{:else if mode === 'ordered'}
-							{#if thresholdMap}
+							{#if thresholdMap && palette}
 								<canvas
 									class="pixelated shadow-lg bg-gray-200"
 									style={`width: ${width}px; height: ${height}px`}
 									use:orderedDithering={{
 										image: image_data,
-										threshold,
 										noiseIntensity,
-										monochrome,
-										colorLight,
-										colorDark,
+										palette,
 										output_width: width,
 										output_height: height,
 										thresholdMap
@@ -308,7 +304,7 @@
 						/>
 					</div>
 					<div class={mode === 'ordered' ? 'contents' : 'hidden'}>
-						<OrderedDitheringOptions bind:thresholdMap bind:noiseIntensity bind:threshold />
+						<OrderedDitheringOptions bind:thresholdMap bind:noiseIntensity />
 					</div>
 				</div>
 

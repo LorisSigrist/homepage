@@ -7,7 +7,6 @@
 	import type { ThresholdMapOptions } from './thresholdMapGeneration/generation';
 
 	export let thresholdMap: ImageData | null;
-	export let threshold: number;
 	export let noiseIntensity: number;
 
 	type ThresholdMapMode = `bayer` | 'blue_noise' | 'white_noise';
@@ -82,8 +81,6 @@
 <ImageDataViewer imageData={thresholdMap}>
 	<span slot="placeholder">Loading Threshold Map</span>
 </ImageDataViewer>
-
-<Slider label="Threshold ({threshold})" min={0} max={1} step={0.01} bind:value={threshold} />
 
 <Slider
 	label="Noise Intensity ({noiseIntensity})"

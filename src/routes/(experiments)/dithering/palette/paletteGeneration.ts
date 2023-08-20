@@ -15,8 +15,6 @@ export function generatePalette(colors: RGB[]): ImageData {
             for (let b = 0; b < 16; b++) {
                 const og_color : RGB = [r * 16, g * 16 , b * 16];
                 const [x, y] = rgb2xy(og_color);
-
-                console.log(og_color);
                 const color = closestColor(og_color, colors);
 
                 const index = 4 * (y * palette.width + x);
@@ -46,6 +44,8 @@ export function samplePalette(palette: ImageData, og_color: RGB): RGB {
     return [r, g, b];
 }
 
+
+//Each chanel ranges from 0 to 255, in 16 steps
 function rgb2xy(rgb: RGB): [number, number] {
     const [r, g, b] = rgb;
     const i = Math.floor((r + (g * 16) + (b * 16 * 16)) / 16);

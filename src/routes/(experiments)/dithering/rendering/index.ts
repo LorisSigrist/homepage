@@ -6,11 +6,8 @@ import { createTexture, initShaderProgram, loadImageToTexture, setUpRect, textur
 export type DitheringOptions = {
     image: ImageData;
     thresholdMap: ImageData;
-    threshold: number;
     noiseIntensity: number;
-    monochrome: boolean;
-    colorLight: string;
-    colorDark: string;
+    palette: ImageData;
     output_width: number;
     output_height: number;
 }
@@ -32,6 +29,7 @@ export function orderedDithering(canvas: HTMLCanvasElement, initialOptions: Dith
 
     const program = initShaderProgram(gl, vertex_src, fragment_src);
     const { vertex_buffer, index_buffer } = setUpRect(gl);
+    gl.useProgram(program);
 
     //Get the location of the attributes and uniforms
     const position_attribute_location = gl.getAttribLocation(program, 'position');
@@ -39,15 +37,12 @@ export function orderedDithering(canvas: HTMLCanvasElement, initialOptions: Dith
     gl.enableVertexAttribArray(position_attribute_location);
 
     const uSampler = gl.getUniformLocation(program, 'uSampler');
-    const uThreshold = gl.getUniformLocation(program, 'uThreshold');
     const uNoiseSampler = gl.getUniformLocation(program, 'uNoiseSampler');
     const uNoise = gl.getUniformLocation(program, 'uNoise');
     const uSize = gl.getUniformLocation(program, 'uSize');
     const uNoiseSamplerSize = gl.getUniformLocation(program, 'uNoiseSamplerSize');
-    const uMonochrome = gl.getUniformLocation(program, 'uMonochrome');
-    const uDarkColor = gl.getUniformLocation(program, 'uDarkColor');
-    const uLightColor = gl.getUniformLocation(program, 'uLightColor');
-
+    const uPaletteSampler = gl.getUniformLocation(program, 'uPaletteSampler');
+    
     let imageTexture: WebGLTexture;
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
@@ -64,7 +59,6 @@ export function orderedDithering(canvas: HTMLCanvasElement, initialOptions: Dith
     let thresholdMapTexture: WebGLTexture;
     let thresholdMapSize: { width: number, height: number };
 
-    gl.useProgram(program);
     let frame: number | null = null;
 
     const loadThresholdMap = () => {
@@ -77,6 +71,19 @@ export function orderedDithering(canvas: HTMLCanvasElement, initialOptions: Dith
     }
 
     loadThresholdMap();
+
+    let paletteTexture: WebGLTexture;
+
+    const loadPalette = () => {
+        if (paletteTexture) {
+            gl.deleteTexture(paletteTexture);
+        }
+
+        paletteTexture = textureFromImageData(gl, options.palette, gl.NEAREST);
+    }
+
+
+    loadPalette();
 
     const render = () => {
         gl.viewport(0, 0, options.output_width, options.output_height);
@@ -98,17 +105,16 @@ export function orderedDithering(canvas: HTMLCanvasElement, initialOptions: Dith
         gl.bindTexture(gl.TEXTURE_2D, thresholdMapTexture);
         gl.uniform1i(uNoiseSampler, 1);
 
+        gl.activeTexture(gl.TEXTURE2);
+        gl.bindTexture(gl.TEXTURE_2D, paletteTexture);
+        gl.uniform1i(uPaletteSampler, 2);
+
         gl.uniform2f(uNoiseSamplerSize, thresholdMapSize.width, thresholdMapSize.height);
 
-        gl.uniform1f(uThreshold, options.threshold);
         gl.uniform1f(uNoise, options.noiseIntensity);
 
         gl.uniform2f(uSize, options.output_width, options.output_height);
 
-        gl.uniform1f(uMonochrome, options.monochrome ? 1 : 0);
-
-        gl.uniform3f(uDarkColor, ...hexToGLSL(options.colorDark));
-        gl.uniform3f(uLightColor, ...hexToGLSL(options.colorLight));
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
@@ -127,6 +133,7 @@ export function orderedDithering(canvas: HTMLCanvasElement, initialOptions: Dith
         update(newOptions: DitheringOptions) {
             const imageHasBeenChanged = options.image !== newOptions.image;
             const thresholdMapChanged = options.thresholdMap !== newOptions.thresholdMap;
+            const paletteChanged = options.palette !== newOptions.palette;
 
             //Use the new options
             options = newOptions;
@@ -138,6 +145,9 @@ export function orderedDithering(canvas: HTMLCanvasElement, initialOptions: Dith
             if (thresholdMapChanged)
                 loadThresholdMap();
 
+            if (paletteChanged)
+                loadPalette();
+
             //Schedule a rerender
             invalidate();
         },
@@ -148,12 +158,4 @@ export function orderedDithering(canvas: HTMLCanvasElement, initialOptions: Dith
                 cancelAnimationFrame(frame);
         }
     }
-}
-
-function hexToGLSL(hex: string): [number, number, number] {
-    const r = parseInt(hex.slice(1, 3), 16) / 255;
-    const g = parseInt(hex.slice(3, 5), 16) / 255;
-    const b = parseInt(hex.slice(5, 7), 16) / 255;
-
-    return [r, g, b];
 }
