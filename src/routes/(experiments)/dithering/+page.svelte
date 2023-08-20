@@ -5,7 +5,7 @@
 
 	import { orderedDithering } from './rendering/index';
 	import Button from './Button.svelte';
-	import { Image2ImageData, loadImageFile, saveCanvasAsImage } from './utils';
+	import { Image2ImageData, hexToRGB, loadImageFile, saveCanvasAsImage } from './utils';
 	import SplitPanzoom from './SplitPanzoom.svelte';
 	import cat_img_src from './images/cat.jpg';
 	import gradient_img_src from './images/gradient.avif';
@@ -18,15 +18,12 @@
 	import Collapsible from './Collapsible.svelte';
 	import Metadata from '$lib/metadata/Metadata.svelte';
 
-	import logo_src from "$lib/assets/dither-studio-logo.png"
-	import og_src from "$lib/assets/dither-studio-og.webp"
+	import logo_src from '$lib/assets/dither-studio-logo.png';
+	import { generatePaletteInWorker } from './palette/main';
+	import { browser } from '$app/environment';
+	const og_src = '/og/dither-studio.webp';
 
 	const imagePresets = [cat_img_src, gradient_img_src, david_img_src];
-
-	let monochrome = false;
-	let colorLight = '#ede6cc';
-	let colorDark = '#21263f';
-
 	let canvas: HTMLCanvasElement | null = null;
 
 	let width = 300;
@@ -36,8 +33,7 @@
 	let image_data: ImageData | null = null;
 
 	$: {
-		if (loaded_image) image_data = Image2ImageData(loaded_image);
-		else image_data = null;
+		image_data = loaded_image ? Image2ImageData(loaded_image) : null;
 	}
 
 	$: aspectRatio =
@@ -95,11 +91,44 @@
 	let diffusionMatrix = [[1]];
 	let diffusionMatrixOriginX = 0;
 
-	let splitDirection: 'horizontal' | 'vertical' = 'horizontal';
+	let monochrome = false;
+	let colorLight = '#ede6cc';
+	let colorDark = '#21263f';
 
+	let splitDirection: 'horizontal' | 'vertical' = 'horizontal';
 	let options_open = false;
 
-	onMount(() => {
+	let color_mode: '3bit' | 'black_white' = '3bit';
+	$: color_mode = monochrome ? 'black_white' : '3bit';
+
+	let palette: ImageData;
+
+	$: if (browser) {
+		switch (color_mode) {
+			case '3bit': {
+				generatePaletteInWorker([
+					[0, 0, 0],
+					[255, 0, 0],
+					[0, 255, 0],
+					[0, 0, 255],
+					[255, 255, 0],
+					[255, 0, 255],
+					[0, 255, 255],
+					[255, 255, 255],
+				]).then((generatedPalette) => (palette = generatedPalette));
+				break;
+			}
+
+			case 'black_white': {
+				generatePaletteInWorker([
+					hexToRGB(colorDark),
+					hexToRGB(colorLight),
+				]).then((generatedPalette) => (palette = generatedPalette));
+			}
+		}
+	}
+
+	onMount(async () => {
 		const mediaQuery = window.matchMedia('(min-width: 768px)');
 
 		function handleOrientationChange(e: MediaQueryListEvent | MediaQueryList) {
@@ -112,7 +141,6 @@
 
 		mediaQuery.addEventListener('change', handleOrientationChange);
 		handleOrientationChange(mediaQuery);
-
 		return () => mediaQuery.removeEventListener('change', handleOrientationChange);
 	});
 </script>
@@ -132,33 +160,33 @@
 						src={loaded_image.src}
 						alt=""
 						style={`width: ${width}px; height: ${height}px`}
-						class="pixelated max-w-none shadow-lg"
+						class="pixelated max-w-none shadow-lg bg-gray-200"
 					/>
 
 					<svelte:fragment slot="right">
 						{#if mode === 'error_diffusion'}
-							<canvas
-								class="pixelated shadow-lg bg-gray-200"
-								style={`width: ${width}px; height: ${height}px`}
-								bind:this={canvas}
-								use:errorDiffusionDithering={{
-									image: image_data,
-									output_width: width,
-									output_height: height,
-									monochrome,
-									colorLight,
-									colorDark,
-									diffusionStrength,
-									diffusionMatrix,
-									diffusionMatrixOriginX
-								}}
-								{width}
-								{height}
-							/>
+							{#if palette}
+								<canvas
+									class="pixelated shadow-lg bg-gray-200"
+									style={`width: ${width}px; height: ${height}px`}
+									bind:this={canvas}
+									use:errorDiffusionDithering={{
+										image: image_data,
+										output_width: width,
+										output_height: height,
+										palette,
+										diffusionStrength,
+										diffusionMatrix,
+										diffusionMatrixOriginX
+									}}
+									{width}
+									{height}
+								/>
+							{/if}
 						{:else if mode === 'ordered'}
 							{#if thresholdMap}
 								<canvas
-									class="pixelated shadow-lg"
+									class="pixelated shadow-lg bg-gray-200"
 									style={`width: ${width}px; height: ${height}px`}
 									use:orderedDithering={{
 										image: image_data,
@@ -285,7 +313,7 @@
 				</div>
 
 				<!--Color Palette-->
-				<div class="grid gap-3" class:hidden={mode === "none"}>
+				<div class="grid gap-3" class:hidden={mode === 'none'}>
 					<h2 class="text-base font-semibold leading-7 text-black mb-2">Palette</h2>
 
 					<div class="relative flex items-start">

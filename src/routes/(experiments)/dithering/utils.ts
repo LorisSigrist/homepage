@@ -80,3 +80,11 @@ export function Image2ImageData(image: HTMLImageElement): ImageData {
     ctx.drawImage(image, 0, 0);
     return ctx.getImageData(0, 0, image.width, image.height);
 }
+
+export function hexToRGB(hex: string): [number, number, number] {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+
+    return [r, g, b];
+}

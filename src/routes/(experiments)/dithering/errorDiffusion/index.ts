@@ -6,9 +6,7 @@ export type ErrorDiffusionDitheringOptions = {
     image: ImageData,
     output_width: number,
     output_height: number,
-    monochrome: boolean;
-    colorLight: string;
-    colorDark: string;
+    palette: ImageData;
     diffusionStrength: number;
     diffusionMatrix: number[][];
     diffusionMatrixOriginX: number;

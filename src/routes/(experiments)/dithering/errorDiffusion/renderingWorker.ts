@@ -1,6 +1,7 @@
 import { clamp } from "$lib/math/clamp";
 import type { ErrorDiffusionDitheringOptions } from ".";
 import * as Comlink from "comlink";
+import { samplePalette } from "../palette/paletteGeneration";
 
 function errorDiffusionDithering(canvas: OffscreenCanvas, options: ErrorDiffusionDitheringOptions) {
 
@@ -16,9 +17,6 @@ function errorDiffusionDithering(canvas: OffscreenCanvas, options: ErrorDiffusio
 
     loadImage();
 
-    let colorLight = hexToRGB(options.colorLight);
-    let colorDark = hexToRGB(options.colorDark);
-
     const ctx = canvas.getContext('2d')!;
 
     const render = () => {
@@ -31,34 +29,22 @@ function errorDiffusionDithering(canvas: OffscreenCanvas, options: ErrorDiffusio
             for (let x = 0; x < options.output_width; x++) {
                 const index = (y * options.output_width + x) * 4;
 
+
+                //Quantize the pixel
                 const r = dithered.data[index + 0];
                 const g = dithered.data[index + 1];
                 const b = dithered.data[index + 2];
 
-                let r3;
-                let g3;
-                let b3;
 
-                if (options.monochrome) {
-                    const gray = (r + g + b) / 3;
-                    
-                    r3 = gray > 127 ? colorLight[0] : colorDark[0];
-                    g3 = gray > 127 ? colorLight[1] : colorDark[1];
-                    b3 = gray > 127 ? colorLight[2] : colorDark[2];
-                } else {
-                    r3 = r > 127 ? 255 : 0;
-                    g3 = g > 127 ? 255 : 0;
-                    b3 = b > 127 ? 255 : 0;
-                }
-
-                const error_r = (r - r3) * options.diffusionStrength / 2;
-                const error_g = (g - g3) * options.diffusionStrength / 2;
-                const error_b = (b - b3) * options.diffusionStrength / 2
-
+                const [r3, g3, b3] = samplePalette(options.palette, [r, g, b]);
                 dithered.data[index + 0] = r3;
                 dithered.data[index + 1] = g3;
                 dithered.data[index + 2] = b3;
 
+                
+                const error_r = (r - r3) * options.diffusionStrength / 2;
+                const error_g = (g - g3) * options.diffusionStrength / 2;
+                const error_b = (b - b3) * options.diffusionStrength / 2;
 
                 //Spread the error to the surrounding pixels (making sure to stay within the bounds of the image)
                 for (let matrixY = 0; matrixY < options.diffusionMatrix.length; matrixY++) {
@@ -80,6 +66,8 @@ function errorDiffusionDithering(canvas: OffscreenCanvas, options: ErrorDiffusio
                         dithered.data[errorIndex + 2] = clamp(dithered.data[errorIndex + 2] + error_b * errorMultiplier * options.diffusionStrength, 0, 255);
                     }
                 }
+
+                
             }
         }
 
@@ -107,9 +95,6 @@ function errorDiffusionDithering(canvas: OffscreenCanvas, options: ErrorDiffusio
         canvas.width = options.output_width;
         canvas.height = options.output_height;
 
-        colorLight = hexToRGB(options.colorLight);
-        colorDark = hexToRGB(options.colorDark);
-
         if (imageChanged)
             loadImage();
 
@@ -132,11 +117,3 @@ export const ErrorDiffusionWorker = {
 }
 
 Comlink.expose(ErrorDiffusionWorker);
-
-function hexToRGB(hex: string): [number, number, number] {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-
-    return [r, g, b];
-}
