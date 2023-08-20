@@ -17,7 +17,7 @@
 			const startSplit = split;
 
 			const previousCursor = document.body.style.cursor;
-			document.body.style.cursor = direction === "vertical" ? "row-resize" : 'col-resize';
+			document.body.style.cursor = direction === "vertical" ? "ns-resize" : 'ew-resize';
 
 			const pointermove = (event: PointerEvent) => {
 				const containerWidth = container ? container.clientWidth : window.innerWidth;
@@ -134,7 +134,7 @@
 		width: 4px;
 		background: rgba(0, 0, 0, 1);
 
-		cursor: col-resize;
+		cursor: ew-resize;
 	}
 
 	.vertical .handle {
@@ -145,7 +145,7 @@
 		transform: translateY(-50%);
 		height: 4px;
 
-		cursor: row-resize;
+		cursor: ns-resize;
 	}
 
 </style>
