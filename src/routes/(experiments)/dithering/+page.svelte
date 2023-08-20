@@ -84,13 +84,13 @@
 	let mode: 'ordered' | 'error_diffusion' | 'none' = 'ordered';
 
 	let thresholdMap: ImageData | null = null;
-	let noiseIntensity = 0;
+	let noiseIntensity = 0.3;
 
 	let diffusionStrength = 1;
 	let diffusionMatrix = [[1]];
 	let diffusionMatrixOriginX = 0;
 
-	let monochrome = true;
+	let monochrome = false;
 	let colorLight = '#ffffff';
 	let colorDark = '#000000';
 
