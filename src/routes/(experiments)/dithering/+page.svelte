@@ -21,6 +21,7 @@
 	import logo_src from '$lib/assets/dither-studio-logo.png';
 	import { generatePaletteInWorker } from './palette/main';
 	import { browser } from '$app/environment';
+	import PaletteOptions from './PaletteOptions.svelte';
 	const og_src = '/og/dither-studio.webp';
 
 	const imagePresets = [cat_img_src, gradient_img_src, david_img_src];
@@ -90,41 +91,16 @@
 	let diffusionMatrix = [[1]];
 	let diffusionMatrixOriginX = 0;
 
-	let monochrome = false;
-	let colorLight = '#ffffff';
-	let colorDark = '#000000';
-
 	let splitDirection: 'horizontal' | 'vertical' = 'horizontal';
 	let options_open = false;
 
-	let color_mode: '3bit' | 'black_white' = '3bit';
-	$: color_mode = monochrome ? 'black_white' : '3bit';
-
+	let colors = ['#000000', '#ffffff'];
 	let palette: ImageData;
 
 	$: if (browser) {
-		switch (color_mode) {
-			case '3bit': {
-				generatePaletteInWorker([
-					[0, 0, 0],
-					[255, 0, 0],
-					[0, 255, 0],
-					[0, 0, 255],
-					[255, 255, 0],
-					[255, 0, 255],
-					[0, 255, 255],
-					[255, 255, 255],
-				]).then((generatedPalette) => (palette = generatedPalette));
-				break;
-			}
-
-			case 'black_white': {
-				generatePaletteInWorker([
-					hexToRGB(colorDark),
-					hexToRGB(colorLight),
-				]).then((generatedPalette) => (palette = generatedPalette));
-			}
-		}
+		generatePaletteInWorker(colors.map(hexToRGB)).then(
+			(generatedPalette) => (palette = generatedPalette)
+		);
 	}
 
 	onMount(async () => {
@@ -312,32 +288,7 @@
 				<div class="grid gap-3" class:hidden={mode === 'none'}>
 					<h2 class="text-base font-semibold leading-7 text-black mb-2">Palette</h2>
 
-					<div class="relative flex items-start">
-						<div class="flex h-6 items-center">
-							<input
-								type="checkbox"
-								id="monochrome"
-								bind:checked={monochrome}
-								class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-							/>
-						</div>
-						<div class="ml-3 text-sm leading-6">
-							<label for="monochrome" class="font-medium text-gray-900">Monochrome</label>
-						</div>
-					</div>
-
-					{#if monochrome}
-						<fieldset>
-							<div class="flex gap-3">
-								<input type="color" name="color-light" id="color-light" bind:value={colorLight} />
-								<label for="color-light" class="font-medium text-gray-900">Light</label>
-							</div>
-							<div class="flex gap-3">
-								<input type="color" name="color-dark" id="color-dark" bind:value={colorDark} />
-								<label for="color-dark" class="font-medium text-gray-900">Dark</label>
-							</div>
-						</fieldset>
-					{/if}
+					<PaletteOptions bind:palette={colors} />
 				</div>
 			</section>
 		</Collapsible>

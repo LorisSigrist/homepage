@@ -1,9 +1,13 @@
+import { rgbToLab, type LAB, labColorDistance, labToRgb } from "./lab";
+
 /**
  * An RGB color with values between 0 and 255
  */
 export type RGB = [number, number, number];
 
 export function generatePalette(colors: RGB[]): ImageData {
+
+    const lab_colors = colors.map(rgbToLab);
 
     //Loop over a bunch of shades, and choose the color from the palette that is closest to it
     //Then save that color in the palette at the position of the shade
@@ -15,7 +19,7 @@ export function generatePalette(colors: RGB[]): ImageData {
             for (let b = 0; b < 16; b++) {
                 const og_color : RGB = [r * 16, g * 16 , b * 16];
                 const [x, y] = rgb2xy(og_color);
-                const color = closestColor(og_color, colors);
+                const color = closestColor(og_color, lab_colors);
 
                 const index = 4 * (y * palette.width + x);
 
@@ -57,12 +61,14 @@ function rgb2xy(rgb: RGB): [number, number] {
 }
 
 
-function closestColor(og_color: RGB, palette: RGB[]): RGB {
-    let closest: RGB = [0, 0, 0];
+function closestColor(og_color: RGB, palette: LAB[]): RGB {
+    const lab_color = rgbToLab(og_color);
+
+    let closest: LAB = [0, 0, 0];
     let closest_distance = Infinity;
 
     for (const color of palette) {
-        const distance = colorDistance(og_color, color);
+        const distance = labColorDistance(lab_color, color);
 
         if (distance < closest_distance) {
             closest = color;
@@ -70,13 +76,5 @@ function closestColor(og_color: RGB, palette: RGB[]): RGB {
         }
     }
 
-    return closest;
-}
-
-//Maybe migrate this to HSL?
-function colorDistance(color_1: RGB, color_2: RGB): number {
-    const [r1, g1, b1] = color_1;
-    const [r2, g2, b2] = color_2;
-
-    return Math.sqrt((r1 - r2) ** 2 + (g1 - g2) ** 2 + (b1 - b2) ** 2);
+    return labToRgb(closest);
 }

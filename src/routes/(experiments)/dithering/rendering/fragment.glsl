@@ -30,10 +30,10 @@ vec3 samplePalette(vec3 og_color) {
     
 
     //Map the pixel to the texture coordinates (64x64)
-    float halfPixel = 0.5 / 64.0;
+    float halfPixel = 0.5 / 64.0; //bilinear filtering fucks you without this
     vec2 uv = vec2(
         (mappedX / 64.0) + halfPixel,
-        1.0 - (mappedY / 64.0) - halfPixel
+        1.0 - (mappedY / 64.0) - halfPixel //correct for the texture being upside down
     );
 
 

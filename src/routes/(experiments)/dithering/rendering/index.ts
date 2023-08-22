@@ -1,6 +1,6 @@
 import vertex_src from './vertex.glsl';
 import fragment_src from './fragment.glsl';
-import { createTexture, initShaderProgram, loadImageToTexture, setUpRect, textureFromImageData } from './utils';
+import { initShaderProgram, setUpRect, textureFromImageData } from './utils';
 
 
 export type DitheringOptions = {
