@@ -94,7 +94,7 @@
 	let splitDirection: 'horizontal' | 'vertical' = 'horizontal';
 	let options_open = false;
 
-	let colors = ['#000000', '#ffffff'];
+	let colors = ['#000000', '#ffffff', '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff'];
 	let palette: ImageData;
 
 	$: if (browser) {
@@ -288,7 +288,7 @@
 				<div class="grid gap-3" class:hidden={mode === 'none'}>
 					<h2 class="text-base font-semibold leading-7 text-black mb-2">Palette</h2>
 
-					<PaletteOptions bind:palette={colors} />
+					<PaletteOptions bind:palette={colors} image={image_data} />
 				</div>
 			</section>
 		</Collapsible>
