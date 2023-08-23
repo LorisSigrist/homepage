@@ -1,5 +1,5 @@
 import quantize from './quantize';
-import core from './core';
+import { validateOptions } from './core';
 import type { RGB } from '../../utils';
 
 
@@ -13,9 +13,9 @@ import type { RGB } from '../../utils';
  * most dominant color.
  *
  * */
-function getColor(imageData: ImageData, quality = 10) : RGB | null {
+function getColor(imageData: ImageData, quality = 10): RGB | null {
     const palette = getPalette(imageData, 5, quality);
-    if(!palette) return null;
+    if (!palette) return null;
     return palette[0];
 };
 
@@ -31,16 +31,14 @@ function getColor(imageData: ImageData, quality = 10) : RGB | null {
  * faster the palette generation but the greater the likelihood that colors will be missed.
  */
 function getPalette(imageData: ImageData, colorCount: number, quality: number): RGB[] | null {
-    const options = core.validateOptions({
+    const options = validateOptions({
         colorCount,
         quality
     });
 
-    const pixelArray = core.createPixelArray(imageData, options.quality);
-
-    const color_map = quantize(pixelArray, options.colorCount);
+    const color_map = quantize(imageData.data, options.colorCount);
     const palette: RGB[] | null = color_map ? color_map.palette() : null;
-    
+
     return palette;
 };
 

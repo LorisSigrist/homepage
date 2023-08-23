@@ -28,7 +28,6 @@
 
     async function generatePalette(imgData: ImageData) : Promise<string[]> {
         const colors  = getPalette(imgData, 20, 2);
-        console.log(colors);
         if(!colors) throw new Error("Failed to generate palette");
         return colors.map(rgbToHex);
     }

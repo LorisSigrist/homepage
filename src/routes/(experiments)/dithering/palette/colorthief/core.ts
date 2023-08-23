@@ -1,11 +1,10 @@
 import type { RGB } from "../../utils";
 
-function createPixelArray(imageData: ImageData, quality: number): RGB[] {
+function createPixelArray(pixels: Uint8ClampedArray, quality: number): RGB[] {
 
-    const pixelCount = imageData.width * imageData.height;
+    const pixelCount = Math.floor(pixels.length / 4);
 
-    const pixels = imageData.data;
-    const pixelArray: RGB[] = [];
+    const pixelArray: RGB[] = new Array(pixelCount);
 
     for (let i = 0, offset, r, g, b, a; i < pixelCount; i = i + quality) {
         offset = i * 4;
@@ -53,7 +52,7 @@ function validateOptions(options : ColorThiefOptions) {
     }
 }
 
-export default {
+export {
     createPixelArray,
     validateOptions
-};
+}

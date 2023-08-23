@@ -1,4 +1,5 @@
 import type { RGB } from "../../utils";
+import { createPixelArray } from './core';
 
 /**
  * WE USE A REDUCED BIT REPRESENTATION FOR COLORS (5bits instead of 8bits)
@@ -8,20 +9,9 @@ const REDUCED_BITS_PER_CHANNEL = 5;
 const MAX_ITERATIONS = 1000;
 
 const significant_bits = REDUCED_BITS_PER_CHANNEL;
-const rshift = BITS_PER_CHANNEL - REDUCED_BITS_PER_CHANNEL;
+const right_shift = BITS_PER_CHANNEL - REDUCED_BITS_PER_CHANNEL;
 const fractByPopulations = 0.75;
 
-
-/**
- * Maps an RGB color to a reduced-space color index
- * @param r 
- * @param g 
- * @param b 
- * @returns 
- */
-function getColorIndex(r: number, g: number, b: number) {
-    return (r << 2 * significant_bits) + (g << significant_bits) + b;
-}
 
 function naturalOrder(a: number, b: number): -1 | 0 | 1 {
     if (a < b) return -1;
@@ -91,8 +81,6 @@ class PriorityQueue<T> {
  * Represents a cube-subset of the color space, with a distribution of colors inside it
  */
 class VBox {
-
-    private _volume: number | undefined = undefined;
     private _count: number | undefined = undefined;
     private _avg: RGB | undefined = undefined;
 
@@ -106,18 +94,15 @@ class VBox {
         public g2: number,
         public b1: number,
         public b2: number,
-        public histo: number[]
+        public histogram: Histogram
     ) { }
 
     /**
      * Gets the volume of the vbox
      * @param force - If true, recalculate the volume even if a cached value exists
      */
-    public volume(force: boolean = false) {
-        if (force || this._volume === undefined) {
-            this._volume = (this.r2 - this.r1 + 1) * (this.g2 - this.g1 + 1) * (this.b2 - this.b1 + 1)
-        }
-        return this._volume;
+    public volume() {
+        return (this.r2 - this.r1 + 1) * (this.g2 - this.g1 + 1) * (this.b2 - this.b1 + 1)
     }
 
     /**
@@ -129,8 +114,7 @@ class VBox {
             let num_pixels: number = 0;
 
             for (const [r, g, b] of this.colors()) {
-                let index = getColorIndex(r, g, b);
-                num_pixels += this.histo[index] || 0;
+                num_pixels += this.histogram.sampleWithReducedColor(r, g, b);
             }
 
             this._count = num_pixels;
@@ -142,7 +126,7 @@ class VBox {
      * Creates a new VBox copy with the same dimensions and histogram
      */
     public copy() {
-        return new VBox(this.r1, this.r2, this.g1, this.g2, this.b1, this.b2, this.histo);
+        return new VBox(this.r1, this.r2, this.g1, this.g2, this.b1, this.b2, this.histogram);
     }
 
 
@@ -154,15 +138,14 @@ class VBox {
     public avg(force: boolean = false): RGB {
         if (!this._avg || force) {
             let num_total_colors = 0; //The total number of colors encountered inside the vbox
-            const MULTIPLIER = 1 << rshift; //number to multiply by to go from reduced to full bits
+            const MULTIPLIER = 1 << right_shift; //number to multiply by to go from reduced to full bits
 
             let r_sum = 0;
             let g_sum = 0;
             let b_sum = 0;
 
             for (const [r, g, b] of this.colors()) {
-                let histo_index = getColorIndex(r, g, b);
-                let hval = this.histo[histo_index] ?? 0;
+                let hval = this.histogram.sampleWithReducedColor(r, g, b);
                 num_total_colors += hval;
                 r_sum += hval * (r + 0.5) * MULTIPLIER;
                 g_sum += hval * (g + 0.5) * MULTIPLIER;
@@ -187,9 +170,9 @@ class VBox {
     public contains(pixel: RGB) {
 
         // Reduce the number of significant bits for each color channel.
-        const r_val = pixel[0] >> rshift;
-        const g_val = pixel[1] >> rshift;
-        const b_val = pixel[2] >> rshift;
+        const r_val = pixel[0] >> right_shift;
+        const g_val = pixel[1] >> right_shift;
+        const b_val = pixel[2] >> right_shift;
 
         //See if the pixel is within the vbox
         return (r_val >= this.r1 && r_val <= this.r2) &&
@@ -271,35 +254,49 @@ class ColorMap {
 }
 
 
-// histo (1-d array, giving the number of pixels in
-// each quantized region of color space), or null on error
+class Histogram {
+    private histogram: number[] = new Array(1 << 3 * significant_bits);
 
-function getHistogram(pixels: RGB[]): number[] {
-    const histogram_size = 1 << 3 * significant_bits;
-    const histo = new Array(histogram_size);
-    let index;
+    constructor(pixels: RGB[]) {
+        pixels.forEach((pixel) => {
+            let r_val = pixel[0] >> right_shift;
+            let g_val = pixel[1] >> right_shift;
+            let b_val = pixel[2] >> right_shift;
 
+            let index = Histogram.getColorIndex(r_val, g_val, b_val);
+            this.histogram[index] = (this.histogram[index] ?? 0) + 1;
+        });
+    }
 
-    pixels.forEach((pixel) => {
-        let r_val = pixel[0] >> rshift;
-        let g_val = pixel[1] >> rshift;
-        let b_val = pixel[2] >> rshift;
+    public sample(r: number, g: number, b: number): number {
+        const r_val = r >> right_shift;
+        const g_val = g >> right_shift;
+        const b_val = b >> right_shift;
 
-        index = getColorIndex(r_val, g_val, b_val);
-        histo[index] = (histo[index] ?? 0) + 1;
-    });
+        return this.sampleWithReducedColor(r_val, g_val, b_val);
+    }
 
-    return histo;
+    public sampleWithReducedColor(r_val: number, g_val: number, b_val: number): number {
+        const index = Histogram.getColorIndex(r_val, g_val, b_val);
+        return this.histogram[index] ?? 0;
+    }
+
+    /**
+    * Maps a reduced color to an index in the histogram
+    */
+    static getColorIndex(r_val: number, g_val: number, b_val: number) {
+        return (r_val << 2 * significant_bits) + (g_val << significant_bits) + b_val;
+    }
 }
 
 /**
  * Return the smallest VBox that contains all the pixels
  * 
  * @param pixels 
- * @param histo 
+ * @param histogram 
  * @returns 
  */
-function vboxFromPixels(pixels: RGB[], histo: number[]): VBox {
+function vboxFromPixels(pixels: RGB[], histogram: Histogram): VBox {
     let r_min = 1000000;
     let r_max = 0;
     let gmin = 1000000;
@@ -310,9 +307,9 @@ function vboxFromPixels(pixels: RGB[], histo: number[]): VBox {
 
     // find min/max
     pixels.forEach(pixel => {
-        const r_val = pixel[0] >> rshift;
-        const g_val = pixel[1] >> rshift;
-        const b_val = pixel[2] >> rshift;
+        const r_val = pixel[0] >> right_shift;
+        const g_val = pixel[1] >> right_shift;
+        const b_val = pixel[2] >> right_shift;
 
 
         if (r_val < r_min) r_min = r_val;
@@ -323,17 +320,56 @@ function vboxFromPixels(pixels: RGB[], histo: number[]): VBox {
         else if (b_val > bmax) bmax = b_val;
     });
 
-
-    return new VBox(r_min, r_max, gmin, gmax, bmin, bmax, histo);
+    return new VBox(r_min, r_max, gmin, gmax, bmin, bmax, histogram);
 }
-function medianCutApply(histo: number[], vbox: VBox): [VBox, VBox | undefined] {
+
+function doCut(vbox: VBox, partial_sum: number[], lookahead_sum: number[], total: number, channel: "r" | "g" | "b"): [VBox, VBox] {
+
+    type ColorDim = `${typeof channel}1` | `${typeof channel}2`;
+
+    const dim1: ColorDim = channel + '1' as ColorDim;
+    const dim2: ColorDim = channel + '2' as ColorDim;
+
+    for (let r = vbox[dim1]; r <= vbox[dim2]; r++) {
+        if (partial_sum[r] > total / 2) {
+            let vbox1 = vbox.copy();
+            let vbox2 = vbox.copy();
+            let left = r - vbox[dim1];
+            let right = vbox[dim2] - r;
+
+            let d2, count2 = 0;
+
+            if (left <= right)
+                d2 = Math.min(vbox[dim2] - 1, ~~(r + right / 2)); else d2 = Math.max(vbox[dim1], ~~(r - 1 - left / 2));
+
+
+            // avoid 0-count boxes
+            while (!partial_sum[d2]) d2++;
+            count2 = lookahead_sum[d2];
+
+            while (!count2 && partial_sum[d2 - 1])
+                count2 = lookahead_sum[--d2];
+
+
+            // set dimensions
+            vbox1[dim2] = d2;
+            vbox2[dim1] = vbox1[dim2] + 1;
+
+            return [vbox1, vbox2];
+        }
+    }
+
+    throw new Error("VBox can't be cut");
+}
+
+function medianCutApply(histogram: Histogram, vbox: VBox): [VBox, VBox | undefined] {
     if (!vbox.count())
         return [vbox.copy(), undefined]; //Shouldn't happen
 
     const rw = vbox.r2 - vbox.r1 + 1;
     const gw = vbox.g2 - vbox.g1 + 1;
     const bw = vbox.b2 - vbox.b1 + 1;
-    const maxw = Math.max(rw, gw, bw);
+    const max_channel_w = Math.max(rw, gw, bw);
 
     // only one pixel, no split
     if (vbox.count() == 1) {
@@ -341,113 +377,71 @@ function medianCutApply(histo: number[], vbox: VBox): [VBox, VBox | undefined] {
     }
 
     /* Find the partial sum arrays along the selected axis. */
-    var total = 0,
-        partial_sum: number[] = [],
-        lookahead_sum: number[] = [],
-        i,
-        j,
-        k,
-        sum,
-        index;
-    if (maxw == rw) {
-        for (i = vbox.r1; i <= vbox.r2; i++) {
-            sum = 0;
-            for (j = vbox.g1; j <= vbox.g2; j++) {
-                for (k = vbox.b1; k <= vbox.b2; k++) {
-                    index = getColorIndex(i, j, k);
-                    sum += histo[index] || 0;
+    let total = 0;
+    const partial_sum: number[] = [];
+    const lookahead_sum: number[] = [];
+
+    if (max_channel_w == rw) {
+        for (let r = vbox.r1; r <= vbox.r2; r++) {
+            let sum = 0;
+            for (let g = vbox.g1; g <= vbox.g2; g++) {
+                for (let b = vbox.b1; b <= vbox.b2; b++) {
+                    sum += histogram.sampleWithReducedColor(r, g, b);
                 }
             }
             total += sum;
-            partial_sum[i] = total;
+            partial_sum[r] = total;
         }
-    } else if (maxw == gw) {
-        for (i = vbox.g1; i <= vbox.g2; i++) {
-            sum = 0;
-            for (j = vbox.r1; j <= vbox.r2; j++) {
-                for (k = vbox.b1; k <= vbox.b2; k++) {
-                    index = getColorIndex(j, i, k);
-                    sum += histo[index] || 0;
+    } else if (max_channel_w == gw) {
+        for (let g = vbox.g1; g <= vbox.g2; g++) {
+            let sum = 0;
+            for (let r = vbox.r1; r <= vbox.r2; r++) {
+                for (let b = vbox.b1; b <= vbox.b2; b++) {
+                    sum += histogram.sampleWithReducedColor(r, g, b);
                 }
             }
             total += sum;
-            partial_sum[i] = total;
+            partial_sum[g] = total;
+        }
+    } else if (max_channel_w == bw) {
+        for (let b = vbox.b1; b <= vbox.b2; b++) {
+            let sum = 0;
+            for (let r = vbox.r1; r <= vbox.r2; r++) {
+                for (let g = vbox.g1; g <= vbox.g2; g++) {
+                    sum += histogram.sampleWithReducedColor(r, g, b);
+                }
+            }
+            total += sum;
+            partial_sum[b] = total;
         }
     } else {
-        /* maxw == bw */
-        for (i = vbox.b1; i <= vbox.b2; i++) {
-            sum = 0;
-            for (j = vbox.r1; j <= vbox.r2; j++) {
-                for (k = vbox.g1; k <= vbox.g2; k++) {
-                    index = getColorIndex(j, k, i);
-                    sum += histo[index] || 0;
-                }
-            }
-            total += sum;
-            partial_sum[i] = total;
-        }
+        throw new Error("Not Reached");
     }
-
 
     partial_sum.forEach(function (d, i) {
         lookahead_sum[i] = total - d;
     });
 
 
-    function doCut(channel: "r" | "g" | "b"): [VBox, VBox] {
-
-        type ColorDim = `${typeof channel}1` | `${typeof channel}2`;
-
-        const dim1: ColorDim = channel + '1' as ColorDim;
-        const dim2: ColorDim = channel + '2' as ColorDim;
-
-        let
-            left,
-            right,
-            vbox1,
-            vbox2,
-            d2,
-            count2 = 0;
-        for (i = vbox[dim1]; i <= vbox[dim2]; i++) {
-            if (partial_sum[i] > total / 2) {
-                vbox1 = vbox.copy();
-                vbox2 = vbox.copy();
-                left = i - vbox[dim1];
-                right = vbox[dim2] - i;
-                if (left <= right) d2 = Math.min(vbox[dim2] - 1, ~~(i + right / 2)); else d2 = Math.max(vbox[dim1], ~~(i - 1 - left / 2));
-                // avoid 0-count boxes
-                while (!partial_sum[d2]) d2++;
-                count2 = lookahead_sum[d2];
-                while (!count2 && partial_sum[d2 - 1]) count2 = lookahead_sum[--d2];
-                // set dimensions
-                vbox1[dim2] = d2;
-                vbox2[dim1] = vbox1[dim2] + 1;
-                // console.log('vbox counts:', vbox.count(), vbox1.count(), vbox2.count());
-                return [vbox1, vbox2];
-            }
-        }
-
-        throw new Error("VBox can't be cut");
-    }
-    // determine the cut planes
-    return maxw == rw ? doCut('r') : maxw == gw ? doCut('g') : doCut('b');
+    const channel = max_channel_w == rw ? 'r' : max_channel_w == gw ? 'g' : 'b';
+    return doCut(vbox, partial_sum, lookahead_sum, total, channel);
 }
 
 
 
-export default function quantize(pixels: RGB[], max_colors: number): ColorMap {
-    
+export default function quantize(pixelData: Uint8ClampedArray, max_colors: number): ColorMap {
 
     // Validate Inputs
-    if (!pixels.length || max_colors < 2 || max_colors > 256) {
+    if ((pixelData.length < 4) || max_colors < 2 || max_colors > 256) {
         throw new Error('Invalid Arguments. There must be at least one pixel, and the max color must be between 2 and 256');
     }
 
 
-    const histo = getHistogram(pixels);
+    const pixels = createPixelArray(pixelData, 10);
+    const histogram = new Histogram(pixels);
 
     // get the beginning vbox from the colors
-    const vbox = vboxFromPixels(pixels, histo);
+    const vbox = vboxFromPixels(pixels, histogram);
     const pq = new PriorityQueue<VBox>((a, b) => {
         return naturalOrder(a.count(), b.count());
     });
@@ -475,7 +469,7 @@ export default function quantize(pixels: RGB[], max_colors: number): ColorMap {
                 continue;
             }
             // do the cut
-            var [vbox1, vbox2] = medianCutApply(histo, vbox);
+            var [vbox1, vbox2] = medianCutApply(histogram, vbox);
             lh.push(vbox1);
 
             if (vbox2) {
