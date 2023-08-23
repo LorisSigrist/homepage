@@ -1,5 +1,4 @@
 import quantize from './quantize';
-import { validateOptions } from './core';
 import type { RGB } from '../../utils';
 
 
@@ -31,14 +30,10 @@ function getColor(imageData: ImageData, quality = 10): RGB | null {
  * faster the palette generation but the greater the likelihood that colors will be missed.
  */
 function getPalette(imageData: ImageData, colorCount: number, quality: number): RGB[] | null {
-    const options = validateOptions({
-        colorCount,
-        quality
-    });
 
     //Down-sample pixel data to decrease pixel count
     const numPixels = Math.floor(imageData.data.length / 4);
-    const newNumPixels = Math.max(1, Math.round(numPixels / options.quality));
+    const newNumPixels = Math.max(1, Math.round(numPixels / quality));
     const pixelData = new Uint8ClampedArray(newNumPixels * 4);
 
     for (let i = 0; i < newNumPixels; i++) {
@@ -51,7 +46,7 @@ function getPalette(imageData: ImageData, colorCount: number, quality: number): 
     }
 
 
-    const color_map = quantize(pixelData, options.colorCount);
+    const color_map = quantize(pixelData, colorCount);
     const palette: RGB[] | null = color_map ? color_map.palette() : null;
 
     return palette;
