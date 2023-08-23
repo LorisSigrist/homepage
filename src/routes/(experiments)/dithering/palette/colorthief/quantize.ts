@@ -1,5 +1,4 @@
 import type { RGB } from "../../utils";
-import { createPixelArray } from './core';
 
 /**
  * WE USE A REDUCED BIT REPRESENTATION FOR COLORS (5bits instead of 8bits)
@@ -11,7 +10,6 @@ const MAX_ITERATIONS = 1000;
 const significant_bits = REDUCED_BITS_PER_CHANNEL;
 const right_shift = BITS_PER_CHANNEL - REDUCED_BITS_PER_CHANNEL;
 const fractByPopulations = 0.75;
-
 
 function naturalOrder(a: number, b: number): -1 | 0 | 1 {
     if (a < b) return -1;
@@ -257,15 +255,16 @@ class ColorMap {
 class Histogram {
     private histogram: number[] = new Array(1 << 3 * significant_bits);
 
-    constructor(pixels: RGB[]) {
-        pixels.forEach((pixel) => {
-            let r_val = pixel[0] >> right_shift;
-            let g_val = pixel[1] >> right_shift;
-            let b_val = pixel[2] >> right_shift;
+    constructor(pixelData: Uint8ClampedArray) {
+
+        for (let i = 0; i < pixelData.length; i += 4) {
+            let r_val = pixelData[i] >> right_shift;
+            let g_val = pixelData[i + 1] >> right_shift;
+            let b_val = pixelData[i + 2] >> right_shift;
 
             let index = Histogram.getColorIndex(r_val, g_val, b_val);
             this.histogram[index] = (this.histogram[index] ?? 0) + 1;
-        });
+        }
     }
 
     public sample(r: number, g: number, b: number): number {
@@ -296,7 +295,7 @@ class Histogram {
  * @param histogram 
  * @returns 
  */
-function vboxFromPixels(pixels: RGB[], histogram: Histogram): VBox {
+function vboxFromPixeldata(pixelData: Uint8ClampedArray, histogram: Histogram): VBox {
     let r_min = 1000000;
     let r_max = 0;
     let gmin = 1000000;
@@ -304,13 +303,10 @@ function vboxFromPixels(pixels: RGB[], histogram: Histogram): VBox {
     let bmin = 1000000;
     let bmax = 0;
 
-
-    // find min/max
-    pixels.forEach(pixel => {
-        const r_val = pixel[0] >> right_shift;
-        const g_val = pixel[1] >> right_shift;
-        const b_val = pixel[2] >> right_shift;
-
+    for (let i = 0; i < pixelData.length; i += 4) {
+        const r_val = pixelData[i] >> right_shift;
+        const g_val = pixelData[i + 1] >> right_shift;
+        const b_val = pixelData[i + 2] >> right_shift;
 
         if (r_val < r_min) r_min = r_val;
         else if (r_val > r_max) r_max = r_val;
@@ -318,7 +314,9 @@ function vboxFromPixels(pixels: RGB[], histogram: Histogram): VBox {
         else if (g_val > gmax) gmax = g_val;
         if (b_val < bmin) bmin = b_val;
         else if (b_val > bmax) bmax = b_val;
-    });
+
+    }
+
 
     return new VBox(r_min, r_max, gmin, gmax, bmin, bmax, histogram);
 }
@@ -436,21 +434,17 @@ export default function quantize(pixelData: Uint8ClampedArray, max_colors: numbe
         throw new Error('Invalid Arguments. There must be at least one pixel, and the max color must be between 2 and 256');
     }
 
-
-    const pixels = createPixelArray(pixelData, 10);
-    const histogram = new Histogram(pixels);
+    const histogram = new Histogram(pixelData);
 
     // get the beginning vbox from the colors
-    const vbox = vboxFromPixels(pixels, histogram);
+    const vbox = vboxFromPixeldata(pixelData, histogram);
     const pq = new PriorityQueue<VBox>((a, b) => {
         return naturalOrder(a.count(), b.count());
     });
 
-    pq.push(vbox);
+    pq.push(vbox); //Initial vbox covering all colors
 
-    // inner function to do the iteration
-
-    function iter(lh: PriorityQueue<VBox>, target: number) {
+    const iter = (lh: PriorityQueue<VBox>, target: number) => {
         let num_colors = lh.size();
         let iterations = 0;
 
@@ -482,14 +476,13 @@ export default function quantize(pixelData: Uint8ClampedArray, max_colors: numbe
 
     // first set of colors, sorted by population
     iter(pq, fractByPopulations * max_colors);
-    // console.log(pq.size(), pq.debug().length, pq.debug().slice());
 
     // Re-sort by the product of pixel occupancy times the size in color space.
     var pq2 = new PriorityQueue<VBox>(function (a, b) {
         return naturalOrder(a.count() * a.volume(), b.count() * b.volume());
     });
 
-
+    //Transfer all the elements from pq to pq2
     while (pq.size()) {
         pq2.push(pq.pop()!);
     }
@@ -497,7 +490,6 @@ export default function quantize(pixelData: Uint8ClampedArray, max_colors: numbe
     // next set - generate the median cuts using the (npix * vol) sorting.
     iter(pq2, max_colors);
 
-    // calculate the actual colors
     const colorMap = new ColorMap();
     while (pq2.size()) {
         colorMap.push(pq2.pop()!);

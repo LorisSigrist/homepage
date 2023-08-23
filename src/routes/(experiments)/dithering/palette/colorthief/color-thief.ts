@@ -36,7 +36,22 @@ function getPalette(imageData: ImageData, colorCount: number, quality: number): 
         quality
     });
 
-    const color_map = quantize(imageData.data, options.colorCount);
+    //Down-sample pixel data to decrease pixel count
+    const numPixels = Math.floor(imageData.data.length / 4);
+    const newNumPixels = Math.max(1, Math.round(numPixels / options.quality));
+    const pixelData = new Uint8ClampedArray(newNumPixels * 4);
+
+    for (let i = 0; i < newNumPixels; i++) {
+        const j = Math.round(i * numPixels / newNumPixels);
+
+        pixelData[i * 4 + 0] = imageData.data[j * 4 + 0];
+        pixelData[i * 4 + 1] = imageData.data[j * 4 + 1];
+        pixelData[i * 4 + 2] = imageData.data[j * 4 + 2];
+        pixelData[i * 4 + 3] = imageData.data[j * 4 + 3];
+    }
+
+
+    const color_map = quantize(pixelData, options.colorCount);
     const palette: RGB[] | null = color_map ? color_map.palette() : null;
 
     return palette;
