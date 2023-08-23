@@ -1,7 +1,4 @@
-/**
- * An RGB color with values between 0 and 255
- */
-export type RGB = [number, number, number];
+import type { RGB } from "../utils";
 
 export function generatePalette(colors: RGB[]): ImageData {
 

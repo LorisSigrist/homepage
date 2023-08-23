@@ -1,5 +1,5 @@
 <script lang="ts">
-    import ColorThief from "colorthief";
+	import { getPalette } from "./palette/colorthief/color-thief";
 	import { rgbToHex, type RGB } from "./utils";
 	export let palette: string[] = [];
     export let image: ImageData | null = null;
@@ -26,36 +26,10 @@
         }
 	];
 
-    /**
-     * 
-     * @param img
-     * @returns An Array of Hexadecimal color strings
-     */
-    async function generatePalette(img: ImageData) : Promise<string[]> {
-        const colorThief = new ColorThief();
-
-        const canvas = new OffscreenCanvas(img.width, img.height);
-        const ctx = canvas.getContext("2d")!;
-        ctx.putImageData(img, 0, 0);
-
-
-        const blob = await canvas.convertToBlob();
-        const url = URL.createObjectURL(blob);
-
-        const image = new Image();
-
-        const resolutionPromise = new Promise<void>((resolve, reject) => {
-            image.onload = () => {
-                resolve();
-            }
-        });
-
-        image.src = url;
-
-        await resolutionPromise;
-
-        const colors : RGB[] = colorThief.getPalette(image, 20, 2);
-
+    async function generatePalette(imgData: ImageData) : Promise<string[]> {
+        const colors  = getPalette(imgData, 20, 2);
+        console.log(colors);
+        if(!colors) throw new Error("Failed to generate palette");
         return colors.map(rgbToHex);
     }
 </script>
