@@ -1,7 +1,8 @@
 import type { RGB } from "../../utils";
 
-/**
- * WE USE A REDUCED BIT REPRESENTATION FOR COLORS (5bits instead of 8bits)
+/*
+    WE USE A REDUCED BIT REPRESENTATION FOR COLORS (5bits instead of 8bits)
+    This increases the chance of a collision in the histogram, reducing the number of samples needed
  */
 const BITS_PER_CHANNEL = 8;
 const REDUCED_BITS_PER_CHANNEL = 5;
@@ -11,6 +12,9 @@ const significant_bits = REDUCED_BITS_PER_CHANNEL;
 const right_shift = BITS_PER_CHANNEL - REDUCED_BITS_PER_CHANNEL;
 const fractByPopulations = 0.75;
 
+/**
+ * Convenience function for comparing two numbers
+ */
 function naturalOrder(a: number, b: number): -1 | 0 | 1 {
     if (a < b) return -1;
     if (a > b) return 1;
@@ -22,23 +26,22 @@ function naturalOrder(a: number, b: number): -1 | 0 | 1 {
  */
 class PriorityQueue<T> {
     private contents: T[] = [];
-    private sorted: boolean = false;
+    private isSorted: boolean = false;
 
-    constructor(private compareFn: (a: T, b: T) => number) {
-    }
+    constructor(private compareFn: (a: T, b: T) => number) { }
 
     /**
      * Make sure the contents are sorted. If they are already sorted, this is a no-op.
      */
     private sort() {
-        if (this.sorted) return;
+        if (this.isSorted) return;
         this.contents.sort(this.compareFn);
-        this.sorted = true;
+        this.isSorted = true;
     }
 
     public push(o: T) {
         this.contents.push(o);
-        this.sorted = false;
+        this.isSorted = false;
     }
 
     public peek(index: number | undefined) {
@@ -58,15 +61,6 @@ class PriorityQueue<T> {
 
     public map<X>(mapFn: (value: T, index: number, array: T[]) => X): X[] {
         return this.contents.map(mapFn);
-    }
-
-    /**
-     * @deprecated Debugging function. Do not use.
-     * @returns The internal array used to store the contents of the queue. This array is sorted.
-     */
-    public debug() {
-        this.sort();
-        return this.contents;
     }
 
     [Symbol.iterator]() {
@@ -290,18 +284,14 @@ class Histogram {
 
 /**
  * Return the smallest VBox that contains all the pixels
- * 
- * @param pixels 
- * @param histogram 
- * @returns 
  */
-function vboxFromPixeldata(pixelData: Uint8ClampedArray, histogram: Histogram): VBox {
+function vboxFromPixelData(pixelData: Uint8ClampedArray, histogram: Histogram): VBox {
     let r_min = 1000000;
     let r_max = 0;
-    let gmin = 1000000;
-    let gmax = 0;
-    let bmin = 1000000;
-    let bmax = 0;
+    let g_min = 1000000;
+    let g_max = 0;
+    let b_min = 1000000;
+    let b_max = 0;
 
     for (let i = 0; i < pixelData.length; i += 4) {
         const r_val = pixelData[i] >> right_shift;
@@ -310,15 +300,13 @@ function vboxFromPixeldata(pixelData: Uint8ClampedArray, histogram: Histogram): 
 
         if (r_val < r_min) r_min = r_val;
         else if (r_val > r_max) r_max = r_val;
-        if (g_val < gmin) gmin = g_val;
-        else if (g_val > gmax) gmax = g_val;
-        if (b_val < bmin) bmin = b_val;
-        else if (b_val > bmax) bmax = b_val;
-
+        if (g_val < g_min) g_min = g_val;
+        else if (g_val > g_max) g_max = g_val;
+        if (b_val < b_min) b_min = b_val;
+        else if (b_val > b_max) b_max = b_val;
     }
 
-
-    return new VBox(r_min, r_max, gmin, gmax, bmin, bmax, histogram);
+    return new VBox(r_min, r_max, g_min, g_max, b_min, b_max, histogram);
 }
 
 function doCut(vbox: VBox, partial_sum: number[], lookahead_sum: number[], total: number, channel: "r" | "g" | "b"): [VBox, VBox] {
@@ -437,7 +425,7 @@ export default function quantize(pixelData: Uint8ClampedArray, max_colors: numbe
     const histogram = new Histogram(pixelData);
 
     // get the beginning vbox from the colors
-    const vbox = vboxFromPixeldata(pixelData, histogram);
+    const vbox = vboxFromPixelData(pixelData, histogram);
     const pq = new PriorityQueue<VBox>((a, b) => {
         return naturalOrder(a.count(), b.count());
     });
@@ -463,11 +451,11 @@ export default function quantize(pixelData: Uint8ClampedArray, max_colors: numbe
                 continue;
             }
             // do the cut
-            var [vbox1, vbox2] = medianCutApply(histogram, vbox);
+            const [vbox1, vbox2] = medianCutApply(histogram, vbox);
             lh.push(vbox1);
 
+            /* vbox2 may be null */
             if (vbox2) {
-                /* vbox2 may be null */
                 lh.push(vbox2);
                 num_colors++;
             }
@@ -478,7 +466,7 @@ export default function quantize(pixelData: Uint8ClampedArray, max_colors: numbe
     iter(pq, fractByPopulations * max_colors);
 
     // Re-sort by the product of pixel occupancy times the size in color space.
-    var pq2 = new PriorityQueue<VBox>(function (a, b) {
+    const pq2 = new PriorityQueue<VBox>(function (a, b) {
         return naturalOrder(a.count() * a.volume(), b.count() * b.volume());
     });
 

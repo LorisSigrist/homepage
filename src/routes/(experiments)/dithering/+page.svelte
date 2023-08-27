@@ -5,7 +5,7 @@
 
 	import { orderedDithering } from './rendering/index';
 	import Button from './Button.svelte';
-	import { Image2ImageData, hexToRGB, loadImageFile, saveCanvasAsImage } from './utils';
+	import { Image2ImageData, hexToRGB, loadImageFile, saveCanvasAsImage, type RGB } from './utils';
 	import SplitPanzoom from './SplitPanzoom.svelte';
 	import cat_img_src from './images/cat.jpg';
 	import gradient_img_src from './images/gradient.avif';
@@ -94,11 +94,20 @@
 	let splitDirection: 'horizontal' | 'vertical' = 'horizontal';
 	let options_open = false;
 
-	let colors = ['#000000', '#ffffff', '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff'];
+	let colors : RGB[] = [
+		'#000000',
+		'#ffffff',
+		'#ff0000',
+		'#00ff00',
+		'#0000ff',
+		'#ffff00',
+		'#00ffff',
+		'#ff00ff'
+	].map(hexToRGB);
 	let palette: ImageData;
 
 	$: if (browser) {
-		generatePaletteInWorker(colors.map(hexToRGB)).then(
+		generatePaletteInWorker(colors).then(
 			(generatedPalette) => (palette = generatedPalette)
 		);
 	}
@@ -288,7 +297,7 @@
 				<div class="grid gap-3" class:hidden={mode === 'none'}>
 					<h2 class="text-base font-semibold leading-7 text-black mb-2">Palette</h2>
 
-					<PaletteOptions bind:palette={colors} image={image_data} />
+					<PaletteOptions bind:colors image={image_data} />
 				</div>
 			</section>
 		</Collapsible>
