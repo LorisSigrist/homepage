@@ -52,7 +52,7 @@
 		height
 	}}
 	bind:this={canvas}
-	style={`width: ${width}px; height: ${height}px; image-rendering: pixelated;`}
+	style={`image-rendering: pixelated;`}
 	{width}
 	{height}
 	class={twClass}

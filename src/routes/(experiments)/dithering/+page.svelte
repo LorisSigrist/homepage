@@ -3,11 +3,9 @@
 	import { ArrowDownTray, Icon, XMark } from 'svelte-hero-icons';
 	import DimensionsInput from './ImageSizeInput.svelte';
 
-	import { orderedDithering } from './rendering/index';
 	import Button from './Button.svelte';
 	import { Image2ImageData, hexToRGB, loadImageFile, saveCanvasAsImage, type RGB } from './utils';
 	import SplitPanzoom from './SplitPanzoom.svelte';
-	import { errorDiffusionDithering } from './errorDiffusion';
 	import ErrorDiffusionOptions from './errorDiffusion/ErrorDiffusionOptions.svelte';
 	import Tabs from './Tabs.svelte';
 	import OrderedDitheringOptions from './rendering/OrderedDitheringOptions.svelte';
@@ -19,7 +17,7 @@
 	import { browser } from '$app/environment';
 	import PaletteOptions from './palette/PaletteOptions.svelte';
 	import ImageSelectionScreen from './ImageSelectionScreen.svelte';
-	import ImageDataCanvas from './ImageDataCanvas.svelte';
+	import DitheredImage, { type DitherMode } from './DitheredImage.svelte';
 	const og_src = '/og/dither-studio.webp';
 
 	let canvas: HTMLCanvasElement | null = null;
@@ -28,9 +26,12 @@
 	$: height = Math.round(width / aspectRatio);
 
 	let image_data: ImageData | null = null;
-
-	$: aspectRatio =
-		image_data?.width && image_data?.height ? image_data.width / image_data.height : 1;
+	$: aspectRatio = calculateAspectRatio(image_data);
+	
+	function calculateAspectRatio(imgData: ImageData | null) {
+		if (!imgData) return 1;
+		return imgData.width / imgData.height;
+	}
 
 	async function save() {
 		if (!canvas) return;
@@ -55,7 +56,7 @@
 		}
 	}
 
-	let mode: 'ordered' | 'error_diffusion' | 'none' = 'ordered';
+	let mode: DitherMode = 'ordered';
 
 	let thresholdMap: ImageData | null = null;
 	let noiseIntensity = 0.3;
@@ -87,64 +88,42 @@
 
 <svelte:body on:drop|preventDefault={onDrop} on:dragover|preventDefault={() => {}} />
 
+
 <main class="w-screen max-w-screen h-screen max-h-screen relative bg-gray-300">
+	{#if image_data}
 	<!--Main content-->
 	<section class="overflow-hidden select-none fixed inset-0">
-		{#if image_data}
 			<div class="w-full h-full relative">
 				<SplitPanzoom>
-					<ImageDataCanvas
+					<DitheredImage
 						slot="left"
-						data={image_data}
+						bind:canvas
+						width={image_data.width}
+						height={image_data.height}
+						mode="none"
+						{palette}
+						{thresholdMap}
+						{noiseIntensity}
+						{diffusionStrength}
+						{diffusionMatrix}
+						{diffusionMatrixOriginX}
+						{image_data}
+					/>
+
+					<DitheredImage
+						slot="right"
 						bind:canvas
 						{width}
 						{height}
-						twClass="shadow-lg"
+						{mode}
+						{palette}
+						{thresholdMap}
+						{noiseIntensity}
+						{diffusionStrength}
+						{diffusionMatrix}
+						{diffusionMatrixOriginX}
+						{image_data}
 					/>
-
-					<svelte:fragment slot="right">
-						{#if mode === 'error_diffusion'}
-							{#if palette}
-								<canvas
-									class="pixelated shadow-lg bg-gray-200"
-									style={`width: ${width}px; height: ${height}px`}
-									bind:this={canvas}
-									use:errorDiffusionDithering={{
-										image: image_data,
-										output_width: width,
-										output_height: height,
-										palette,
-										diffusionStrength,
-										diffusionMatrix,
-										diffusionMatrixOriginX
-									}}
-									{width}
-									{height}
-								/>
-							{/if}
-						{:else if mode === 'ordered'}
-							{#if thresholdMap && palette}
-								<canvas
-									class="pixelated shadow-lg bg-gray-200"
-									style={`width: ${width}px; height: ${height}px`}
-									use:orderedDithering={{
-										image: image_data,
-										noiseIntensity,
-										palette,
-										output_width: width,
-										output_height: height,
-										thresholdMap
-									}}
-									bind:this={canvas}
-									{width}
-									{height}
-									aria-label="Dithered Image"
-								/>
-							{/if}
-						{:else if mode === 'none'}
-							<ImageDataCanvas data={image_data} bind:canvas {width} {height} twClass="shadow-lg" />
-						{/if}
-					</svelte:fragment>
 				</SplitPanzoom>
 				<button
 					class="absolute top-0 left-0 m-4 p-2 bg-black bg-opacity-40 rounded-full"
@@ -154,13 +133,9 @@
 					<Icon src={XMark} class="w-5 h-5 text-white" />
 				</button>
 			</div>
-		{:else}
-			<ImageSelectionScreen on:image={(e) => (image_data = Image2ImageData(e.detail))} />
-		{/if}
 	</section>
 
 	<!--GUI-->
-
 
 	<!--Sidebar-->
 	<aside
@@ -180,7 +155,7 @@
 
 					<DimensionsInput
 						bind:width
-						bind:aspectRatio
+						{aspectRatio}
 						minWidth={12}
 						minHeight={12}
 						maxHeight={5000}
@@ -279,12 +254,13 @@
 			</section>
 		</Collapsible>
 	</aside>
+
+	{:else}
+			<ImageSelectionScreen on:image={(e) => (image_data = Image2ImageData(e.detail))} />
+		{/if}
 </main>
 
 <style>
-	.pixelated {
-		image-rendering: pixelated;
-	}
 	.safe-padding-bottom {
 		padding-bottom: max(env(safe-area-inset-bottom), 2rem);
 	}
