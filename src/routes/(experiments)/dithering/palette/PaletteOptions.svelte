@@ -1,7 +1,8 @@
 <script lang="ts">
 	import PaletteInput from './PaletteInput.svelte';
-	import { getPalette } from './palette/color-extraction';
-	import { hexToRGB, type RGB } from './utils';
+	import { getPalette } from './color-extraction';
+	import { hexToRGB, type RGB } from '../utils';
+	import { Cog6Tooth, Icon } from 'svelte-hero-icons';
 
 	export let colors: RGB[];
 	export let image: ImageData | null = null;
@@ -37,23 +38,22 @@
 	}
 </script>
 
-<ul>
-	{#each presets as { name, palette: presetPalette }}
-		<li>
-			<button on:click={() => (colors = presetPalette)}> {name} </button>
-		</li>
+<select on:input={(e) => (colors = presets[Number(e.target?.value ?? 0)].palette)}>
+	{#each presets as { name, palette: presetPalette }, i}
+		<option value={i}> {name} </option>
 	{/each}
+</select>
 
-	<li>
-		<button
-			disabled={!image}
-			on:click={async () => {
-				if (image) colors = await generatePalette(image);
-			}}
-		>
-			Generate
-		</button>
-	</li>
-</ul>
+<button
+	disabled={!image}
+	on:click={async () => {
+		if (image) colors = await generatePalette(image);
+	}}
+	class="flex items-center justify-center gap-1 w-full h-10 bg-gray-200 text-gray-800 rounded-md"
+>
+	<Icon src={Cog6Tooth} class="w-4 h-4" />
+	Generate Palette
+</button>
+
 
 <PaletteInput bind:colors />

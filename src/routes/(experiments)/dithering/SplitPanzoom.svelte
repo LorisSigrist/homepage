@@ -2,6 +2,7 @@
 	import { ArrowsRightLeft, Icon } from 'svelte-hero-icons';
 	import { Panzoom, type TransformChangeEvent } from '$lib/interactions/panzoom';
 	import { clamp } from '$lib/math/clamp';
+	import { onMount } from 'svelte';
 
 	export let direction: 'horizontal' | 'vertical' = 'horizontal';
 
@@ -70,6 +71,19 @@
 			}
 		}
 	}
+
+
+	onMount(async () => {
+		const mediaQuery = window.matchMedia('(min-width: 768px)');
+
+		function handleOrientationChange(e: MediaQueryListEvent | MediaQueryList) {
+			direction = e.matches ? 'horizontal' : 'vertical';
+		}
+
+		mediaQuery.addEventListener('change', handleOrientationChange);
+		handleOrientationChange(mediaQuery);
+		return () => mediaQuery.removeEventListener('change', handleOrientationChange);
+	});
 </script>
 
 <div class="pz-container" class:vertical={direction === "vertical"} style:--split-point={split + '%'} bind:this={container}>

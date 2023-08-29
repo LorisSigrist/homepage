@@ -27,24 +27,16 @@ function errorDiffusionDithering(canvas: OffscreenCanvas, options: ErrorDiffusio
 
         for (let y = 0; y < options.output_height; y++) {
             for (let x = 0; x < options.output_width; x++) {
-                const index = (y * options.output_width + x) * 4;
+                const imgDataIdx = (y * options.output_width + x) << 2;
 
+                //Use the closest color from the palette (while preserving alpha)
+                const ogRGB = dithered.data.slice(imgDataIdx, imgDataIdx | 0b11);
+                const sampledRGB = samplePalette(options.palette, ogRGB);
+                dithered.data.set(sampledRGB, imgDataIdx);
 
-                //Quantize the pixel
-                const r = dithered.data[index + 0];
-                const g = dithered.data[index + 1];
-                const b = dithered.data[index + 2];
-
-
-                const [r3, g3, b3] = samplePalette(options.palette, [r, g, b]);
-                dithered.data[index + 0] = r3;
-                dithered.data[index + 1] = g3;
-                dithered.data[index + 2] = b3;
-
-                
-                const error_r = (r - r3) * options.diffusionStrength / 2;
-                const error_g = (g - g3) * options.diffusionStrength / 2;
-                const error_b = (b - b3) * options.diffusionStrength / 2;
+                const error_r = (ogRGB[0] - sampledRGB[0]) * options.diffusionStrength / 2;
+                const error_g = (ogRGB[1] - sampledRGB[1]) * options.diffusionStrength / 2;
+                const error_b = (ogRGB[2] - sampledRGB[2]) * options.diffusionStrength / 2;
 
                 //Spread the error to the surrounding pixels (making sure to stay within the bounds of the image)
                 for (let matrixY = 0; matrixY < options.diffusionMatrix.length; matrixY++) {
@@ -57,20 +49,17 @@ function errorDiffusionDithering(canvas: OffscreenCanvas, options: ErrorDiffusio
                         if (errorPixelX < 0 || errorPixelX >= options.output_width || errorPixelY < 0 || errorPixelY >= options.output_height)
                             continue;
 
-                        const errorIndex = (errorPixelY * dithered.width + errorPixelX) * 4;
+                        const errorIndex = (errorPixelY * dithered.width + errorPixelX) << 2;
 
                         const errorMultiplier = options.diffusionMatrix[matrixY][matrixX];
 
-                        dithered.data[errorIndex + 0] = clamp(dithered.data[errorIndex + 0] + error_r * errorMultiplier * options.diffusionStrength, 0, 255);
-                        dithered.data[errorIndex + 1] = clamp(dithered.data[errorIndex + 1] + error_g * errorMultiplier * options.diffusionStrength, 0, 255);
-                        dithered.data[errorIndex + 2] = clamp(dithered.data[errorIndex + 2] + error_b * errorMultiplier * options.diffusionStrength, 0, 255);
+                        dithered.data[errorIndex] = clamp(dithered.data[errorIndex] + error_r * errorMultiplier * options.diffusionStrength, 0, 255);
+                        dithered.data[errorIndex | 0b01] = clamp(dithered.data[errorIndex | 0b01] + error_g * errorMultiplier * options.diffusionStrength, 0, 255);
+                        dithered.data[errorIndex | 0b10] = clamp(dithered.data[errorIndex | 0b10] + error_b * errorMultiplier * options.diffusionStrength, 0, 255);
                     }
                 }
-
-                
             }
         }
-
 
         ctx.putImageData(dithered, 0, 0);
     }

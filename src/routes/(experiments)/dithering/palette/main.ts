@@ -10,4 +10,3 @@ export async function generatePaletteInWorker(palette: RGB[]): Promise<ImageData
     if (!worker) throw new Error("Worker not initialized");
     return await worker.generatePalette(palette);
 }
-

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Slider from './Slider.svelte';
-    import Select from './Select.svelte'
+	import Slider from '../Slider.svelte';
+    import Select from '../Select.svelte'
 
 	export let diffusionStrength: number;
 	export let diffusionMatrix: number[][];

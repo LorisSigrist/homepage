@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Icon, Plus, XMark } from 'svelte-hero-icons';
-	import { rgbToHex, type RGB, hexToRGB } from './utils';
+	import { rgbToHex, type RGB, hexToRGB } from '../utils';
 
 	export let colors: RGB[];
 
@@ -23,10 +23,10 @@
 	}
 </script>
 
-<ul class="grid gap-2 grid-cols-2">
+<ul class="grid gap-2 grid-cols-3">
 	{#each colors as color, index}
         {@const hex = rgbToHex(color)}
-		<li style="background-color: {hex}" class="relative rounded-md border h-10">
+		<li style="background-color: {hex}" class="relative rounded-md h-10">
 			<input
 				type="color"
 				value={hex}
@@ -45,10 +45,10 @@
 	<li>
 		<button
 			on:click={addColor}
-			class="flex items-center justify-center gap-2 w-full h-10 bg-emerald-500 text-white rounded-md"
+			class="flex items-center justify-center gap-1 w-full h-10 bg-emerald-500 text-white rounded-md"
 		>
 			<Icon src={Plus} class="w-4 h-4" />
-			<span>Add Color</span>
+			<span>Color</span>
 		</button>
 	</li>
 </ul>

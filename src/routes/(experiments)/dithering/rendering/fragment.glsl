@@ -11,9 +11,9 @@ uniform float uNoise;
 uniform vec2 uSize;
 
 //Each channel ranges from 0-1 
-vec3 samplePalette(vec3 og_color) {
+vec3 samplePalette(vec3 glsl_color) {
 
-    vec3 scaledColor = floor(og_color * 255.0); //Scale the color to 0-255
+    vec3 scaledColor = floor(glsl_color * 255.0); //Scale the color to 0-255
     vec3 quantized_color = floor(scaledColor / 16.0) * 16.0; //Quantize the color to 16 steps
 
     float mappingI = floor(

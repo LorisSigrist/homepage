@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Select, { type Options } from './Select.svelte';
-	import Slider from './Slider.svelte';
-	import DimensionsInput from './ImageSizeInput.svelte';
-	import ImageDataViewer from './ImageDataViewer.svelte';
-	import { generateThresholdMap } from './thresholdMapGeneration/main';
-	import type { ThresholdMapOptions } from './thresholdMapGeneration/generation';
+	import Select, { type Options } from '../Select.svelte';
+	import Slider from '../Slider.svelte';
+	import DimensionsInput from '../ImageSizeInput.svelte';
+	import ImageDataViewer from '../ImageDataViewer.svelte';
+	import { generateThresholdMap } from '../thresholdMapGeneration/main';
+	import type { ThresholdMapOptions } from '../thresholdMapGeneration/generation';
 
 	export let thresholdMap: ImageData | null;
 	export let noiseIntensity: number;
