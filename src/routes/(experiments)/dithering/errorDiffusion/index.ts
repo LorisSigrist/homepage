@@ -46,7 +46,6 @@ export function errorDiffusionDithering(canvas: HTMLCanvasElement, options: Erro
 
     return {
         update: (newOptions: ErrorDiffusionDitheringOptions) => {
-            console.log("update", newOptions);
             if (!changed) return;
 
             if (update)
