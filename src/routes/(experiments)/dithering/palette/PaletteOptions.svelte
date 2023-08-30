@@ -6,6 +6,9 @@
 	import { browser } from '$app/environment';
 	import { clamp } from '$lib/math/clamp';
 
+	const MAX_EXTRACTED_COLORS = 256;
+	const MIN_EXTRACTED_COLORS = 2;
+
 	export let image: ImageData | null = null;
 	export let palette: ImageData | null = null;
 
@@ -45,7 +48,7 @@
 		generatePaletteInWorker(colors).then((generatedPalette) => (palette = generatedPalette));
 	}
 
-	let generate_palette = false;
+	let generate_palette = true;
 	let num_colors = 16;
 
 	function onPresetInput(e: Event) {
@@ -60,31 +63,34 @@
 	let generate_palette_input : HTMLInputElement | null = null;
 
 	function potentiallyReExtractColors() {
-		generate_palette = generate_palette_input?.checked ?? false;
+		generate_palette = generate_palette_input?.checked ?? true;
 
 		if(!image) return;
 		if (generate_palette) {
-			generatePalette(image, clamp(num_colors, 2, 64)).then(
+			generatePalette(image, clamp(num_colors, MIN_EXTRACTED_COLORS, MAX_EXTRACTED_COLORS)).then(
 				(generatedPalette) => (colors = generatedPalette)
 			);
 		}
 	}
+
+	if(browser && image) {
+		potentiallyReExtractColors();
+	}
 </script>
 
 <label>
-	<input type="checkbox" bind:this={generate_palette_input} on:input={potentiallyReExtractColors} />
+	<input type="checkbox" bind:checked={generate_palette} bind:this={generate_palette_input} on:input={potentiallyReExtractColors} />
 	Extract Colors from Image
 </label>
 
 {#if generate_palette}
-	<label>
-		<span>Number of Colors {clamp(num_colors, 2, 64)}</span>
-		<br />
+	<label class="flex justify-between items-center">
+		<span>Number of Colors ({clamp(num_colors, MIN_EXTRACTED_COLORS, MAX_EXTRACTED_COLORS)})</span>
 		<input 
 			type="number" 
 			bind:value={num_colors} 
-			min={2} 
-			max={64}
+			min={MIN_EXTRACTED_COLORS} 
+			max={MAX_EXTRACTED_COLORS}
 			on:input={potentiallyReExtractColors}
 		/>
 	</label>

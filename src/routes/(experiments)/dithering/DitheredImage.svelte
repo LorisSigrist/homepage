@@ -32,7 +32,7 @@
 <script lang="ts">
 	import ImageDataCanvas from './ImageDataCanvas.svelte';
 	import { errorDiffusionDithering } from './errorDiffusion';
-	import { orderedDithering } from './rendering';
+	import { orderedDithering } from './ordered';
 
 	export let canvas: HTMLCanvasElement | null = null;
 

@@ -3,7 +3,7 @@
 	import Tabs from "./Tabs.svelte";
 	import ErrorDiffusionOptions from "./errorDiffusion/ErrorDiffusionOptions.svelte";
 	import PaletteOptions from "./palette/PaletteOptions.svelte";
-	import OrderedDitheringOptions from "./rendering/OrderedDitheringOptions.svelte";
+	import OrderedDitheringOptions from "./ordered/OrderedDitheringOptions.svelte";
     import DimensionsInput from "./ImageSizeInput.svelte";
 
     export let image_data: ImageData;
@@ -67,3 +67,9 @@
         <PaletteOptions bind:palette={config.palette} image={image_data} />
     </div>
 </section>
+
+<style>
+	.safe-padding-bottom {
+		padding-bottom: max(env(safe-area-inset-bottom), 2rem);
+	}
+</style>
