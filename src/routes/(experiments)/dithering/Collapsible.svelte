@@ -5,7 +5,7 @@
 </script>
 
 <div
-	class="w-full max-h-full {open ? "h-full divide-y divide-gray-200 mt-auto" : ""} bg-white bg-opacity-95 border border-gray-100 overflow-y-hidden flex-1 shadow-lg rounded-md flex flex-col justify-start pointer-events-auto touch-auto"
+	class="w-full max-h-full flex-shrink-0 {open ? "h-full divide-y divide-gray-200 mt-auto" : "flex-0"} bg-white bg-opacity-95 border border-gray-100 overflow-y-hidden flex-1 shadow-lg rounded-md flex flex-col justify-start pointer-events-auto touch-auto"
 >
 	<header class="py-4 px-4 flex-shrink-0 shadow-sm z-10 flex gap-2 items-center justify-between bg-white">
 		<button class="contents" on:click={() => (open = !open)}>

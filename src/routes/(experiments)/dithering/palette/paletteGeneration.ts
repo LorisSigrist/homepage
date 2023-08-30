@@ -3,7 +3,7 @@ import type { RGB } from "../utils";
 export function generatePalette(paletteColors: RGB[]): ImageData {
     if (paletteColors.length > 4096) throw new Error("Too many colors - max 4096 colors");
     else if (paletteColors.length < 1) throw new Error("No colors provided");
-    
+
 
     /*
     We are trying to generate a color-lookup-texture that maps each RGB value to the closest color in the given colorPalette.
@@ -44,19 +44,19 @@ export function generatePalette(paletteColors: RGB[]): ImageData {
 
         //Loop over all available colors and find the closest one
         let closestIndex = 0;
-        let closestDistance = Infinity;
+        let closestDistanceSquared = Number.MAX_SAFE_INTEGER;
 
         for (let i = 0; i < paletteColors.length; i++) {
 
-            const distance = Math.sqrt(
+            const distanceSquared =
                 ((r << 4) - colors[(i << 2)]) ** 2 +
                 ((g << 4) - colors[(i << 2) | 0b01]) ** 2 +
                 ((b << 4) - colors[(i << 2) | 0b10]) ** 2
-            );
 
-            if (distance < closestDistance) {
+
+            if (distanceSquared < closestDistanceSquared) {
                 closestIndex = i;
-                closestDistance = distance;
+                closestDistanceSquared = distanceSquared;
             }
         }
 
@@ -77,7 +77,7 @@ export function generatePalette(paletteColors: RGB[]): ImageData {
  * @return A Uint8ClampedArray containing the RGB (but not A) values of the color
  */
 export function samplePalette(palette: ImageData, rgb: Uint8ClampedArray): Uint8ClampedArray {
-    
+
     //Get the 4bit color value
     const r_val = rgb[0] >> 4;
     const g_val = rgb[1] >> 4;

@@ -3,9 +3,13 @@
 	import { getPalette } from './color-extraction';
 	import { hexToRGB, type RGB } from '../utils';
 	import { Cog6Tooth, Icon } from 'svelte-hero-icons';
+	import { generatePaletteInWorker } from './main';
+	import { browser } from '$app/environment';
 
-	export let colors: RGB[];
 	export let image: ImageData | null = null;
+	export let palette: ImageData | null = null;
+
+	let colors: RGB[] = ['#000000', '#ffffff'].map(hexToRGB);
 
 	const presets = [
 		{
@@ -35,6 +39,10 @@
 		const colors = getPalette(imgData, 16, 10);
 		if (!colors) throw new Error('Failed to generate palette');
 		return colors;
+	}
+
+	$: if (browser) {
+		generatePaletteInWorker(colors).then((generatedPalette) => (palette = generatedPalette));
 	}
 </script>
 
