@@ -76,6 +76,11 @@ function errorDiffusionDithering(canvas: OffscreenCanvas, options: ErrorDiffusio
 
     invalidate();
 
+    const updateImage = (newImage: ImageData) => {
+        options.image = newImage;
+        loadImage();
+        invalidate();
+    }
 
     const update = (newOptions: ErrorDiffusionDitheringOptions) => {
         const imageChanged = newOptions.image !== options.image;
@@ -97,6 +102,7 @@ function errorDiffusionDithering(canvas: OffscreenCanvas, options: ErrorDiffusio
 
     return Comlink.proxy({
         update,
+        updateImage,
         destroy
     })
 }

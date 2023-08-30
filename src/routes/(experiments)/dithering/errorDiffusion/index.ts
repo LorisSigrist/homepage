@@ -18,7 +18,7 @@ export function errorDiffusionDithering(canvas: HTMLCanvasElement, options: Erro
     const worker = new RenderingWorker();
     const wrappedWorker: Comlink.Remote<typeof ErrorDiffusionWorker> = Comlink.wrap(worker);
 
-    let pendingUpdate : ErrorDiffusionDitheringOptions | null = null;
+    let pendingUpdate: ErrorDiffusionDitheringOptions | null = null;
 
     let update: ((newOptions: ErrorDiffusionDitheringOptions) => void) | null = null;
     let destroy: () => void = () => { };
@@ -32,11 +32,26 @@ export function errorDiffusionDithering(canvas: HTMLCanvasElement, options: Erro
             else update(options); //Necessary to avoid Chrome bug where `image-rendering` is not respected. No idea why.
         });
 
+
+    const changed = (oldOptions: ErrorDiffusionDitheringOptions, newOptions: ErrorDiffusionDitheringOptions) => {
+        for (const key in oldOptions) {
+            const optionsKey = key as keyof ErrorDiffusionDitheringOptions;
+            if (oldOptions[optionsKey] !== newOptions[optionsKey])
+                return true;
+        }
+
+        return false;
+    }
+
+
     return {
         update: (newOptions: ErrorDiffusionDitheringOptions) => {
-            if(update)
+            console.log("update", newOptions);
+            if (!changed) return;
+
+            if (update)
                 update(newOptions);
-            else 
+            else
                 pendingUpdate = newOptions;
         },
         destroy: () => {

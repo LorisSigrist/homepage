@@ -61,6 +61,15 @@
 	}
 </script>
 
+<Slider
+	label="Noise Intensity ({noiseIntensity})"
+	min={0}
+	max={1.5}
+	step={0.01}
+	bind:value={noiseIntensity}
+/>
+
+
 <Select label="Threshold Map" options={thresholdMapOptions} bind:selected={thresholdMode} />
 
 {#if thresholdMode === 'bayer'}
@@ -81,11 +90,3 @@
 <ImageDataViewer imageData={thresholdMap}>
 	<span slot="placeholder">Loading Threshold Map</span>
 </ImageDataViewer>
-
-<Slider
-	label="Noise Intensity ({noiseIntensity})"
-	min={0}
-	max={1.5}
-	step={0.01}
-	bind:value={noiseIntensity}
-/>
