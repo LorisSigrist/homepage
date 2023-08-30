@@ -89,6 +89,10 @@
 		<input 
 			type="number" 
 			bind:value={num_colors} 
+			on:blur={e => {
+				num_colors = clamp(num_colors, MIN_EXTRACTED_COLORS, MAX_EXTRACTED_COLORS)
+				console.log(num_colors)
+			}}
 			min={MIN_EXTRACTED_COLORS} 
 			max={MAX_EXTRACTED_COLORS}
 			on:input={potentiallyReExtractColors}
