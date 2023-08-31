@@ -5,7 +5,6 @@
 	import Button from './primitives/Button.svelte';
 	import { saveCanvasAsImage } from './utils';
 	import SplitPanzoom from './SplitPanzoom.svelte';
-	import Collapsible from './Collapsible.svelte';
 	import DitheredImage, { type DitherConfig } from './DitheredImage.svelte';
 	import DitherOptions from './DitherOptions.svelte';
 	import { createEventDispatcher } from 'svelte';
