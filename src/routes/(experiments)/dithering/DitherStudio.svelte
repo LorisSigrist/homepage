@@ -2,7 +2,7 @@
 	import '$lib/styles/bootstrap.css';
 	import { ArrowDownTray, Icon, XMark } from 'svelte-hero-icons';
 
-	import Button from './Button.svelte';
+	import Button from './primitives/Button.svelte';
 	import { saveCanvasAsImage } from './utils';
 	import SplitPanzoom from './SplitPanzoom.svelte';
 	import Collapsible from './Collapsible.svelte';

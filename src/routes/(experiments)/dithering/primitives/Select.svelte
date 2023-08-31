@@ -1,24 +1,24 @@
 <script lang="ts" context="module">
 	type Option = { name: string; value: string };
 
-
-	export type Options<Value extends string> = readonly ({
+	export type Options<Value extends string> = readonly {
 		name: string;
 		value: Value;
-	})[]
+	}[];
 
 	type AnyOptions = Options<string>;
 </script>
 
 <script lang="ts" generics="O extends AnyOptions">
+	import { ID } from "$lib/math/id-generation";
+
 	export let options: O;
 
 	export let selected: O[number]['value'];
 	export let label: string;
 	export let name: string | undefined = undefined;
 
-	let id =
-		Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+	const id = ID();
 </script>
 
 <div>

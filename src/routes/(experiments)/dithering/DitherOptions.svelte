@@ -1,10 +1,11 @@
 <script lang="ts">
 	import type { DitherConfig } from './DitheredImage.svelte';
-	import Tabs from './Tabs.svelte';
+	import Tabs from './primitives/Tabs.svelte';
 	import ErrorDiffusionOptions from './errorDiffusion/ErrorDiffusionOptions.svelte';
 	import PaletteOptions from './palette/PaletteOptions.svelte';
 	import OrderedDitheringOptions from './ordered/OrderedDitheringOptions.svelte';
 	import DimensionsInput from './ImageSizeInput.svelte';
+	import Checkbox from './primitives/Checkbox.svelte';
 
 	export let image_data: ImageData;
 	export let config: DitherConfig;
@@ -25,15 +26,10 @@
 </script>
 
 <section class="grid gap-8 pt-8 px-4 safe-padding-bottom">
-	<div>
-		<h2 class="text-base font-semibold leading-7 text-black mb-4">Output Options</h2>
+	<div class="grid gap-4">
+		<h2 class="text-base font-semibold leading-7 text-black">Output Options</h2>
 
-		<div class="flex items-center gap-2">
-			<input type="checkbox" bind:checked={useOriginalSize} />
-			<span>
-                Original Size
-            </span>
-		</div>
+		<Checkbox bind:checked={useOriginalSize} label="Original Size" />
 
 		{#if !useOriginalSize}
 			<DimensionsInput
