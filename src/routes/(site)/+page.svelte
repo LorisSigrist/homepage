@@ -12,8 +12,7 @@
 			<hgroup class="mb-8">
 				<h1 class="text-8xl font-black mb-4">Loris Sigrist</h1>
 				<p class="text-xl">
-					Unleashing Innovation with Curiocity and Passion. Welcome to my personal website, where I
-					explore the intricacies of Fullstack Web engineering.
+					Building fun stuff on the Internet. Occasional blogger, Frequent Nerd.
 				</p>
 			</hgroup>
 
