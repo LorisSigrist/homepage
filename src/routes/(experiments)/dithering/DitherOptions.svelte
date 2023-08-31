@@ -20,7 +20,7 @@
 	$: config.height = Math.round(config.width / aspectRatio);
 
 	let useOriginalSize = true;
-    let resizedWidth = image_data.width;
+	let resizedWidth = image_data.width;
 
 	$: config.width = useOriginalSize ? image_data.width : resizedWidth;
 </script>
@@ -31,16 +31,15 @@
 
 		<Checkbox bind:checked={useOriginalSize} label="Original Size" />
 
-		{#if !useOriginalSize}
-			<DimensionsInput
-				bind:width={resizedWidth}
-				{aspectRatio}
-				minWidth={12}
-				minHeight={12}
-				maxHeight={5000}
-				maxWidth={5000}
-			/>
-		{/if}
+		<DimensionsInput
+			bind:width={resizedWidth}
+			{aspectRatio}
+			minWidth={12}
+			minHeight={12}
+			maxHeight={5000}
+			maxWidth={5000}
+			disabled={useOriginalSize}
+		/>
 	</div>
 
 	<div class="grid gap-4">
