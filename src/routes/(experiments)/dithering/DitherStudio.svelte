@@ -99,7 +99,7 @@
 				<Icon src={options_left_open ? ChevronDown : ChevronUp} class="w-6 h-6 text-gray-500" />
 			</button>
 			<div class="flex flex-1 items-center justify-between">
-				<h1 class="font-bold">Original</h1>
+				<h1 class="font-bold">Options</h1>
 				<Button
 					on:click={() => {
 						if (!canvas_left) return;
@@ -114,7 +114,7 @@
 		</header>
 		<div
 			class:hidden={!options_left_open}
-			class="bg-gray-50 max-h-full flex-1 overflow-y-scroll p-4 py-8 grid gap-8"
+			class="bg-gray-50 max-h-full flex-1 overflow-y-scroll p-4 py-8 flex flex-col gap-8"
 		>
 			<DitherOptions bind:config={config_left} bind:image_data />
 		</div>
@@ -137,7 +137,7 @@
 				<Icon src={options_right_open ? ChevronDown : ChevronUp} class="w-6 h-6 text-gray-500" />
 			</button>
 			<div class="flex flex-1 items-center justify-between">
-				<h1 class="font-bold">Original</h1>
+				<h1 class="font-bold">Options</h1>
 				<Button
 					on:click={() => {
 						if (!canvas_right) return;
@@ -152,7 +152,7 @@
 		</header>
 		<div
 			class:hidden={!options_right_open}
-			class="bg-gray-50 max-h-full flex-1 overflow-y-scroll p-4 py-8 grid gap-8"
+			class="bg-gray-50 max-h-full flex-1 overflow-y-scroll p-4 py-8 flex flex-col gap-8"
 		>
 			<DitherOptions bind:config={config_right} bind:image_data />
 		</div>

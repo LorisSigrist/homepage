@@ -20,7 +20,7 @@ export function errorDiffusionDithering(canvas: HTMLCanvasElement, options: Erro
 
     let pendingUpdate: ErrorDiffusionDitheringOptions | null = null;
 
-    let update: ((newOptions: ErrorDiffusionDitheringOptions) => void) | null = null;
+    let update: Comlink.Remote<(newOptions: ErrorDiffusionDitheringOptions) => void> | null = null;
     let destroy: () => void = () => { };
 
     wrappedWorker.errorDiffusionDithering(Comlink.transfer(offscreen, [offscreen]), options)
@@ -33,21 +33,9 @@ export function errorDiffusionDithering(canvas: HTMLCanvasElement, options: Erro
         });
 
 
-    const changed = (oldOptions: ErrorDiffusionDitheringOptions, newOptions: ErrorDiffusionDitheringOptions) => {
-        for (const key in oldOptions) {
-            const optionsKey = key as keyof ErrorDiffusionDitheringOptions;
-            if (oldOptions[optionsKey] !== newOptions[optionsKey])
-                return true;
-        }
-
-        return false;
-    }
-
 
     return {
         update: (newOptions: ErrorDiffusionDitheringOptions) => {
-            if (!changed) return;
-
             if (update)
                 update(newOptions);
             else

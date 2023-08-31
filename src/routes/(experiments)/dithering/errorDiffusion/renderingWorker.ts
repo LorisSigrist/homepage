@@ -20,11 +20,11 @@ function errorDiffusionDithering(canvas: OffscreenCanvas, options: ErrorDiffusio
     const ctx = canvas.getContext('2d')!;
 
     const render = () => {
+       
         ctx.drawImage(image, 0, 0, options.output_width, options.output_height);
-
         const dithered = ctx.getImageData(0, 0, options.output_width, options.output_height);
-
-
+       
+ 
         for (let y = 0; y < options.output_height; y++) {
             for (let x = 0; x < options.output_width; x++) {
                 const imgDataIdx = (y * options.output_width + x) << 2;
@@ -88,6 +88,7 @@ function errorDiffusionDithering(canvas: OffscreenCanvas, options: ErrorDiffusio
 
         canvas.width = options.output_width;
         canvas.height = options.output_height;
+
 
         if (imageChanged)
             loadImage();
