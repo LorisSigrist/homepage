@@ -25,9 +25,8 @@
 	$: config.width = useOriginalSize ? image_data.width : resizedWidth;
 </script>
 
-<section class="grid gap-8 pt-8 px-4 safe-padding-bottom">
 	<div class="grid gap-4">
-		<h2 class="text-base font-semibold leading-7 text-black">Output Options</h2>
+		<h2 class="text-base font-semibold leading-7 text-black">Output Image</h2>
 
 		<Checkbox bind:checked={useOriginalSize} label="Original Size" />
 
@@ -71,14 +70,9 @@
 
 	<!--Color Palette-->
 	<div class="grid gap-3" class:hidden={config.mode === 'none'}>
-		<h2 class="text-base font-semibold leading-7 text-black mb-2">Palette</h2>
+		<h2 class="text-base font-semibold leading-7 text-black mb-2">Colors</h2>
 
 		<PaletteOptions bind:palette={config.palette} image={image_data} />
 	</div>
-</section>
 
-<style>
-	.safe-padding-bottom {
-		padding-bottom: max(env(safe-area-inset-bottom), 2rem);
-	}
-</style>
+

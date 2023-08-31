@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '$lib/styles/bootstrap.css';
-	import { ArrowDownTray, Icon, XMark } from 'svelte-hero-icons';
+	import { ArrowDownTray, ChevronDown, ChevronUp, Icon, XMark } from 'svelte-hero-icons';
 
 	import Button from './primitives/Button.svelte';
 	import { saveCanvasAsImage } from './utils';
@@ -68,61 +68,94 @@
 			<DitheredImage slot="left" bind:canvas={canvas_left} config={config_left} {image_data} />
 			<DitheredImage slot="right" bind:canvas={canvas_right} config={config_right} {image_data} />
 		</SplitPanzoom>
+	</div>
+</section>
+
+<section class="gui-container touch-none pointer-events-none">
+	<header class="header">
 		<button
-			class="absolute top-0 left-0 m-4 p-2 bg-black bg-opacity-40 rounded-full"
+			class="p-2 bg-black bg-opacity-40 rounded-full touch-auto pointer-events-auto"
 			on:click={() => dispatch('cancel')}
 			title="Close Image & Reset"
 		>
 			<Icon src={XMark} class="w-5 h-5 text-white" />
 		</button>
-	</div>
-</section>
+	</header>
 
-<section class="gui-container touch-none pointer-events-none">
 	<aside
-		style="grid-area: left; align-self: end;"
-		class="md:w-96 max-w-full max-h-full overflow-hidden"
+		style="overflow: hidden;"
+		class="
+		options-left
+		touch-auto
+		pointer-events-auto
+		border border-gray-200
+		rounded-md
+		flex flex-col max-h-full
+		"
 	>
-		<div class="p-2" style={options_left_open ? 'height: 100vh' : ''}>
-			<Collapsible bind:open={options_left_open}>
-				<svelte:fragment slot="header">
-					<h1 class="font-bold">Options</h1>
-					<Button
-						on:click={() => {
-							if (!canvas_left) return;
-							save(canvas_left);
-						}}
-						disabled={!image_data}
-					>
-						<Icon src={ArrowDownTray} class="w-4 h-4" />
-						Save
-					</Button>
-				</svelte:fragment>
-				<DitherOptions bind:config={config_left} bind:image_data />
-			</Collapsible>
+		<header
+			class="py-4 px-4 flex-shrink-0 shadow-sm flex gap-2 items-center justify-between bg-white z-10"
+		>
+			<button class="contents" on:click={() => (options_left_open = !options_left_open)}>
+				<Icon src={options_left_open ? ChevronDown : ChevronUp} class="w-6 h-6 text-gray-500" />
+			</button>
+			<div class="flex flex-1 items-center justify-between">
+				<h1 class="font-bold">Original</h1>
+				<Button
+					on:click={() => {
+						if (!canvas_left) return;
+						save(canvas_left);
+					}}
+					disabled={!image_data}
+				>
+					<Icon src={ArrowDownTray} class="w-4 h-4" />
+					Save
+				</Button>
+			</div>
+		</header>
+		<div
+			class:hidden={!options_left_open}
+			class="bg-gray-50 max-h-full flex-1 overflow-y-scroll p-4 py-8 grid gap-8"
+		>
+			<DitherOptions bind:config={config_left} bind:image_data />
 		</div>
 	</aside>
 	<aside
-		style="grid-area: right; align-self: end;"
-		class="md:w-96 max-w-full max-h-full overflow-hidden"
+		style="overflow: hidden;"
+		class="
+		options-right
+		touch-auto
+		pointer-events-auto
+		border border-gray-200
+		rounded-md
+		flex flex-col max-h-full
+		"
 	>
-		<div class="p-2" style={options_right_open ? 'height: 100vh' : ''}>
-			<Collapsible bind:open={options_right_open}>
-				<svelte:fragment slot="header">
-					<h1 class="font-bold">Options</h1>
-					<Button
-						on:click={() => {
-							if (!canvas_right) return;
-							save(canvas_right);
-						}}
-						disabled={!image_data}
-					>
-						<Icon src={ArrowDownTray} class="w-4 h-4" />
-						Save
-					</Button>
-				</svelte:fragment>
-				<DitherOptions bind:config={config_right} bind:image_data />
-			</Collapsible>
+		<header
+			class="py-4 px-4 flex-shrink-0 shadow-sm flex gap-2 items-center justify-between bg-white z-10"
+		>
+			<button class="contents" on:click={() => (options_right_open = !options_right_open)}>
+				<Icon src={options_right_open ? ChevronDown : ChevronUp} class="w-6 h-6 text-gray-500" />
+			</button>
+			<div class="flex flex-1 items-center justify-between">
+				<h1 class="font-bold">Original</h1>
+				<Button
+					on:click={() => {
+						if (!canvas_right) return;
+						save(canvas_right);
+					}}
+					disabled={!image_data}
+				>
+					<Icon src={ArrowDownTray} class="w-4 h-4" />
+					Save
+				</Button>
+			</div>
+		</header>
+		<div
+			class:hidden={!options_right_open}
+			class="bg-gray-50 max-h-full flex-1 overflow-y-scroll p-4 py-8 grid gap-8"
+		>
+			<DitherOptions bind:config={config_right} bind:image_data />
 		</div>
 	</aside>
 </section>
@@ -131,24 +164,61 @@
 	.gui-container {
 		position: fixed;
 		inset: 0;
+		padding: 12px;
+		gap: 12px;
 
 		/*
 			on small screens: two rows aligned to the bottom
 		*/
 		display: grid;
-		grid-template-areas: '.' 'left' 'right';
+		grid-template-areas:
+			'header'
+			'left'
+			'right';
 		grid-template-columns: 1fr;
-		grid-template-rows: 1fr max-content max-content;
+		grid-template-rows: 1fr auto auto;
+	}
+
+	.options-left {
+		width: 100%;
+
+		max-height: 40vh;
+	}
+
+	.options-right {
+		width: 100%;
+
+		max-height: 40vh;
+	}
+
+	.header {
+		grid-area: header;
+		align-self: start;
 	}
 
 	@media (min-width: 768px) {
 		.gui-container {
-			/*
-				on large screens: two columns aligned to the right
-			*/
-			grid-template-areas: 'left . right';
+			grid-template-rows: max-content 1fr;
 			grid-template-columns: max-content 1fr max-content;
-			grid-template-rows: 1fr max-content;
+			grid-template-areas:
+				'header header header'
+				'left viewportOpts right';
+		}
+
+		.options-left {
+			grid-area: left;
+			align-self: end;
+			width: 350px;
+
+			max-height: 100%;
+		}
+
+		.options-right {
+			grid-area: right;
+			align-self: end;
+			width: 350px;
+
+			max-height: 100%;
 		}
 	}
 </style>

@@ -13,7 +13,7 @@
 	export let image: ImageData | null = null;
 	export let palette: ImageData | null = null;
 
-	let colors: RGB[] = ['#000000', '#ffffff'].map(hexToRGB);
+	export let colors: RGB[] = ['#000000', '#ffffff'].map(hexToRGB)
 
 	const presets = [
 		{
@@ -102,7 +102,7 @@
 
 	let generate_palette_input: HTMLInputElement | null = null;
 
-	function potentiallyReExtractColors() {
+	function reExtractColors() {
 		generate_palette = generate_palette_input?.checked ?? true;
 
 		if (!image) return;
@@ -114,7 +114,7 @@
 	}
 
 	if (browser && image) {
-		potentiallyReExtractColors();
+		reExtractColors();
 	}
 </script>
 
@@ -122,7 +122,7 @@
 	<Checkbox
 		bind:checked={generate_palette}
 		bind:input={generate_palette_input}
-		on:input={potentiallyReExtractColors}
+		on:input={reExtractColors}
 		label="Extract Colors from Image"
 	/>
 
@@ -138,7 +138,7 @@
 				}}
 				min={MIN_EXTRACTED_COLORS}
 				max={MAX_EXTRACTED_COLORS}
-				on:input={potentiallyReExtractColors}
+				on:input={reExtractColors}
 				class="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 			/>
 		</label>
