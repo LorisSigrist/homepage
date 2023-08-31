@@ -27,6 +27,7 @@
 		diffusionMatrix: number[][];
 		diffusionMatrixOriginX: number;
 	};
+
 </script>
 
 <script lang="ts">
@@ -41,7 +42,10 @@
 
 </script>
 
-<div class="shadow-lg bg-gray-200" style="width: 80vmin;">
+<div 
+	class="shadow-lg bg-gray-200" style="width: 80vmin; aspect-ratio: {
+		image_data.width / image_data.height
+	};">
 	{#if config.mode === 'error_diffusion'}
 		{#if config.palette}
 			<canvas

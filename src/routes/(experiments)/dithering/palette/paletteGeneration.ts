@@ -7,17 +7,17 @@ export function generatePalette(paletteColors: RGB[]): ImageData {
 
     /*
     We are trying to generate a color-lookup-texture that maps each RGB value to the closest color in the given colorPalette.
-    To avoid having to generate a massive 4096x4096 texture we reduce the precision of the colors to 4 bits per channel.
+    To avoid having to generate a massive texture for all 16million colors we reduce the precision of the colors to 4 bits per channel.
     This reduces the possible colors to 4096, which nicely fits into a 64x64 image.
 
-    We loop over all possible 4bit colors, map them to a unique xy position, 
+    So. We loop over all possible 4bit colors, map them to a unique xy position, 
     find the closest color in the palette, and save it in the lookup table.
 
     We map each 4bit color to a unique xy position by concatenating the 4bit values into a single 12bit value,
     and then using the first 6 bits as the x value, and the last 6 bits as the y value.
 
-    For performance, we generate each 12bit number directly, instead of using a triple nested loop. 
-    That's why the function is like this.
+    For performance, we generate each 12bit number directly and derive the channels from it, 
+    instead of using a triple nested loop to generate the channels and then concatenating them.
     */
 
     const lookupTable = new ImageData(64, 64);
@@ -30,39 +30,45 @@ export function generatePalette(paletteColors: RGB[]): ImageData {
         colors[(i << 2) | 0b11] = 0b1111_1111; //Set the alpha to 255
     }
 
+    const TWELVE_BIT_MAX = 0b1111_1111_1111;
+    const FOUR_BIT_MASK = 0b1111;
+
     //Loop over all possible 12bit ints
-    //This could be parallelized, but it's probably not worth it
-    for (let i = 0; i <= 0b1111_1111_1111; i++) {
+    for (let i = 0; i <= TWELVE_BIT_MAX; i++) {
         const x = i >> 6;           //Leading 6 bits
         const y = i & 0b11_1111;    //Trailing 6 bits
 
         //Get the 4bit representation of each channel
-        const r = i & 0b1111; //Get the last 4 bits
-        const g = (i >> 4) & 0b1111; //Get the middle 4 bits
-        const b = (i >> 8) & 0b1111; //Get the first 4 bits
+        const r = i & FOUR_BIT_MASK; //Get the last 4 bits
+        const g = (i >> 4) & FOUR_BIT_MASK; //Get the middle 4 bits
+        const b = (i >> 8) & FOUR_BIT_MASK; //Get the first 4 bits
 
 
         //Loop over all available colors and find the closest one
+        //TODO: Use a better color-space for this
         let closestIndex = 0;
         let closestDistanceSquared = Number.MAX_SAFE_INTEGER;
 
-        for (let i = 0; i < paletteColors.length; i++) {
+        for (let c = 0; c < paletteColors.length; c++) {
 
             const distanceSquared =
-                ((r << 4) - colors[(i << 2)]) ** 2 +
-                ((g << 4) - colors[(i << 2) | 0b01]) ** 2 +
-                ((b << 4) - colors[(i << 2) | 0b10]) ** 2
+                ((r << 4) - colors[(c << 2)]) ** 2 +
+                ((g << 4) - colors[(c << 2) | 0b01]) ** 2 +
+                ((b << 4) - colors[(c << 2) | 0b10]) ** 2
 
 
             if (distanceSquared < closestDistanceSquared) {
-                closestIndex = i;
+                closestIndex = c;
                 closestDistanceSquared = distanceSquared;
             }
         }
 
         //Index into the RGBA texture Buffer and save the (8bit) color
-        const index = 4 * (y * lookupTable.width + x);
-        lookupTable.data.set(colors.slice(closestIndex << 2, (closestIndex << 2) + 4), index);
+        const lookupTableDataIndex = ((y << 6) | x) << 2;
+        lookupTable.data.set(
+            colors.slice(closestIndex << 2, (closestIndex << 2) + 4), //Copy RGBA from the colors buffer
+            lookupTableDataIndex
+        );
     }
 
     return lookupTable;
@@ -88,7 +94,7 @@ export function samplePalette(palette: ImageData, rgb: Uint8ClampedArray): Uint8
     const x = i >> 6;           //Leading 6 bits
     const y = i & 0b11_1111;    //Trailing 6 bits
 
-    //Get the color from the palette
-    const paletteIndex = (y * palette.width + x) << 2;
-    return palette.data.slice(paletteIndex, paletteIndex | 0b11); //Get the RGB values from the palette
+    //Get the RGB values from the palette
+    const paletteIndex = ((y << 6) | x) << 2;
+    return palette.data.slice(paletteIndex, paletteIndex | 0b11); 
 }

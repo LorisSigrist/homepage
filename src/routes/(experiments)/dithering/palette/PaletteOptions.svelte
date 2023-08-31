@@ -36,6 +36,13 @@
 		{
 			name: 'Grayscale',
 			palette: ['#000000', '#333333', '#666666', '#999999', '#cccccc', '#ffffff'].map(hexToRGB)
+		},{
+			name: 'Red',
+			palette: ['#000000', '#F46842', '#AA2F0D', '#ffffff'].map(hexToRGB)
+		},
+		{
+			name: 'RGBY',
+			palette: ['#ff0000', '#00ff00', '#0000ff', '#ffff00'].map(hexToRGB)
 		}
 	];
 
