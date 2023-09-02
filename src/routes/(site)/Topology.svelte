@@ -36,7 +36,7 @@
 <svelte:window on:resize={set_size} />
 
 <canvas
-	class="fixed inset-0 -z-50 fade-in print:hidden"
+	class="fixed inset-0 -z-50 fade-in print:hidden motion-reduce:hidden"
 	use:topology={{ width, height, background_color, line_color }}
 	aria-hidden="true"
 />
