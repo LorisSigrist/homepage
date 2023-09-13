@@ -70,8 +70,6 @@ export async function loadImage(src: string): Promise<HTMLImageElement> {
     });
 }
 
-
-
 export function Image2ImageData(image: HTMLImageElement): ImageData {
     const canvas = new OffscreenCanvas(image.width, image.height);
     const ctx = canvas.getContext('2d');

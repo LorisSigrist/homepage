@@ -1,12 +1,13 @@
 <script lang="ts">
 	import '$lib/styles/bootstrap.css';
 
-	import { Image2ImageData, loadImageFile, saveCanvasAsImage } from './utils';
+	import { loadImageFile, saveCanvasAsImage } from './utils';
 	import Metadata from '$lib/metadata/Metadata.svelte';
 
 	import logo_src from '$lib/assets/dither-studio-logo.png';
 	import ImageSelectionScreen from './ImageSelectionScreen.svelte';
 	import DitherStudio from './DitherStudio.svelte';
+	import { getImageData } from '$lib/utils/loadImage';
 	const og_src = '/og/dither-studio.webp';
 
 	let canvas: HTMLCanvasElement | null = null;
@@ -29,7 +30,7 @@
 
 		try {
 			const loaded_image = await loadImageFile(file);
-			image_data = Image2ImageData(loaded_image);
+			image_data = getImageData(loaded_image);
 		} catch (e) {
 			alert('Failed to load image');
 			console.error(e);
@@ -45,7 +46,7 @@
 	{#if image_data}
 		<DitherStudio {image_data} on:cancel={() => (image_data = null)} />
 	{:else}
-		<ImageSelectionScreen on:image={(e) => (image_data = Image2ImageData(e.detail))} />
+		<ImageSelectionScreen on:image={(e) => (image_data = getImageData(e.detail))} />
 	{/if}
 </main>
 

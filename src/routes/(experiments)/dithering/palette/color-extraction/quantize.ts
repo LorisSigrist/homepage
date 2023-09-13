@@ -1,5 +1,7 @@
 import type { RGB } from "../../utils";
 
+//median cut algorithm
+
 /*
     WE USE A REDUCED BIT REPRESENTATION FOR COLORS (5bits instead of 8bits)
     This increases the chance of a collision in the histogram, reducing the number of samples needed
