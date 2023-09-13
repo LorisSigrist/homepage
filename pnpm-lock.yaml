@@ -14,9 +14,6 @@ dependencies:
   blurhash:
     specifier: ^2.0.5
     version: 2.0.5
-  blurhash-to-css:
-    specifier: ^0.5.5
-    version: 0.5.5
   chrono-node:
     specifier: ^2.6.4
     version: 2.6.4
@@ -1053,11 +1050,6 @@ packages:
       inherits: 2.0.4
       readable-stream: 3.6.2
     dev: true
-
-  /blurhash-to-css@0.5.5:
-    resolution: {integrity: sha512-S0p5YH7WL52w5t2xTUcP6yMp6WsR/JPZwEiZNEmZgr2aqNwBMm3tqVqtm/Vo2Mrd8oV9xL9F2eLtCQ+TB99A0A==}
-    engines: {node: '>=10'}
-    dev: false
 
   /blurhash@2.0.5:
     resolution: {integrity: sha512-cRygWd7kGBQO3VEhPiTgq4Wc43ctsM+o46urrmPOiuAe+07fzlSB9OJVdpgDL0jPqXUVQ9ht7aq7kxOeJHRK+w==}

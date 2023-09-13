@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Icon, Plus, XMark } from 'svelte-hero-icons';
-	import { rgbToHex, type RGB, hexToRGB } from '../utils';
+	import { type RGB, hexToRGB } from '../utils';
+	import { rgbToHex } from '$lib/utils/colorHex';
 
 	export let colors: RGB[];
 
@@ -25,7 +26,7 @@
 
 <ul class="grid gap-2 grid-cols-3">
 	{#each colors as color, index}
-        {@const hex = rgbToHex(color)}
+        {@const hex = rgbToHex(...color)}
 		<li style="background-color: {hex}" class="relative rounded-md h-10">
 			<input
 				type="color"

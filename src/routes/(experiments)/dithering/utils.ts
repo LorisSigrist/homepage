@@ -92,16 +92,6 @@ export function hexToRGB(hex: string): RGB {
     return [r, g, b];
 }
 
-
-export function rgbToHex([r, g, b]: RGB): string {
-    const hex = (n: number) => {
-        const hex = n.toString(16);
-        return hex.length == 1 ? '0' + hex : hex;
-    }
-
-    return '#' + hex(r) + hex(g) + hex(b);
-}
-
 export function rgbToHsl([r, g, b]: RGB): HSL {
     r /= 255, g /= 255, b /= 255;
     var max = Math.max(r, g, b), min = Math.min(r, g, b);
