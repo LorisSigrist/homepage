@@ -7,7 +7,7 @@ export function reactStylesToCss(reactStyles) {
     for (const key in reactStyles) {
         const kebabKey = camelToKebabCase(key);
         const value = reactStyles[key];
-        css += `${kebabKey}: ${value};`;
+        css += `${kebabKey}:${value};`;
     }
     return css;
 }

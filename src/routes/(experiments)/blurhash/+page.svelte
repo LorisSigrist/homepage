@@ -7,7 +7,7 @@
 	import { blurhashToCss } from './blurhashToCss.js';
 	import { reactStylesToCss } from '$lib/utils/react-styles';
 
-	let blurhash: string | null = 'L4D]rR?b3s58CiD#D4rDELtl;Kx^';
+	let blurhash: string | null = 'LKO2:N%2Tw=w]~RBVZRi};RPxuwH';
 	$: blurhashCss = blurhash ? blurhashToCss(blurhash) : null;
 
 	async function onImageInput(e: any) {

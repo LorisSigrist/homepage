@@ -1,4 +1,5 @@
 import { decode } from 'blurhash';
+import { decode83 } from './decode83';
 
 /**
  * @typedef {{
@@ -19,7 +20,7 @@ import { decode } from 'blurhash';
  *
  * @param {string} blurhash A blurhash string.
  * @param {number} width The horizontal resolution of the approximation. Defaults to 8.
- * @param {number} height The vertical resolution of the approximation. Defaults to 8.
+ * @param {number} height The vertical resolution of the approximation. Defaults to 5.
  * @returns {BlurhashCSS} An object representing the CSS properties needed to display the blurhash.
  */
 export function blurhashToCss(blurhash, width = 8, height = 8) {
@@ -47,9 +48,8 @@ export function blurhashToCss(blurhash, width = 8, height = 8) {
 		backgroundPositions.push(bgPosition);
 	}
 
-	//Needed to avoid blurry edges
-	const bgCol = getColor(pixels, 0, 0, width);
-	const boxShadow = '0 0 0 20px ' + bgCol;
+	//To avoid blurry edges we use the average color as a backdrop
+	const boxShadow = '0 0 0 20px ' + getAverageColor(blurhash);
 
 	return {
 		backgroundImage: backgroundImages.join(','),
@@ -98,7 +98,7 @@ function asPercentage(ratio) {
 
 /**
  * Returns the compact hex representation (#123) of the given rgb color
- * 
+ *
  * @param {number} r 0-255
  * @param {number} g 0-255
  * @param {number} b 0-255
@@ -113,7 +113,25 @@ export function rgbToCompactHex(r, g, b) {
 	//Convert to hex
 	const rHex = r.toString(16)[0];
 	const gHex = g.toString(16)[0];
-    const bHex = b.toString(16)[0];
-    
+	const bHex = b.toString(16)[0];
+
 	return '#' + rHex + gHex + bHex;
+}
+
+/**
+ * Gets the average color of an image's blurhash
+ * Blurhash always includes the average color in full precision
+ *
+ * @param {string} blurhash
+ * @returns {string} #123
+ */
+function getAverageColor(blurhash) {
+    const value = blurhash.substring(2, 6);
+    const averageColor = decode83(value); //24bit value where the first 8 bits are red, the next 8 bits are green, and the last 8 bits are blue
+
+    const r = averageColor >> 16;
+    const g = (averageColor >> 8) & 0xff;
+    const b = averageColor & 0xff;
+
+    return rgbToCompactHex(r, g, b);
 }
