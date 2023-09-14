@@ -4,10 +4,11 @@
 
 	import { decode, encode } from 'blurhash';
 	import { getImageData, loadImageFile } from '$lib/utils/loadImage';
-	import { blurhashToCss, type BlurhashCSS } from './blurhashToCss';
+	import { blurhashToCss } from './blurhashToCss.js';
+	import { reactStylesToCss } from '$lib/utils/react-styles';
 
-	let blurhash: string | null = "LIGa8p0h$gtQ}TN_E4aw0k-lE4R-";
-	$: blurhashCss = blurhash ? blurhashToCss(blurhash, 8, 4) : null;
+	let blurhash: string | null = 'LIGa8p0h$gtQ}TN_E4aw0k-lE4R-';
+	$: blurhashCss = blurhash ? blurhashToCss(blurhash) : null;
 	async function onImageInput(e: any) {
 		const file = e.target.files[0];
 		if (!file) return;
@@ -60,20 +61,5 @@
 <br />
 
 {#if blurhashCss}
-<div class="overflow-hidden w-96 h-96">
-	<div
-		class="w-96 h-96"
-		style="
-        background-image: {blurhashCss.backgroundImage};
-        background-position: {blurhashCss.backgroundPosition};
-        background-repeat: {blurhashCss.backgroundRepeat};
-        background-size: {blurhashCss.backgroundSize};
-        filter: {blurhashCss.filter};
-        transform: {blurhashCss.transform};
-    "
-	/>
-</div>
-
-{blurhashCss.backgroundPosition}
-
+	<div class="w-96 h-96" style={reactStylesToCss(blurhashCss)} />
 {/if}
