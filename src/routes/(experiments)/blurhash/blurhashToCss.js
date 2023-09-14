@@ -120,13 +120,15 @@ export function rgbToCompactHex(r, g, b) {
 
 /**
  * Gets the average color of an image's blurhash
- * Blurhash always includes the average color in full precision
+ * Blurhash always includes the average color in full precision.
+ * 
+ * @see https://github.com/woltapp/blurhash/blob/master/Algorithm.md
  *
  * @param {string} blurhash
  * @returns {string} #123
  */
 function getAverageColor(blurhash) {
-    const value = blurhash.substring(2, 6);
+    const value = blurhash.substring(2, 6); 
     const averageColor = decode83(value); //24bit value where the first 8 bits are red, the next 8 bits are green, and the last 8 bits are blue
 
     const r = averageColor >> 16;

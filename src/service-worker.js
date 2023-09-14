@@ -1,3 +1,4 @@
+//Kill any existing service workers.
 
 self.addEventListener('install', () => {
     // Skip over the "waiting" lifecycle state, to ensure that our

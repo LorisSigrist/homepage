@@ -1,6 +1,7 @@
-import type { Metadata } from "$lib/metadata/types";
-
-export function load(): Metadata {
+/**
+ * @returns {import("$lib/metadata/types").Metadata}
+ */
+export function load() {
     return {
         title: "Blurhash",
         author: "Loris Sigrist",

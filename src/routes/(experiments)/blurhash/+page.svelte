@@ -2,22 +2,15 @@
 	import '$lib/styles/bootstrap.css';
 	import Metadata from '$lib/metadata/Metadata.svelte';
 
-	import { decode, encode } from 'blurhash';
-	import { getImageData, loadImageFile } from '$lib/utils/loadImage';
+	import { decode, isBlurhashValid } from 'blurhash';
 	import { blurhashToCss } from './blurhashToCss.js';
 	import { reactStylesToCss } from '$lib/utils/react-styles';
 
-	let blurhash: string | null = 'LKO2:N%2Tw=w]~RBVZRi};RPxuwH';
+
+	let blurhashInput = 'LKO2:N%2Tw=w]~RBVZRi};RPxuwH';
+
+	$: blurhash = isBlurhashValid(blurhashInput).result ? blurhashInput : null
 	$: blurhashCss = blurhash ? blurhashToCss(blurhash) : null;
-
-	async function onImageInput(e: any) {
-		const file = e.target.files[0];
-		if (!file) return;
-
-		const image = await loadImageFile(file);
-		const imageData = getImageData(image);
-		blurhash = encode(imageData.data, imageData.width, imageData.height, 4, 3);
-	}
 
 	function blurhashDisplay(canvas: HTMLCanvasElement, blurhash: string) {
 		const ctx = canvas.getContext('2d')!;
@@ -48,12 +41,9 @@
 
 <Metadata />
 
-<input type="file" accept="image/*" on:input={onImageInput} />
+<input type="text" bind:value={blurhashInput} />
 
 {#if blurhash}
-	<p>
-		{blurhash}
-	</p>
 	<canvas use:blurhashDisplay={blurhash} class="w-96" />
 {/if}
 

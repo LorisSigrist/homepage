@@ -1,7 +1,8 @@
-import { minify, type Options } from 'html-minifier';
+import { minify } from 'html-minifier';
 import { building } from '$app/environment';
 
-const minification_options: Options = {
+/** @type {import("html-minifier").Options} */
+const minification_options = {
 	collapseBooleanAttributes: true,
 	collapseWhitespace: true,
 	conservativeCollapse: true,
@@ -31,4 +32,4 @@ export async function handle({ event, resolve }) {
 			}
 		}
 	});
-};
+}
