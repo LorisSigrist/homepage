@@ -10,7 +10,7 @@
 </script>
 
 <script lang="ts" generics="O extends AnyOptions">
-	import { ID } from "$lib/math/id-generation";
+	import { ID } from "$lib/math/id-generation.js";
 
 	export let options: O;
 

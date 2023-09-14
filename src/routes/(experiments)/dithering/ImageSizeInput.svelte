@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { ID } from '$lib/math/id-generation.js';
 	import { Icon, LockClosed } from 'svelte-hero-icons';
 
 	export let width: number;
@@ -30,14 +31,8 @@
 		width = Math.round(aspectRatio * height);
 	}
 
-	let withId = id();
-	let heightId = id();
-
-	function id() {
-		return (
-			Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-		);
-	}
+	let withId = ID();
+	let heightId = ID();
 </script>
 
 <fieldset class="flex gap-3 items-end justify-between">

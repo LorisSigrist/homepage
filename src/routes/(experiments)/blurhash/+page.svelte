@@ -3,14 +3,19 @@
 	import Metadata from '$lib/metadata/Metadata.svelte';
 
 	import { decode, isBlurhashValid } from 'blurhash';
-	import { blurhashToCss } from './blurhashToCss.js';
+	import { blurhashAsGradients } from 'blurhash-gradients';
 	import { reactStylesToCss } from '$lib/utils/react-styles';
 
+	import big_image from './big.jpeg';
+	import big_image_size from './big.jpeg?size';
+	import hash from './big.jpeg?blurhash';
 
-	let blurhashInput = 'LKO2:N%2Tw=w]~RBVZRi};RPxuwH';
+	let blurhashInput = hash;
 
-	$: blurhash = isBlurhashValid(blurhashInput).result ? blurhashInput : null
-	$: blurhashCss = blurhash ? blurhashToCss(blurhash) : null;
+	$: blurhash = isBlurhashValid(blurhashInput).result ? blurhashInput : null;
+	$: blurhashCss = blurhash
+		? blurhashAsGradients(blurhash, { blur: 60, width: 8, height: 8 })
+		: null;
 
 	function blurhashDisplay(canvas: HTMLCanvasElement, blurhash: string) {
 		const ctx = canvas.getContext('2d')!;
@@ -40,18 +45,18 @@
 </script>
 
 <Metadata />
-
 <input type="text" bind:value={blurhashInput} />
 
-{#if blurhash}
-	<canvas use:blurhashDisplay={blurhash} class="w-96" />
-{/if}
-
-<br />
-
 {#if blurhashCss}
-	<div class="w-96 h-96" style={reactStylesToCss(blurhashCss)} />
+	<div class="relative">
+		<div style={reactStylesToCss(blurhashCss)} class="absolute inset-0 -z-10" />
+		<img src={big_image} width={big_image_size.width} height={big_image_size.height} alt="big" />
+	</div>
 	<p>
 		{reactStylesToCss(blurhashCss)}
 	</p>
+{/if}
+
+{#if blurhash}
+	<canvas use:blurhashDisplay={blurhash} class="w-96" />
 {/if}

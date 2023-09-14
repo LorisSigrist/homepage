@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ID } from '$lib/math/id-generation';
+	import { ID } from '$lib/math/id-generation.js';
 
 	export let checked = false;
 	export let label: string;
