@@ -7,17 +7,16 @@
 	import { blurhashToCss } from './blurhashToCss.js';
 	import { reactStylesToCss } from '$lib/utils/react-styles';
 
-	let blurhash: string | null = 'LIGa8p0h$gtQ}TN_E4aw0k-lE4R-';
+	let blurhash: string | null = 'L4D]rR?b3s58CiD#D4rDELtl;Kx^';
 	$: blurhashCss = blurhash ? blurhashToCss(blurhash) : null;
+
 	async function onImageInput(e: any) {
 		const file = e.target.files[0];
 		if (!file) return;
 
-		console.log('File dropped');
 		const image = await loadImageFile(file);
 		const imageData = getImageData(image);
 		blurhash = encode(imageData.data, imageData.width, imageData.height, 4, 3);
-		console.log('Blurhash encoded');
 	}
 
 	function blurhashDisplay(canvas: HTMLCanvasElement, blurhash: string) {
@@ -62,4 +61,7 @@
 
 {#if blurhashCss}
 	<div class="w-96 h-96" style={reactStylesToCss(blurhashCss)} />
+	<p>
+		{reactStylesToCss(blurhashCss)}
+	</p>
 {/if}

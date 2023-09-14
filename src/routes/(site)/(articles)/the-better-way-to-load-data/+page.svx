@@ -109,6 +109,7 @@ We now have a bunch of readable strings in the console.
 	height={TextStreamGifSize.height}
 	style:background-color={TextStreamGifColor}
 	alt="A bunch of strings being logged to the console, with each being a chunk of a big JSON string"
+	loading="lazy"
 />
 
 But we really want a stream of objects that represent our items. We can't just `JSON.parse` each string-chunk, they don't line up with the JSON structure; What we need is a streaming JSON parser.
@@ -141,6 +142,7 @@ In the console we now see a bunch of weird objects. The `value` property in each
 	height={ParseResultValueStreamGifSize.height}
 	style:background-color={ParseResultValueStreamGifColor}
 	alt="A bunch of objects with the properties value,key,parent and stack being logged to the console"
+	loading="lazy"
 />
 
 Since we only care about the parsed values, let's map over each element in the stream using, you guessed it, another Transform Stream. This time we'll create our own. The constructor takes an object with some lifecycle methods. The `start` method runs when the stream starts, the `flush` method runs if the stream is about to be closed, and the `transform` method runs whenever a new chunk of data arrives. We will only be using `transform` . It takes two arguments the first one is the chunk of incoming data, in our case that is the ParsedElementInfo object from the JSONParser, and the second one is a stream-controller for the output stream. The stream-controller is how we write to or close the output stream. Here we enqueue the value property of each parsed element.
@@ -167,6 +169,7 @@ const stream = response.body
 	height={FinalStreamGifSize.height}
 	style:background-color={FinalStreamGifColor}
 	alt="Each object in the list being logged out one after the other"
+	loading="lazy"
 />
 
 That's looking good already! We get list-items trickling in as the data is arriving over the network!
@@ -189,6 +192,7 @@ while(true) {
 	height={StreamLoadGifSize.height}
 	style:background-color={StreamLoadGifColor}
 	alt="The list being rendered one item at a time"
+	loading="lazy"
 />
 
 Just what we wanted!
@@ -256,6 +260,7 @@ for await (const todo of stream) {
 	height={forAwaitOfCompatSize.height}
 	style:background-color={forAwaitOfCompatColor}
 	alt="Table showing that the 'for await of' syntax is only supported in Node, Deno and Firefox"
+	loading="lazy"
 />
 
 Let's write another helper that let's us use the nicer syntax. If you've never used async-generators before, this will look unintelligible. That's ok, this is entirely optional; Just stick with the while loop.
