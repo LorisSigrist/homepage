@@ -1,0 +1,1 @@
+{"type":"data","nodes":[null,null,null,{"type":"data","data":[{"title":1,"description":2,"published":3,"author":4},"A neat Pattern for Melt UI"," Sometimes I want to share behavior of my Melt UI based components with their children. I've found a neat pattern to do so.",["Date","2023-09-18T00:00:00.000Z"],"Loris Sigrist"],"uses":{}}]}
