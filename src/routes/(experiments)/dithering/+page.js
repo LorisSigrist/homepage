@@ -1,6 +1,5 @@
-import type { Metadata } from "$lib/metadata/types";
-
-export function load(): Metadata {
+/** @return {import("$lib/metadata/types").Metadata} */
+export function load() {
     return {
         title: "Dithering",
         author: "Loris Sigrist",

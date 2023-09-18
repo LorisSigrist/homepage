@@ -2,6 +2,8 @@ import getPixels from "get-pixels"
 import { encode } from "blurhash";
 import { blurhashAsGradients } from "blurhash-gradients";
 
+//No-op template string function
+const js = String.raw;
 
 /** @type {import('vite').Plugin} */
 export const blurhash = {
@@ -12,21 +14,23 @@ export const blurhash = {
             return null;
 
         let imageData = await getPixelsAsync(path);
-        if(imageData.width > 200) imageData = downsize(imageData, 160)
-        const blurhash = encode(imageData.data, imageData.width, imageData.height, 8, 8);
+        if (imageData.width > 200) imageData = downsize(imageData, 160)
+        const blurhash = encode(imageData.data, imageData.width, imageData.height, 4, 3);
+        const blurhashCss = blurhashAsGradients(blurhash);
 
-        return `export default "${blurhash}";`;
+        return js`const blurhash = "${blurhash}"; export { blurhash };`;
     }
 };
 
 /**
+ * Substitute for the ImageData class which is not available in Node.
+ * 
  * @typedef {{
  *    width:number,
  *    height:number,
  *    data: Uint8ClampedArray
  * }} Image
  */
-
 
 /**
  * @param {string} path 
@@ -36,7 +40,7 @@ function getPixelsAsync(path) {
     return new Promise((resolve, reject) => {
         getPixels(path, (err, pixels) => {
             if (err) reject(err);
-            
+
             const clamped = new Uint8ClampedArray(pixels.data);
 
             resolve({
@@ -48,8 +52,9 @@ function getPixelsAsync(path) {
     });
 }
 
-
 /**
+ * Nearest neighbor downscaling.
+ * 
  * @param {Image} image 
  * @param {number} newWidth
  * @returns {Image}

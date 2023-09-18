@@ -1,4 +1,4 @@
-import { isPowerOf2 } from "$lib/math/power2";
+import { isPowerOf2 } from "$lib/math/power2.js";
 
 export function initShaderProgram(
     gl: WebGLRenderingContext,

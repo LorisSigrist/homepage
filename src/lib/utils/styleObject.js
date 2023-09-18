@@ -1,12 +1,13 @@
 /**
- * Converts a React style object to a CSS string
- * @param {Record<string, string>} reactStyles 
+ * Converts a Style object to a CSS string
+ * 
+ * @param {Record<string, string>} obj - A style object where the keys are camelCase CSS properties and the values are CSS values.
  */
-export function reactStylesToCss(reactStyles) {
+export function styleObjectToCssString(obj) {
     let css = '';
-    for (const key in reactStyles) {
+    for (const key in obj) {
         const kebabKey = camelToKebabCase(key);
-        const value = reactStyles[key];
+        const value = obj[key];
         css += `${kebabKey}:${value};`;
     }
     return css;
@@ -15,6 +16,7 @@ export function reactStylesToCss(reactStyles) {
 
 /**
  * Returns the kebab-case version of a camelCase string
+ * 
  * @param {string} str 
  * @returns {string}
  */

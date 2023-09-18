@@ -1,3 +1,3 @@
 declare module "*?blurhash" {
-    export default string;
+    export const blurhash: string;
 }

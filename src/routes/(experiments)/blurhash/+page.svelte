@@ -4,11 +4,11 @@
 
 	import { decode, isBlurhashValid } from 'blurhash';
 	import { blurhashAsGradients } from 'blurhash-gradients';
-	import { reactStylesToCss } from '$lib/utils/react-styles';
+	import { styleObjectToCssString } from '$lib/utils/styleObject';
 
 	import big_image from './big.jpeg';
 	import big_image_size from './big.jpeg?size';
-	import hash from './big.jpeg?blurhash';
+	import { blurhash as hash } from './big.jpeg?blurhash';
 
 	let blurhashInput = hash;
 
@@ -46,14 +46,16 @@
 
 <Metadata />
 <input type="text" bind:value={blurhashInput} />
+{blurhashInput}
 
 {#if blurhashCss}
+	{@const style = styleObjectToCssString(blurhashCss)}
 	<div class="relative">
-		<div style={reactStylesToCss(blurhashCss)} class="absolute inset-0 -z-10" />
+		<div {style} class="absolute inset-0 -z-10" />
 		<img src={big_image} width={big_image_size.width} height={big_image_size.height} alt="big" />
 	</div>
 	<p>
-		{reactStylesToCss(blurhashCss)}
+		{style}
 	</p>
 {/if}
 

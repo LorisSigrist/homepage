@@ -1,4 +1,4 @@
-import { isPowerOf2 } from "$lib/math/power2";
+import { isPowerOf2 } from "$lib/math/power2.js";
 
 const computedBayerLevels : Map<number, number[][]> = new Map();
 

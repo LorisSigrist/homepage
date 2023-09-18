@@ -1,0 +1,68 @@
+# A neat pattern for Melt UI
+
+While working with Melt UI, I've stumbled upon a pattern that has been quite handy several times. Sharing stuff from the same builder between components using the `let:` directive. Here is an example:
+
+
+I often find myself in the need for a generic Tooltip component, one where the Trigger is some outside object. Since I use Melt UI for my projects anyway, I really want to use it's Tooltip builder. However, it's not immediately obvious how you can do that. Melt UI's docs always have one component that fully encapsulates all the behavior. 
+
+But it's actually quite doable thanks to the `let:` directive. You can use it to pass the Tooltip's `trigger` prop to the outside world. Ideally this would be as simple as:
+
+```svelte
+<!--Tooltip.svelte-->
+<script>
+    import { createTooltip } from '@melt-ui/svelte';
+
+    const {
+    elements: { trigger, content, arrow },
+    states: { open },
+  } = createTooltip();
+</script>
+
+<slot {trigger} />
+
+{#if open}
+  ...
+{/if}
+
+<!--App.svelte-->
+<script>
+    import Tooltip from './Tooltip.svelte';
+</script>
+
+<Tooltip let:trigger>
+  <button use:trigger {...$trigger}>Do Something</button>
+</Tooltip>
+```
+
+Unfortunately, this doesn't work as of now. The problem is the `{...$trigger}` part. It's not possible to bind to a store unless it comes from the component's script tag. The workaround here is to bind the store inside the `Tooltip` component and pass it to the `trigger` slot. 
+
+```svelte
+<!--Tooltip.svelte-->
+<script>
+    import { createTooltip } from '@melt-ui/svelte';
+
+    const {
+    elements: { trigger, content, arrow },
+    states: { open },
+  } = createTooltip();
+</script>
+
+<slot triggerAction={trigger} triggerProps={$trigger} />
+
+{#if open}
+  ...
+{/if}
+
+<!--App.svelte-->
+<script>
+    import Tooltip from './Tooltip.svelte';
+</script>
+
+<Tooltip let:triggerAction let:triggerProps>
+  <button use:triggerAction {...triggerProps}>Do Something</button>
+</Tooltip>
+```
+
+That's it.
+
+This pattern is has been useful to me a couple times so I wanted to share.
