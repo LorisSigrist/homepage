@@ -1,66 +1,81 @@
-import satori from 'satori';
-import { Resvg } from '@resvg/resvg-js';
-import { html as toReactElement } from 'satori-html';
-import inter_regular_base64 from "$lib/assets/Inter-Regular.woff?base64"
-import baskerville_bold_base64 from "$lib/assets/LibreBaskerville-Bold.ttf?base64"
-import avatar from "$lib/assets/avatar.png?base64"
-
+import { createCanvas, loadImage } from 'canvas';
+import avatar64 from "$lib/assets/avatar.png?base64"
+import bg64 from "./bg.png?base64"
 
 export const prerender = true;
 
-const HEIGHT = 630;
 const WIDTH = 1200;
+const HEIGHT = 630;
 
-export const GET = async ({ params }) => {
-  const title = params.title.replace(".png", "");
+export async function GET({ params }) {
+    const title = params.title.replace(".png", "").replace("?", "");
 
-  const interRegular = Buffer.from(inter_regular_base64, 'base64')
-  const baskervilleBold = Buffer.from(baskerville_bold_base64, 'base64')
+    const canvas = createCanvas(WIDTH, HEIGHT);
+    const ctx = canvas.getContext('2d');
 
-  const avatar_data_url = `data:image/png;base64,${avatar}`
+    const avatar = await loadImage(`data:image/png;base64,${avatar64}`);
+    const bg = await loadImage(`data:image/png;base64,${bg64}`);
 
-  const html = toReactElement(` <div tw="bg-gray-50 flex w-full h-full p-8">
-    <div tw="flex flex-row w-full py-12 px-4 items-center justify-between p-8 ">
+    //Draw Background
+    ctx.drawImage(bg, 0, 0);
 
-      <img src="${avatar_data_url}" tw="h-96 w-96  rounded-full" alt="">
+    //Calculate the top of the avatar so it is centered
+    const avatar_top = (HEIGHT - avatar.height) / 2;
+    const avatar_left = 60;
+    const avatar_right = avatar_left + avatar.width;
 
-      <h2 tw="flex flex-col flex-1 font-bold text-left p-12">
-        <span class="text-indigo-600  text-4xl font-bold py-3">Loris Sigrist</span>
-        <span class="text-black  text-6xl" style="font-family: Baskerville;">${title}</span>
-      </h2>
+    //Draw Avatar
+    ctx.drawImage(avatar, avatar_left, avatar_top);
 
-    </div>
-  </div>`)
 
-  const svg = await satori(html, {
-    fonts: [
-      {
-        name: 'Inter Latin',
-        data: interRegular,
-        style: 'normal'
-      },
-      {
-        name: 'Baskerville',
-        data: baskervilleBold,
-        style: 'normal'
-      }
-    ],
-    height: HEIGHT,
-    width: WIDTH
-  });
+    const text_left = avatar_right + 40;
+    const MAX_TEXT_WIDTH = WIDTH - text_left - 60;
 
-  const resvg = new Resvg(svg, {
-    fitTo: {
-      mode: 'width',
-      value: WIDTH
+
+    //Draw Text
+    ctx.fillStyle = 'black';
+    ctx.font = 'bold 60pt Inter';
+    ctx.textBaseline = 'top';
+
+    //Split the title into lines
+    const lines: string[] = [];
+    let current_line = "";
+    for (const word of title.split(" ")) {
+        const new_line = current_line + word + " ";
+        const metrics = ctx.measureText(new_line);
+        if (metrics.width > MAX_TEXT_WIDTH) {
+            lines.push(current_line);
+            current_line = word + " ";
+        } else {
+            current_line = new_line;
+        }
     }
-  });
 
-  const image = resvg.render();
+    lines.push(current_line);
 
-  return new Response(image.asPng(), {
-    headers: {
-      'content-type': 'image/png'
+    const AUTHOR_LINE_HEIGHT = 60;
+    const GAP = 20;
+    const TITLE_LINE_HEIGHT = 85;
+
+    const TEXT_AREA_HEIGHT = AUTHOR_LINE_HEIGHT + GAP + lines.length * TITLE_LINE_HEIGHT;
+    const text_top = (HEIGHT - TEXT_AREA_HEIGHT) / 2;
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        ctx.fillText(line, text_left, text_top + AUTHOR_LINE_HEIGHT + GAP + i * TITLE_LINE_HEIGHT, MAX_TEXT_WIDTH);
     }
-  });
-};
+
+    //Draw Author
+    ctx.fillStyle = 'blue';
+    ctx.font = 'bold 40pt Inter';
+    ctx.textBaseline = 'top';
+    ctx.fillText("Loris Sigrist", text_left, text_top);
+
+    const png = canvas.toBuffer();
+    return new Response(png, {
+        headers: {
+            'content-type': 'image/png',
+            'cache-control': 'public, max-age=604800, immutable',
+        }
+    });
+}
