@@ -1,7 +1,6 @@
 import { createCanvas, loadImage } from 'canvas';
-import avatar64 from "./avatar.png?base64";
-import bg64 from "./bg.png?base64";
-
+import avatar64 from "$lib/assets/avatar.png?base64"
+import bg64 from "./bg.png?base64"
 
 export const prerender = true;
 
@@ -18,7 +17,7 @@ export async function GET({ params }) {
     const bg = await loadImage(`data:image/png;base64,${bg64}`);
 
     //Draw Background
-    ctx.drawImage(bg, 0, 0, 0, 0);
+    ctx.drawImage(bg, 0, 0);
 
     //Calculate the top of the avatar so it is centered
     const avatar_top = (HEIGHT - avatar.height) / 2;
@@ -26,11 +25,12 @@ export async function GET({ params }) {
     const avatar_right = avatar_left + avatar.width;
 
     //Draw Avatar
-    ctx.drawImage(avatar, avatar_left, avatar_top, 0, 0);
+    ctx.drawImage(avatar, avatar_left, avatar_top);
 
-    
+
     const text_left = avatar_right + 40;
     const MAX_TEXT_WIDTH = WIDTH - text_left - 60;
+
 
     //Draw Text
     ctx.fillStyle = 'black';
@@ -70,9 +70,8 @@ export async function GET({ params }) {
     ctx.font = 'bold 40pt Inter';
     ctx.textBaseline = 'top';
     ctx.fillText("Loris Sigrist", text_left, text_top);
-    
-    const png = canvas.toBuffer();
 
+    const png = canvas.toBuffer();
     return new Response(png, {
         headers: {
             'content-type': 'image/png',
