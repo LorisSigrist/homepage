@@ -1,0 +1,234 @@
+# Adding Devtools to Vite plugins
+
+One of my favorite features in any framework is the _Svelte Inspector_. It allows you to click on a component and then it magically opens the relevant file in your editor.
+
+In order to accomplish this, without the user's having to do additional setup, they have to inject their devtool code into the browser during development. Today we will learn how to do that, so that you too can build great devtools!
+
+## Getting a Foothold - Injecting JS into the Browser
+
+The key is to inject code into vite's client side entry point. This is surprisingly straight forward since a vite-plugin can just modify any js file using the `transform` hook.
+
+```js
+/** @returns {import('vite').Plugin} */
+const devtoolsPlugin = () => ({
+  name: "devtools",
+  enforce: "pre", //run before the vite's built-in transformations
+  apply: "serve", //only run in dev mode
+  transform(code, id, options) {
+    if(options?.ssr) return; //Don't run in SSR mode
+
+    //Inject some code into the vite's client side entry point
+    if (id.includes("vite/dist/client/client.mjs")) {
+      return { code: code + "\n" + "console.log('Hello World!')" }
+    }
+  }
+})
+```
+
+Opening the dev-site now shows the message in the console. 
+That's the foothold we need.
+
+## Importing our own modules
+
+But to ship non-trivial devtools, we need more than just a foothold. We need more than just appending some code at the end of a file. We need to import our own modules. 
+
+Unfortunately, this isn't so straight forward. Our plugin is likely part of an external package and we don't know where that package will be installed, so we can't import our own modules using relative paths.
+
+```js
+transform(code, id, options) {
+  if (id.includes("vite/dist/client/client.mjs")) {
+    //How do we import our own modules?
+    return { code: code + "\n" + "import(????)" }
+  }
+}
+```
+
+I offer a few solutions here:
+1. Export the devtools browser code from the plugin package
+2. Use a sub-package 
+3. Magic Module Resolution (preferred)
+
+### Option 1: Exporting the runtime code from the package
+This one is very straight forward. We just export the entry point of our devtools from our package. This way all we need to do is to inject an import statement to it in the client side js.
+
+```js
+//in the entry point of our package
+export function bootstrapDevtools() {
+    // Devtool Browser code here
+}
+
+
+//in the plugin
+transform(code, id, options) {
+  if (id.includes("vite/dist/client/client.mjs")) {
+    return { code: code + "\n" + 'import("my-devtools-plugin").then(module => module.bootstrapDevtools())' }
+  }
+}
+```
+
+This works and is very simple, but it has some downsides.
+- It clutters up the exports of our package.
+- It mixes browser code with plugin code.
+
+> It's probably possible to hide the export from the IDE by modifying the package's type definitions, but that's more work than the other solutions.
+
+### Option 2: Using a sub-package
+Sub packages are a feature of npm that allow you to have multiple entry points in a single package. For example, the `svelte` package has a sub-package `svelte/stores` which contains store implementations. 
+
+In this approach, we still export the runtime code from our package, but we give it it's own entry point. This way we don't clutter up the exports and we don't mix concerns.
+
+Here is the setup:
+
+```
+src
+|- plugin.js
+|- devtools
+   |- entry.js
+```
+
+Then, in the `package.json`, add an exports field with two entries: one for the plugin and one for the devtools.
+
+```json
+{
+  "name": "my-devtools-plugin",
+  "exports": {
+    ".": {
+        "import": "./plugin.js"
+        "types": "./plugin.d.ts" //If you have types. link to them here
+    },
+    "./internal": {
+        "import": "./devtools/entry.js"
+    }
+  }
+}
+```
+You can then inject an import statement to `my-devtools-plugin/internal` in the client side js.
+
+```js
+//in the plugin
+transform(code, id, options) {
+  if (id.includes("vite/dist/client/client.mjs")) {
+    return { code: code + "\n" + 'import("my-devtools-plugin/internal").then(module => module.bootstrap())' }
+  }
+}
+```
+
+This eliminates the code-mixing problem, but does not quite eliminated the import cluttering.
+While the `my-devtools-plugin` package does not have private exports, IDEs might still suggest `my-devtools-plugin/internal` as an import option. Developers are unlikely to use it, but it's still a bit annoying.
+
+> If you generate your type definitions using [`dts-buddy`](https://www.github.com/Rich-Harris/dts-buddy) instead of `tsc`, you can sidestep this problem by not generating type declarations for the `internal` sub-package. Otherwise use Option 3.
+
+### Option 3: Magic Module Resolution (preferred)
+If you _really_ don't want to clutter your exports, this is the best way to go, but it's a bit of work to set up.
+
+The idea is to define a magic module-id that our plugin resolves to the absolute path of our entry point.
+
+(Eg: `import("my-package:devtools")` resolves to `import("/home/user/project/node_modules/my-package/devtools/entry.js")` or whatever)
+
+But how can we know the absolute path of our entry point? The trick is that we know the relative path to the entry point _from_ our plugin file.
+
+We can get the absolute path of our plugin's file using `import.meta.url`. We can then combine that with the relative path to our entry point to get the absolute path to our entry point.
+
+```
+src
+|- plugin.js
+|- devtools
+   |- entry.js
+```
+
+```js
+//plugin.js 
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import { normalizePath } from "vite";
+
+function getDevtoolsEntryPath() {
+    const srcFolderPath = normalizePath(dirname(fileURLToPath(import.meta.url)));
+    return srcFolderPath + "/devtools/entry.js";
+}
+```
+
+Using this, we can then resolve our magic module id to the absolute path of our entry point.
+
+```js
+//plugin.js
+//...
+
+const MAGIC_MODULE_ID = "my-package:devtools";
+export const devtoolsPlugin = () => ({
+    name: "devtools",
+    enforce: "pre",
+    apply: "serve",
+    resolveId(id) {
+        if (id === MAGIC_MODULE_ID) {
+            return getDevtoolsEntryPath();
+        }
+    }, 
+    transform(code, id, options) {
+        if (id.includes("vite/dist/client/client.mjs")) {
+            return { code: code + "\n" + `import("${MAGIC_MODULE_ID}").then(module => module.bootstrapDevtools())` }
+        }
+    }
+})
+```
+
+If you're going to use this, make sure that the relative path to your entry point is correct. Compiling or Bundling your plugin code may change the relative path.
+
+
+#### Addendum: Dealing with `fs.allow`
+`vite` has a configuration option called `fs.allow`. It decides which paths vite's file-imports are allowed to read. This prevents path-traversal attacks. If your user's use this and haven't allowed paths inside your package folder the above code will break. You could just instruct them to allow these paths, but that's not very user friendly.
+
+We can sidestep this by loading the code ourselves using the `load` hook and `fs.readFile`. We need to do this for all devtool files, not just the entry point. 
+
+To do this, we will not use a _magic id_, but a _magic prefix_. We will check if an import id starts with the prefix, and if it does, replace the prefix with the path to our _src/devtools/_ folder and load the files ourselves.
+
+```
+src
+|- plugin.js
+|- devtools
+   |- entry.js
+   |- imported-by-entry.js
+```
+
+Eg:
+- "my-package:devtools/entry.js" -> "/home/user/project/node_modules/my-package/devtools/entry.js"
+- "my-package:devtools/imported-by-entry.js" -> "/home/user/project/node_modules/my-package/devtools/imported-by-entry.js
+
+```js
+//...
+const srcFolderPath = normalizePath(dirname(fileURLToPath(import.meta.url)));
+const devtoolsFolderPath = srcFolderPath + "/devtools";
+
+const MAGIC_MODULE_PREFIX = "my-package:devtools";
+
+export const devtoolsPlugin = () => ({
+    name: "devtools",
+    enforce: "pre", 
+    apply: "serve",
+
+    resolveId(id) {
+        if (id.startsWith(MAGIC_MODULE_PREFIX)) {
+            return id.replace(MAGIC_MODULE_PREFIX, devtoolsFolderPath);
+        }
+    }, 
+
+    load(path) {
+        if (path.startsWith(devtoolsFolderPath)) {
+            let cleanPath = id.split("?")[0] ?? ""; //remove query params
+            cleanPath = cleanId.split("#")[0] ?? ""; //remove hash
+
+            if(fs.existsSync(cleanPath)) return fs.readFile(cleanPath, "utf-8");
+            else console.warn(`Could not find file ${cleanPath}`);
+        }
+    }
+
+    transform(code, id, options) {
+        if (id.includes("vite/dist/client/client.mjs")) {
+            return { code: code + "\n" + `import("${MAGIC_MODULE_ID}/entry.js").then(module => module.bootstrap())` }
+        }
+    }
+})
+```
+
+## In Conclusion
+It's not hard, but it's a hassle. Fortunately, you only need to do this once.
