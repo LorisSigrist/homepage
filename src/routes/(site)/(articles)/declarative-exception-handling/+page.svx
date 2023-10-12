@@ -1,0 +1,234 @@
+# Declarative Exception Handling
+In this article we will explore a potential remedy to the nightmare that is error handling in JS.
+
+## The State of Error Handling in JS
+If you have a function that might fail, you would probably do something like this.
+
+```js
+let result;
+try {
+  const user = unsafe();
+  result = user.name;
+catch(e) {
+  result = null;
+}
+```
+
+This very common implementation has a bug though. It handles all exceptions, not just the ones we expect to happen during normal operation. 
+If `usafe` has a Syntax error in it's implementation this would silently swallow it. We don't want that.
+
+A better implementation would be to throw custom error-types for all your expected exceptions 
+and test anything that's thrown against those.
+
+```js
+class CustomException1 extends Error {}
+class CustomException2 extends Error {}
+
+let result;
+try {
+   const user = unsafe(); //throws CustomException1 & 2
+   result = user.name;
+catch(e) {
+  if(e instanceof CustomException1) result = null;
+  else if (e instanceof CustomException2) {
+    console.warn("CustomeException2");
+    result = null;
+  }
+  else throw e;
+}
+```
+
+But the code here gets really really ugly really really fast. We have to imperatively check which Execution path we should take, 
+opening up the door to many silly bugs.
+
+## What we want
+Wouldn't it be really nice if we could declaratively define each execution path an the right thing just happened? 
+Other languages like Rust would make this pretty easy using Errors-As-Values and `match` statements. Something like this:
+
+```rust
+let result = match unsafe_fn() {
+    Ok(user) => user.name,
+    Err(CustomExceptions::1) => null,
+    Err(CustomExceptions::2) => {
+      print!("CustomeException2");
+      null;
+    },
+    Err(error) => panic!("Unexpected Error: {:?}", error),
+};
+```
+
+This way we can declaratively define each possible execution branch, drastically reducing the chance of bugs.
+
+## `ResultMatcher` a potential solution
+I took a stab at implementing a similar API in JS, and I came up with the `ResultMatcher` class. You can find the full source code at the bottom of this article. It is used like this:
+
+```js
+const result = new ResultMatcher(unsafe)
+    .ok(user => user.name)
+    .catch(CustomException1, e => null)
+    .catch(CustomException2, e => { console.warn("CustomException2"); return null})
+    .run()
+```
+
+It is fully typesafe making it a breeze to work with.
+
+
+Let's take a look at each part:
+- `const result` will be the return value of whatever execution branch is taken. In the snippet above the return type would be `string | null`
+- `ResultMatcher(unsafe)` constructs a matcher instance for the function `unsafe`
+- `.ok()` takes a callback that handles the return value of `unsafe` if it succeeds. If `.ok` is not used on the Matcher it will default to the identity function.
+- `.catch(CustomException1, e => null)` Will only run if `unsafe` throws a `CustomException1`. It may return a value.
+- `.run()` Actually calls `unsafe`. If unsafe takes args, you will pass them here (Eg: `run("Hello", {option: "a"})`). TS will enforce this.
+
+Sometimes you _do_ want to react to all errors that are thrown. Maybe just to log them. For that we have the `catchAll` method.
+- `.catchAll(e => {console.error(e); throw e})`
+
+
+## The Snippet
+```js
+/**
+ * The configuration for a ResultMatcher Strategy.
+ *
+ * @template Prototype
+ * @template ReturnType
+ * @typedef {{
+ *    prototype: { new (): Prototype;  } | { prototype: Prototype; },
+ *    handler: (instance: Prototype) => ReturnType;
+ * }} Strategy
+ */
+
+/**
+ * Declaratively define what should happen for all the possible outcomes of a function.
+ * This follows an immutable builder pattern, so each method returns a new instance of the ResultMatcher class.
+ *
+ * @template {(...args: any) => any} UnsafeFunc
+ * @template {(result: ReturnType<UnsafeFunc>) => any} [SuccessHandler=((result: ReturnType<UnsafeFunc>) => ReturnType<UnsafeFunc>)]
+ * @template {Strategy<any, any>[]} [Strategies=[]]
+ * @template {((e: unknown) => any)} [FallbackHandler=(e: unknown) => never]
+ */
+export class ResultMatcher {
+  /** @type {UnsafeFunc} */
+  #unsafeFunction;
+
+  /** @type {Strategies} */
+  #strategies;
+
+  /** @type {SuccessHandler} */
+  #successHandler;
+
+  /** @type {FallbackHandler} */
+  #fallbackHandler;
+
+  /**
+   * @param {UnsafeFunc} func
+   * @param {Strategies} strategies
+   * @param {SuccessHandler} successHandler
+   * @param {FallbackHandler} fallbackHandler
+   */
+  constructor(
+    func,
+    strategies = /** @type {any} */ ([]),
+    successHandler = /** @type {any} */ (identity),
+    fallbackHandler = /** @type {any} */ (raise),
+  ) {
+    this.#unsafeFunction = func;
+    this.#strategies = strategies;
+    this.#successHandler = successHandler;
+    this.#fallbackHandler = fallbackHandler;
+  }
+
+  /**
+   * Defines a strategy for a given error type.
+   *
+   * @template Prototype
+   * @template StrategyReturnType
+   *
+   * @param {{ new (): Prototype;} | { prototype: Prototype; }} prototype - The error type to handle. Thrown things will be compared against this with `instanceof`.
+   * @param {(instance: Prototype) => StrategyReturnType} handler - Callback to handle the error.
+   * @returns {ResultMatcher<UnsafeFunc, SuccessHandler, [...Strategies, Strategy<Prototype, StrategyReturnType>], FallbackHandler>}
+   */
+  catch(prototype, handler) {
+    const registeredStrategy = { prototype, handler };
+    return new ResultMatcher(
+      this.#unsafeFunction,
+      [...this.#strategies, registeredStrategy],
+      this.#successHandler,
+      this.#fallbackHandler,
+    );
+  }
+
+  /**
+   * @template {(e:unknown) => any} Handler
+   *
+   * @param {Handler} handler
+   * @returns {ResultMatcher<UnsafeFunc, SuccessHandler, Strategies, Handler>}
+   */
+  catchAll(handler) {
+    return new ResultMatcher(
+      this.#unsafeFunction,
+      this.#strategies,
+      this.#successHandler,
+      handler,
+    );
+  }
+
+  /**
+   * Handle the happy path
+   *
+   * @template {(result: ReturnType<UnsafeFunc>) => any} Handler
+   * @param {Handler} handler
+   * @returns {ResultMatcher<UnsafeFunc, Handler, Strategies, FallbackHandler>}
+   */
+  ok(handler) {
+    return new ResultMatcher(
+      this.#unsafeFunction,
+      this.#strategies,
+      handler,
+      this.#fallbackHandler,
+    );
+  }
+
+  /**
+   * Calls the unsafe function with the given parameters and handles any errors that may be thrown
+   * according to the registered strategies.
+   *
+   * @param  {Parameters<UnsafeFunc>} params
+   * @returns {ReturnType<SuccessHandler> | ReturnType<Strategies[number]["handler"]> | ReturnType<FallbackHandler>}
+   */
+  run(...params) {
+    let successResult;
+    try {
+      // @ts-ignore
+      successResult = this.#unsafeFunction(...params);
+    } catch (e) {
+      for (const strategy of this.#strategies) {
+        if (e instanceof /** @type {any} */ (strategy.prototype)) {
+          return strategy.handler(e);
+        }
+      }
+
+      return this.#fallbackHandler(e);
+    }
+
+    return this.#successHandler(successResult);
+  }
+}
+
+/**
+ * The identity function
+ * @template T
+ * @param {T} x
+ * @returns {T}
+ */
+const identity = (x) => x;
+
+/**
+ * @template T
+ * @param {T} e
+ * @returns {never}
+ * @throws {T}
+ */
+const raise = (e) => {
+  throw e;
+};
+```
