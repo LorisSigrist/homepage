@@ -2,7 +2,7 @@
 	import avatar from '$lib/assets/avatar.png';
 	import avatar_color from '$lib/assets/avatar.png?color';
 	import avatar_size from '$lib/assets/avatar.png?size';
-	import { Icon, Sun, Moon } from 'svelte-hero-icons';
+	import { Icon, Sun, Moon, Envelope } from 'svelte-hero-icons';
 	import { theme } from '$lib/stores/theme';
 	import Themed from './Themed.svelte';
 	import Github from './icons/Github.svelte';
@@ -62,6 +62,10 @@
 			<span><Github small /></span>
 
 			<span class="hidden sm:block">Github</span>
+		</a>
+
+		<a class="dark:bg-white bg-black text-white dark:text-black px-1 md:px-3 py-1 rounded-md flex gap-2 items-center"  href="mailto:loris@sigrist.dev">
+			<Icon src={Envelope} class="w-4 h-4" /> <span class="hidden md:block">Contact</span>
 		</a>
 		<button
 			class="hover:bg-gray-100 hover:dark:bg-gray-800 p-2 rounded-md aspect-square"
