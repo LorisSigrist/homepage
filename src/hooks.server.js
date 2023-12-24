@@ -27,9 +27,25 @@ export async function handle({ event, resolve }) {
 	return resolve(event, {
 		transformPageChunk: ({ html, done }) => {
 			page += html;
-			if (done) {
-				return building ? minify(page, minification_options) : page;
+			if (done && building) {
+				page = minify(page, minification_options);
 			}
+
+			page +=
+`<!--
+			                                                   ,,                  
+'7MMF'                         db               .M"""bgd  db                      db            mm    
+  MM                                           ,MI    "Y                                        MM    
+  MM         ,pW"Wq.'7Mb,od8 '7MM  ,pP"Ybd     'MMb.    '7MM  .P"Ybmmm '7Mb,od8 '7MM  ,pP"Ybd mmMMmm  
+  MM        6W'   'Wb MM' "'   MM  8I   '"       'YMMNq.  MM :MI  I8     MM' "'   MM  8I   '"   MM    
+  MM      , 8M     M8 MM       MM  'YMMMa.     .     'MM  MM  WmmmP"     MM       MM  'YMMMa.   MM    
+  MM     ,M YA.   ,A9 MM       MM  L.   I8     Mb     dM  MM 8M          MM       MM  L.   I8   MM    
+.JMMmmmmMMM  'Ybmd9'.JMML.   .JMML.M9mmmP'     P"Ybmmd" .JMML.YMMMMMb  .JMML.   .JMML.M9mmmP'   'Mbmo 
+															 6'     dP                                
+															 ^bmmmd'                                  
+-->`
+
+			return page;
 		}
 	});
 }
