@@ -5,10 +5,10 @@ export const ArticleMetadataSchema = MetadataSchema.required().extend({
     draft: z.boolean().default(false).optional(),
 });
 
-export type ArticleMetadata = z.infer<typeof ArticleMetadataSchema>;
-
 export const ArticleSchema = ArticleMetadataSchema.extend({
     link: z.string(),
 });
 
-export type Article = z.infer<typeof ArticleSchema>;
+
+/** @typedef {z.infer<typeof ArticleMetadataSchema>} ArticleMetadata */
+/** @typedef {z.infer<typeof ArticleSchema>} Article */

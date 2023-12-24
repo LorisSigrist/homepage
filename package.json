@@ -60,6 +60,7 @@
 		"image-size": "^1.0.2",
 		"node-chrono": "^0.0.3",
 		"pointer-tracker": "^2.5.3",
+		"posthog-js": "^1.96.1",
 		"satori": "^0.7.4",
 		"satori-html": "^0.3.2",
 		"shiki-twoslash": "^3.1.2",
