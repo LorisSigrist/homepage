@@ -43,7 +43,7 @@
 		{#if parsed}
 			<div
 				class="pointer-events-none absolute top-1/2 -translate-y-1/2 h-6 right-3 px-4 sm:flex items-center shadow-sm bg-indigo-600 rounded-full hidden text-white"
-				transition:fly={{ x: 10, duration: 100 }}
+				transition:fly|global={{ x: 10, duration: 100 }}
 			>
 				<span class="align-middle text-xs">
 					{parsed.toLocaleDateString('en', {
@@ -60,7 +60,7 @@
 
 	<div class="sm:hidden h-6 relative">
 		{#if parsed}
-			<span class="text-xs opacity-75 absolute left-0 top-2" transition:fade={{ duration: 100 }}>
+			<span class="text-xs opacity-75 absolute left-0 top-2" transition:fade|global={{ duration: 100 }}>
 				{parsed.toLocaleDateString('en', {
 					year: 'numeric',
 					month: 'long',
@@ -70,7 +70,7 @@
 				})}
 			</span>
 			{:else}
-			<span class="text-xs opacity-75 absolute left-0 top-2" transition:fade={{ duration: 100 }}>
+			<span class="text-xs opacity-75 absolute left-0 top-2" transition:fade|global={{ duration: 100 }}>
 				Please enter a time and date
 			</span>
 		{/if}

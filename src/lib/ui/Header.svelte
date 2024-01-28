@@ -30,7 +30,7 @@
 	<div id="header-end" class="flex flex-row items-center gap-2 sm:gap-4">
 
 		<a
-		href="https://sigrist.dev/dithering"
+		href="https://dithering.sigrist.dev"
 		target="_blank"
 		class="hover:bg-gray-100 flex gap-2 items-center hover:dark:bg-gray-800 p-1 sm:px-3 rounded-md text-gray-800 dark:text-gray-200"
 	>
