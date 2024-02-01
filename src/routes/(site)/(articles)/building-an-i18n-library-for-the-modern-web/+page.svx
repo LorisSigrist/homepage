@@ -1,0 +1,52 @@
+# Building an i18n library for the modern Web
+
+Over the last few years we've seen the emergence of "partial hydration" patterns across many frameworks. The idea is that most rendering happens on the server, with only the interactive parts of a page actually shipping code to the client. The client and server _cooperate_ to show a user a site. This idea has come in many iterations, be it React Server Components, Astro Islands, or even HTMX. 
+
+This has some interesting implications for i18n libraries.
+
+- 1. Since the server-rendered and client-rendered parts always share the same language, language state is _global_. The only way to switch languages is to rerender everything, including the server-rendered parts, which  can only be done by fully reloading the page. Thus, any form of message reactivity or language lazy-loading is useless.
+
+- 2. Most Translations are rendered on the server & don't depend on client side state
+	- On the server, any i18n library really serves as a templating helper, so they should excel at doing that!
+	- Since only a minority of messages will include client side state, the bundle shipped by an i18n library should only include those messages and the code they require.  
+
+## The Status Quo
+
+Most i18n libraries are still conceptualised as monoliths that do all the work in the same place. Language Detection, Message Fallbacks, Lazy Loading & so many more features. However, doing all the work in one place usually means doing it **twice**! Once on the server and again on the client. This has resulted in some truly impressive bundle sizes. `i18next`, one of the most popular i18n libraries needs over 40kB to render a single message. This is after bundling. 
+
+Clearly there is a lot of room for improvement.
+
+## A modern i18n library
+
+What would an i18n library look like that embraces the cooperation between Server and Client, that's built for partial hydration? 
+
+That's exactly what [we](https://www.inlang.com) tried to accomplish with [ParaglideJS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs)
+
+Paraglide is a compiler that _compiles_ your messages into JS modules. Each message is it's own export. 
+
+```js
+//Paraglide's output
+
+/**
+ * @param {{ name: string }} params
+ */
+export const greeting = (params) => `Hello ${params.name}`
+
+export const my_other_message = () => `My Other Message`
+// ...
+```
+
+
+This takes advantage of modern tooling. 
+
+1. TypeScript. Messages are fully type-safe, including any parameters they take. This makes Paraglide a joy to use for templating.
+2. Modern Build tools remove JS code that isn't used automatically. Because messages are individual JS exports, they can individually be removed if they aren't used. This automatically only ships messages that are needed on the client. This results in some _tiny_ bundle-sizes, starting as low as 100 bytes. 
+
+We can further take advantage of the cooperation between server and client to skip language detection on the client entirely. Because the server already decided which language to render, the client bundle can just read which language was used from the HTML.
+
+Because [ParaglideJS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs)is a compiler, fallback messages can be resolved at build time, so no runtime code is needed for that.
+
+So far, this approach is working very well in any partial-hydration setting. However, even in frameworks without partial hydration [ParaglideJS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) can still be useful. It still only ships messages that are used on a given _page_ without you needing to manually split messages into namespaces as you usually would. 
+
+## Conclusion
+Going forward, scaling _down_ and integration with modern tooling is going to be increasingly important for i18n libraries. [ParaglideJS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) is one attempt at this which can be used _today_. Clearly there is a lot of room for innovation in this space & we're interested in how it will develop over the next few months and years. 
