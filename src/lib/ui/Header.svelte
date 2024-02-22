@@ -1,7 +1,4 @@
 <script lang="ts">
-	import avatar from '$lib/assets/avatar.png';
-	import avatar_color from '$lib/assets/avatar.png?color';
-	import avatar_size from '$lib/assets/avatar.png?size';
 	import { Icon, Sun, Moon, Envelope } from 'svelte-hero-icons';
 	import { theme } from '$lib/stores/theme';
 	import Themed from './Themed.svelte';
@@ -15,13 +12,9 @@
 <header class="container mx-auto px-4 py-4 print:hidden flex flex-row justify-between">
 	<div id="header-start" class="flex flex-row items-center gap-4">
 		<a href="/" class="flex flex-row items-center gap-3">
-			<img
-				src={avatar}
+			<enhanced:img src="$lib/assets/avatar.png"
 				alt="Loris Sigrist looking very handsome"
 				class="rounded-full w-9 aspect-square"
-				style:background-color={avatar_color}
-				width={avatar_size.width}
-				height={avatar_size.height}
 			/>
 
 			<span class="font-bold text-md">Loris Sigrist</span>
