@@ -22,15 +22,10 @@ const minification_options = {
 };
 
 export async function handle({ event, resolve }) {
-	let page = '';
-
 	return resolve(event, {
 		transformPageChunk: ({ html, done }) => {
-			page += html;
-			if (done && building) {
-				page = minify(page, minification_options);
-			}
-			return page;
+			const shouldMinify = done && building;
+			return shouldMinify ? minify(html, minification_options) : html;
 		}
 	});
 }
