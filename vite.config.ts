@@ -6,8 +6,6 @@ import { imageSize } from './plugins/image-size';
 import { blurhash } from './plugins/blurhash';
 import { enhancedImages } from '@sveltejs/enhanced-img';
 
-
-
 export default defineConfig({
 	plugins: [blurhash, base64Loader, colorThief, imageSize, enhancedImages(), sveltekit()],
 	test: {

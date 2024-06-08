@@ -1,10 +1,13 @@
-import { mdsvex } from 'mdsvex';
+import { mdsvex, escapeSvelte } from 'mdsvex';
 import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeSlug from 'rehype-slug';
 import rehypeExternalLinks from 'rehype-external-links';
 import remarkAbbr from 'remark-abbr';
+import { getHighlighter } from 'shiki'
+
+
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -19,21 +22,23 @@ const config = {
 			smartypants: {
 				dashes: 'oldschool'
 			},
+			highlight: {
+				highlighter: async (code, lang = 'text') => {
+					const highlighter = await getHighlighter({
+						themes: ['poimandres'],
+						langs: ['javascript', 'typescript', 'rust', 'json', 'svelte', 'bash', 'yaml']
+					})
+					await highlighter.loadLanguage('javascript', 'typescript')
+					const html = escapeSvelte(highlighter.codeToHtml(code, { lang, theme: 'poimandres' }))
+					return `{@html \`${html}\` }`
+				}
+			},
 			rehypePlugins: [
-				// @ts-ignore It works so shut up
 				[rehypeSlug, undefined],
-				//@ts-ignore
 				[rehypeAutolinkHeadings, { behavior: 'wrap' }],
-				// @ts-ignore
 				[rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }]
 			],
-			remarkPlugins: [
-				// @ts-ignore
-				remarkAbbr
-			],
-			layout: {
-				snippet: "./src/lib/mdsvex/SnippetLayout.svelte",
-			}
+			remarkPlugins: [remarkAbbr]
 		})
 	],
 

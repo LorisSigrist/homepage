@@ -1,6 +1,6 @@
-declare module "*?size" {
-    export default {
-        width: number,
-        height: number
-    };
+declare module '*?size' {
+	export default {
+		width: number,
+		height: number
+	};
 }

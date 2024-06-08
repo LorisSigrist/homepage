@@ -60,7 +60,10 @@
 
 	<div class="sm:hidden h-6 relative">
 		{#if parsed}
-			<span class="text-xs opacity-75 absolute left-0 top-2" transition:fade|global={{ duration: 100 }}>
+			<span
+				class="text-xs opacity-75 absolute left-0 top-2"
+				transition:fade|global={{ duration: 100 }}
+			>
 				{parsed.toLocaleDateString('en', {
 					year: 'numeric',
 					month: 'long',
@@ -69,8 +72,11 @@
 					minute: 'numeric'
 				})}
 			</span>
-			{:else}
-			<span class="text-xs opacity-75 absolute left-0 top-2" transition:fade|global={{ duration: 100 }}>
+		{:else}
+			<span
+				class="text-xs opacity-75 absolute left-0 top-2"
+				transition:fade|global={{ duration: 100 }}
+			>
 				Please enter a time and date
 			</span>
 		{/if}

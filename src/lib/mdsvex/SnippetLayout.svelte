@@ -1,23 +1,19 @@
 <!-- @component
     An MDSVEX layout for code snippets.
-    
 -->
-<script lang="ts">
-    import "$lib/styles/prism-themes/material.css"
+<script>
+	import '$lib/styles/prism-themes/material.css';
 </script>
 
-
 <div class="snippet">
-    <slot/>
+	<slot />
 </div>
 
-
-
 <style>
-    .snippet :global(pre) {
-        display: contents;
-    }
-    .snippet :global(code) {
-       background: none;
-    }
+	.snippet :global(pre) {
+		display: contents;
+	}
+	.snippet :global(code) {
+		background: none;
+	}
 </style>

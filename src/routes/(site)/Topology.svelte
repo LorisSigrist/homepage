@@ -1,30 +1,35 @@
-<script lang="ts">
+<script>
 	import { theme } from '$lib/stores/theme';
 	import { onMount } from 'svelte';
 	import { topology } from 'topology-renderer';
 
 	//some commonjs fuckery disallows named imports here
-	import colors from "tailwindcss/colors"
-	const { stone , sky } = colors;
+	import colors from 'tailwindcss/colors';
+	const { stone, sky } = colors;
 
 	let height = 1000;
 	let width = 1000;
 
 	function set_size() {
-		height = document. documentElement.clientHeight;
+		height = document.documentElement.clientHeight;
 		width = document.documentElement.clientWidth;
 	}
 
 	onMount(set_size);
 
-	let background_color: [number, number, number];
-	let line_color: [number, number, number];
+	/** @type {[number, number, number]} */
+	let background_color;
+	/** @type {[number, number, number]} */
+	let line_color;
 
-	$: line_color =  hexToRGB($theme === 'dark' ? sky[950] : sky[200]);
-	$: background_color = hexToRGB($theme === 'dark' ? stone[900] : stone[50])
+	$: line_color = hexToRGB($theme === 'dark' ? sky[950] : sky[200]);
+	$: background_color = hexToRGB($theme === 'dark' ? stone[900] : stone[50]);
 
-
-	function hexToRGB(hex: string) : [number, number, number] {
+	/**
+	 * @param {string} hex
+	 * @returns {[number, number, number]}
+	 */
+	function hexToRGB(hex) {
 		const r = parseInt(hex.slice(1, 3), 16);
 		const g = parseInt(hex.slice(3, 5), 16);
 		const b = parseInt(hex.slice(5, 7), 16);

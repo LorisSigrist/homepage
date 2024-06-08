@@ -16,7 +16,7 @@
 				</p>
 			</hgroup>
 
-			<div class="mt-10 pt-10 space-y-5 print:space-y-10 sm:mt-8 sm:pt-8 max-w-2xl"  >
+			<div class="mt-10 pt-10 space-y-5 print:space-y-10 sm:mt-8 sm:pt-8 max-w-2xl">
 				{#each data.articles as article}
 					<Article data={article} />
 				{/each}
