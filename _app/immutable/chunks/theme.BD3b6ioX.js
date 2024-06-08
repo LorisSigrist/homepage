@@ -1,0 +1,1 @@
+import{w as o}from"./index.BKx-NocJ.js";const e="theme",a="localStorage"in globalThis&&localStorage.getItem(e)==="dark"?"dark":"light",l=o(a);l.subscribe(t=>{"localStorage"in globalThis&&(localStorage.setItem(e,t),document.documentElement.classList.toggle("dark",t==="dark"))});export{l as t};
