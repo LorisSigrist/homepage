@@ -9,13 +9,15 @@ In order to accomplish this, without the user's having to do additional setup, t
 The key is to inject code into vite's client side entry point. This is surprisingly straight forward since a vite-plugin can just modify any js file using the `transform` hook.
 
 ```js
+// @filename: plugin.js 
+
 /** @returns {import('vite').Plugin} */
 const devtoolsPlugin = () => ({
   name: "devtools",
   enforce: "pre", //run before the vite's built-in transformations
   apply: "serve", //only run in dev mode
   transform(code, id, options) {
-    if(options?.ssr) return; //Don't run in SSR mode
+    if(options?.ssr) return //Don't run in SSR mode
 
     //Inject some code into the vite's client side entry point
     if (id.includes("vite/dist/client/client.mjs")) {
@@ -35,10 +37,13 @@ But to ship non-trivial devtools, we need more than just a foothold. We need mor
 Unfortunately, this isn't so straight forward. Our plugin is likely part of an external package and we don't know where that package will be installed, so we can't import our own modules using relative paths.
 
 ```js
-transform(code, id, options) {
-  if (id.includes("vite/dist/client/client.mjs")) {
-    //How do we import our own modules?
-    return { code: code + "\n" + "import(????)" }
+// @filename: plugin.js 
+const plugin = {
+  transform(code, id, options) {
+    if (id.includes("vite/dist/client/client.mjs")) {
+      // How do we import our own modules?
+      return { code: code + "\n" + "import(????)" }
+    }
   }
 }
 ```
@@ -52,16 +57,17 @@ I offer a few solutions here:
 This one is very straight forward. We just export the entry point of our devtools from our package. This way all we need to do is to inject an import statement to it in the client side js.
 
 ```js
-//in the entry point of our package
+// @filename: entry.js
 export function bootstrapDevtools() {
     // Devtool Browser code here
 }
 
-
-//in the plugin
-transform(code, id, options) {
-  if (id.includes("vite/dist/client/client.mjs")) {
-    return { code: code + "\n" + 'import("my-devtools-plugin").then(module => module.bootstrapDevtools())' }
+// @filename: plugin.js
+const plugin = {
+  transform(code, id, options) {
+    if (id.includes("vite/dist/client/client.mjs")) {
+      return { code: code + "\n" + 'import("my-devtools-plugin").then(module => module.bootstrapDevtools())' }
+    }
   }
 }
 ```
@@ -93,8 +99,8 @@ Then, in the `package.json`, add an exports field with two entries: one for the 
   "name": "my-devtools-plugin",
   "exports": {
     ".": {
-        "import": "./plugin.js"
-        "types": "./plugin.d.ts" //If you have types. link to them here
+        "import": "./plugin.js",
+        "types": "./plugin.d.ts"
     },
     "./internal": {
         "import": "./devtools/entry.js"
@@ -105,10 +111,12 @@ Then, in the `package.json`, add an exports field with two entries: one for the 
 You can then inject an import statement to `my-devtools-plugin/internal` in the client side js.
 
 ```js
-//in the plugin
-transform(code, id, options) {
-  if (id.includes("vite/dist/client/client.mjs")) {
-    return { code: code + "\n" + 'import("my-devtools-plugin/internal").then(module => module.bootstrap())' }
+// @filename: plugin.js
+const plugin = {
+  transform(code, id, options) {
+    if (id.includes("vite/dist/client/client.mjs")) {
+      return { code: code + "\n" + 'import("my-devtools-plugin/internal").then(module => module.bootstrap())' }
+    }
   }
 }
 ```
@@ -129,7 +137,7 @@ But how can we know the absolute path of our entry point? The trick is that we k
 
 We can get the absolute path of our plugin's file using `import.meta.url`. We can then combine that with the relative path to our entry point to get the absolute path to our entry point.
 
-```
+```text
 src
 |- plugin.js
 |- devtools
@@ -137,31 +145,30 @@ src
 ```
 
 ```js
-//plugin.js 
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-import { normalizePath } from "vite";
+// @filename: plugin.js 
+import { dirname } from "node:path"
+import { fileURLToPath } from "node:url"
+import { normalizePath } from "vite"
 
 function getDevtoolsEntryPath() {
-    const srcFolderPath = normalizePath(dirname(fileURLToPath(import.meta.url)));
-    return srcFolderPath + "/devtools/entry.js";
+    const srcFolderPath = normalizePath(dirname(fileURLToPath(import.meta.url)))
+    return srcFolderPath + "/devtools/entry.js"
 }
 ```
 
 Using this, we can then resolve our magic module id to the absolute path of our entry point.
 
 ```js
-//plugin.js
-//...
+// @filename: plugin.js 
+const MAGIC_MODULE_ID = "my-package:devtools"
 
-const MAGIC_MODULE_ID = "my-package:devtools";
 export const devtoolsPlugin = () => ({
     name: "devtools",
     enforce: "pre",
     apply: "serve",
     resolveId(id) {
         if (id === MAGIC_MODULE_ID) {
-            return getDevtoolsEntryPath();
+            return getDevtoolsEntryPath()
         }
     }, 
     transform(code, id, options) {
@@ -182,7 +189,7 @@ We can sidestep this by loading the code ourselves using the `load` hook and `fs
 
 To do this, we will not use a _magic id_, but a _magic prefix_. We will check if an import id starts with the prefix, and if it does, replace the prefix with the path to our _src/devtools/_ folder and load the files ourselves.
 
-```
+```text
 src
 |- plugin.js
 |- devtools
@@ -195,11 +202,11 @@ Eg:
 - "my-package:devtools/imported-by-entry.js" -> "/home/user/project/node_modules/my-package/devtools/imported-by-entry.js
 
 ```js
-//...
-const srcFolderPath = normalizePath(dirname(fileURLToPath(import.meta.url)));
-const devtoolsFolderPath = srcFolderPath + "/devtools";
+// @filename: plugin.js 
+const srcFolderPath = normalizePath(dirname(fileURLToPath(import.meta.url)))
+const devtoolsFolderPath = srcFolderPath + "/devtools"
 
-const MAGIC_MODULE_PREFIX = "my-package:devtools";
+const MAGIC_MODULE_PREFIX = "my-package:devtools"
 
 export const devtoolsPlugin = () => ({
     name: "devtools",
@@ -217,10 +224,10 @@ export const devtoolsPlugin = () => ({
             let cleanPath = id.split("?")[0] ?? ""; //remove query params
             cleanPath = cleanId.split("#")[0] ?? ""; //remove hash
 
-            if(fs.existsSync(cleanPath)) return fs.readFile(cleanPath, "utf-8");
-            else console.warn(`Could not find file ${cleanPath}`);
+            if(fs.existsSync(cleanPath)) {return fs.readFile(cleanPath, "utf-8") }
+            else { console.warn(`Could not find file ${cleanPath}`) }
         }
-    }
+    },
 
     transform(code, id, options) {
         if (id.includes("vite/dist/client/client.mjs")) {

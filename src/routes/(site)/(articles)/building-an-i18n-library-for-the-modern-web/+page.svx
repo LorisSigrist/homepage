@@ -25,8 +25,7 @@ That's exactly what [we](https://www.inlang.com) tried to accomplish with [Parag
 Paraglide is a compiler that _compiles_ your messages into JS modules. Each message is it's own export. 
 
 ```js
-//Paraglide's output
-
+// @filename: paraglide/messages.js
 /**
  * @param {{ name: string }} params
  */

@@ -9,7 +9,7 @@ let result;
 try {
   const user = unsafe();
   result = user.name;
-catch(e) {
+} catch(e) {
   result = null;
 }
 ```
@@ -28,7 +28,7 @@ let result;
 try {
    const user = unsafe(); //throws CustomException1 & 2
    result = user.name;
-catch(e) {
+} catch(e) {
   if(e instanceof CustomException1) result = null;
   else if (e instanceof CustomException2) {
     console.warn("CustomeException2");

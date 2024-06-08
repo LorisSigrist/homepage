@@ -5,9 +5,12 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeSlug from 'rehype-slug';
 import rehypeExternalLinks from 'rehype-external-links';
 import remarkAbbr from 'remark-abbr';
-import { getHighlighter } from 'shiki'
+import { createShikiHighlighter, renderCodeToHTML, runTwoSlash } from 'shiki-twoslash';
 
-
+const highlighter = await createShikiHighlighter({
+	themes: ['poimandres'],
+	langs: ['javascript', 'typescript', 'rust', 'json', 'svelte', 'bash', 'yaml', 'tex']
+});
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -24,13 +27,42 @@ const config = {
 			},
 			highlight: {
 				highlighter: async (code, lang = 'text') => {
-					const highlighter = await getHighlighter({
-						themes: ['poimandres'],
-						langs: ['javascript', 'typescript', 'rust', 'json', 'svelte', 'bash', 'yaml']
-					})
-					await highlighter.loadLanguage('javascript', 'typescript')
-					const html = escapeSvelte(highlighter.codeToHtml(code, { lang, theme: 'poimandres' }))
-					return `{@html \`${html}\` }`
+					const twoslashable = [
+						'js',
+						'javascript',
+						'ts',
+						'typescript',
+						'tsx',
+						'jsx',
+						'json',
+						'jsn'
+					].includes(lang);
+					
+					let rendered = '';
+					if (twoslashable) {
+						const twoslash = runTwoSlash(code, lang, {
+							includeJSDocInHover: true,
+						});
+						rendered = renderCodeToHTML(
+							twoslash.code,
+							lang,
+							{ twoslash: true },
+							{ "includeJSDocInHover": true },
+							highlighter,
+							twoslash
+						);
+					} else {
+						rendered = renderCodeToHTML(
+							code,
+							lang,
+							{ twoslash: false },
+							{},
+							highlighter
+						);
+					}
+
+					const html = escapeSvelte(rendered);
+					return `{@html \`${html}\` }`;
 				}
 			},
 			rehypePlugins: [
