@@ -5,12 +5,9 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeSlug from 'rehype-slug';
 import rehypeExternalLinks from 'rehype-external-links';
 import remarkAbbr from 'remark-abbr';
-import { createShikiHighlighter, renderCodeToHTML, runTwoSlash } from 'shiki-twoslash';
+import { transformerTwoslash } from '@shikijs/twoslash';
+import { codeToHtml } from 'shiki';
 
-const highlighter = await createShikiHighlighter({
-	themes: ['poimandres'],
-	langs: ['javascript', 'typescript', 'rust', 'json', 'svelte', 'bash', 'yaml', 'tex']
-});
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -37,28 +34,16 @@ const config = {
 						'json',
 						'jsn'
 					].includes(lang);
-					
+
 					let rendered = '';
 					if (twoslashable) {
-						const twoslash = runTwoSlash(code, lang, {
-							includeJSDocInHover: true,
+						rendered = await codeToHtml(code, {
+							lang: 'ts',
+							theme: 'vitesse-dark',
+							transformers: [transformerTwoslash()]
 						});
-						rendered = renderCodeToHTML(
-							twoslash.code,
-							lang,
-							{ twoslash: true },
-							{ "includeJSDocInHover": true },
-							highlighter,
-							twoslash
-						);
 					} else {
-						rendered = renderCodeToHTML(
-							code,
-							lang,
-							{ twoslash: false },
-							{},
-							highlighter
-						);
+						rendered = await codeToHtml(code, { lang, theme: 'vitesse-dark' });
 					}
 
 					const html = escapeSvelte(rendered);

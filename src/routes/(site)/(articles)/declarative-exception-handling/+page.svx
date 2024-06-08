@@ -5,6 +5,8 @@ In this article we will explore a potential remedy to the nightmare that is erro
 If you have a function that might fail, you would probably do something like this.
 
 ```js
+const unsafe = () => ({ name: "Loris" })
+// ---cut-before---
 let result;
 try {
   const user = unsafe();
@@ -15,12 +17,14 @@ try {
 ```
 
 This very common implementation has a bug though. It handles all exceptions, not just the ones we expect to happen during normal operation. 
-If `usafe` has a Syntax error in it's implementation this would silently swallow it. We don't want that.
+If `unsafe` has a Syntax error in it's implementation this would silently swallow it. We don't want that.
 
 A better implementation would be to throw custom error-types for all your expected exceptions 
 and test anything that's thrown against those.
 
 ```js
+const unsafe = () => ({ name: "Loris" })
+// ---cut-before---
 class CustomException1 extends Error {}
 class CustomException2 extends Error {}
 
@@ -63,6 +67,8 @@ This way we can declaratively define each possible execution branch, drastically
 I took a stab at implementing a similar API in JS, and I came up with the `ResultMatcher` class. You can find the full source code at the bottom of this article. It is used like this:
 
 ```js
+const unsafe = () => "value"
+// ---cut-before---
 const result = new ResultMatcher(unsafe)
     .ok(user => user.name)
     .catch(CustomException1, e => null)

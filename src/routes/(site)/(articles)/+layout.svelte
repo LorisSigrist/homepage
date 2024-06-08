@@ -1,6 +1,7 @@
 <script lang="ts">
 	//import '$lib/styles/prism-themes/material.css';
 	import '$lib/styles/prose.css';
+	import "@shikijs/twoslash/style-rich.css"
 
 	async function handleProseClick(e: MouseEvent) {
 		/*
