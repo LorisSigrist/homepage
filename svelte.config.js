@@ -37,7 +37,6 @@ const config = {
 					let rendered = '';
 					if (twoslashable) {
 						try {
-							console.log('shiki lang', lang);
 							rendered = await codeToHtml(code, {
 								lang,
 								theme: 'vitesse-dark',
