@@ -8,9 +8,9 @@ In order to accomplish this, without the user's having to do additional setup, t
 
 The key is to inject code into vite's client side entry point. This is surprisingly straight forward since a vite-plugin can just modify any js file using the `transform` hook.
 
-```js
+```ts
 // @filename: plugin.js 
-
+// ---cut-before---
 /** @returns {import('vite').Plugin} */
 const devtoolsPlugin = () => ({
   name: "devtools",
@@ -36,8 +36,9 @@ But to ship non-trivial devtools, we need more than just a foothold. We need mor
 
 Unfortunately, this isn't so straight forward. Our plugin is likely part of an external package and we don't know where that package will be installed, so we can't import our own modules using relative paths.
 
-```js
+```ts
 // @filename: plugin.js 
+// ---cut-before---
 const plugin = {
   transform(code, id, options) {
     if (id.includes("vite/dist/client/client.mjs")) {
@@ -56,7 +57,7 @@ I offer a few solutions here:
 ### Option 1: Exporting the runtime code from the package
 This one is very straight forward. We just export the entry point of our devtools from our package. This way all we need to do is to inject an import statement to it in the client side js.
 
-```js
+```ts
 // @filename: entry.js
 export function bootstrapDevtools() {
     // Devtool Browser code here
@@ -85,7 +86,7 @@ In this approach, we still export the runtime code from our package, but we give
 
 Here is the setup:
 
-```
+```text
 src
 |- plugin.js
 |- devtools
@@ -110,8 +111,9 @@ Then, in the `package.json`, add an exports field with two entries: one for the 
 ```
 You can then inject an import statement to `my-devtools-plugin/internal` in the client side js.
 
-```js
+```ts
 // @filename: plugin.js
+// ---cut-before---
 const plugin = {
   transform(code, id, options) {
     if (id.includes("vite/dist/client/client.mjs")) {
@@ -144,8 +146,9 @@ src
    |- entry.js
 ```
 
-```js
+```ts
 // @filename: plugin.js 
+// ---cut-before---
 import { dirname } from "node:path"
 import { fileURLToPath } from "node:url"
 import { normalizePath } from "vite"
@@ -158,8 +161,9 @@ function getDevtoolsEntryPath() {
 
 Using this, we can then resolve our magic module id to the absolute path of our entry point.
 
-```js
+```ts
 // @filename: plugin.js 
+// ---cut-before---
 const MAGIC_MODULE_ID = "my-package:devtools"
 
 export const devtoolsPlugin = () => ({
@@ -201,7 +205,7 @@ Eg:
 - "my-package:devtools/entry.js" -> "/home/user/project/node_modules/my-package/devtools/entry.js"
 - "my-package:devtools/imported-by-entry.js" -> "/home/user/project/node_modules/my-package/devtools/imported-by-entry.js
 
-```js
+```ts
 // @filename: plugin.js 
 const srcFolderPath = normalizePath(dirname(fileURLToPath(import.meta.url)))
 const devtoolsFolderPath = srcFolderPath + "/devtools"

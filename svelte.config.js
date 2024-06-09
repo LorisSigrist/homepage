@@ -8,7 +8,6 @@ import remarkAbbr from 'remark-abbr';
 import { transformerTwoslash } from '@shikijs/twoslash';
 import { codeToHtml } from 'shiki';
 
-
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	extensions: ['.svelte', '.svx', '.md', '.mdx'],
@@ -37,11 +36,16 @@ const config = {
 
 					let rendered = '';
 					if (twoslashable) {
-						rendered = await codeToHtml(code, {
-							lang: 'ts',
-							theme: 'vitesse-dark',
-							transformers: [transformerTwoslash()]
-						});
+						try {
+							console.log('shiki lang', lang);
+							rendered = await codeToHtml(code, {
+								lang,
+								theme: 'vitesse-dark',
+								transformers: [transformerTwoslash()]
+							});
+						} catch (e) {
+							throw Error('Could not transform code: \n' + code, { cause: e });
+						}
 					} else {
 						rendered = await codeToHtml(code, { lang, theme: 'vitesse-dark' });
 					}
