@@ -10,5 +10,8 @@ export default defineConfig({
 	plugins: [blurhash, base64Loader, colorThief, imageSize, enhancedImages(), sveltekit()],
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']
+	},
+	build: {
+		minify: false,
 	}
 });
