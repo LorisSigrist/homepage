@@ -1,4 +1,4 @@
-import { s as stores } from "./entry.DaU_FpiT.js";
+import { s as stores } from "./entry.5E28R7r4.js";
 const getStores = () => {
   const stores$1 = stores;
   return {
