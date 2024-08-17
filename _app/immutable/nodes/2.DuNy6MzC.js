@@ -1,6 +1,6 @@
 import { s as safe_not_equal, l as assign, n as noop, m as compute_rest_props, p as exclude_internal_props, a as create_slot, u as update_slot_base, g as get_all_dirty_from_scope, b as get_slot_changes } from "../chunks/scheduler.DwkGEAYb.js";
 import { S as SvelteComponent, i as init, J as svg_element, K as claim_svg_element, a as children, d as detach, L as set_svg_attributes, g as insert_hydration, F as destroy_each, e as element, s as space, c as claim_element, f as claim_space, m as attr, o as transition_in, p as transition_out, h as append_hydration, y as create_component, k as get_svelte_dataset, z as claim_component, A as mount_component, r as listen, B as destroy_component, q as head_selector } from "../chunks/index.BoYP9eQs.js";
-import { M as Metadata } from "../chunks/Metadata.K18ksX65.js";
+import { M as Metadata } from "../chunks/Metadata.CqO-MEiM.js";
 import { e as ensure_array_like } from "../chunks/each.CuygwpM4.js";
 import { t as theme } from "../chunks/theme.COyUI6g7.js";
 function get_spread_update(levels, updates) {
@@ -558,7 +558,7 @@ function create_dark_slot(ctx) {
 function create_fragment$1(ctx) {
   let header;
   let div0;
-  let textContent = `<a href="/" class="flex flex-row items-center gap-3"><picture><source srcset="${"" + new URL("../assets/avatar.CO8mBa3R.avif", import.meta.url).href + " 1x, " + new URL("../assets/avatar.CUQxh67W.avif", import.meta.url).href + " 2x"}" type="image/avif"/><source srcset="${"" + new URL("../assets/avatar.B39wt1fA.webp", import.meta.url).href + " 1x, " + new URL("../assets/avatar.D9hkS3v8.webp", import.meta.url).href + " 2x"}" type="image/webp"/><source srcset="${"" + new URL("../assets/avatar.BJCwippg.png", import.meta.url).href + " 1x, " + new URL("../assets/avatar.BQIWiNBc.png", import.meta.url).href + " 2x"}" type="image/png"/><img src=""+new URL('../assets/avatar.BQIWiNBc.png', import.meta.url).href+"" alt="Loris Sigrist looking very handsome" class="rounded-full w-9 aspect-square" width="412" height="412"/></picture> <span class="font-bold text-md">Loris Sigrist</span></a>`;
+  let textContent = `<a href="/" class="flex flex-row items-center gap-3"><picture><source srcset="${"" + new URL("../assets/avatar.Bf4TRO7F.avif", import.meta.url).href + " 1x, " + new URL("../assets/avatar.BkqM9Qx8.avif", import.meta.url).href + " 2x"}" type="image/avif"/><source srcset="${"" + new URL("../assets/avatar.B39wt1fA.webp", import.meta.url).href + " 1x, " + new URL("../assets/avatar.D9hkS3v8.webp", import.meta.url).href + " 2x"}" type="image/webp"/><source srcset="${"" + new URL("../assets/avatar.nNTP_Lha.png", import.meta.url).href + " 1x, " + new URL("../assets/avatar.B3igIkfZ.png", import.meta.url).href + " 2x"}" type="image/png"/><img src=""+new URL('../assets/avatar.B3igIkfZ.png', import.meta.url).href+"" alt="Loris Sigrist looking very handsome" class="rounded-full w-9 aspect-square" width="412" height="412"/></picture> <span class="font-bold text-md">Loris Sigrist</span></a>`;
   let t2;
   let div1;
   let a1;
