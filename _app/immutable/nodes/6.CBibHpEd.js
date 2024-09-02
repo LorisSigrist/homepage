@@ -313,7 +313,7 @@ fileURLToPath('file:///hello world');      // Correct:   /hello world (POSIX)
   let t139;
   let html_tag_10;
   let raw10_value = `<pre class="shiki vitesse-dark twoslash lsp" style="background-color:#121212;color:#dbd7caee" tabindex="0"><code><span class="line"><span style="color:#758575DD">// @filename: plugin.js </span></span>
-<span class="line"><span style="color:#CB7676">const </span><span style="color:#BD976A"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#CB7676">const </span><span style="color:#BD976A">srcFolderPath</span><span style="color:#666666">: </span><span style="color:#5DA994">any</span></code></span>srcFolderPath</span></span><span style="color:#666666"> =</span><span style="color:#80A665"> </span><span style="color:#80A665">normalizePath</span><span style="color:#666666">(</span><span style="color:#80A665">dirname</span><span style="color:#666666">(</span><span style="color:#80A665">fileURLToPath</span><span style="color:#666666">(</span><span style="color:#4D9375">import</span><span style="color:#666666">.</span><span style="color:#B8A965">meta</span><span style="color:#666666">.</span><span style="color:#BD976A"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#BD976A">ImportMeta</span><span style="color:#666666">.</span><span style="color:#BD976A">url</span><span style="color:#DBD7CAEE">: </span><span style="color:#BD976A">string</span></code></span>url</span></span><span style="color:#666666">)))</span></span>
+<span class="line"><span style="color:#CB7676">const </span><span style="color:#BD976A"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#CB7676">const </span><span style="color:#BD976A">srcFolderPath</span><span style="color:#666666">: </span><span style="color:#5DA994">any</span></code></span>srcFolderPath</span></span><span style="color:#666666"> =</span><span style="color:#80A665"> </span><span style="color:#80A665">normalizePath</span><span style="color:#666666">(</span><span style="color:#80A665">dirname</span><span style="color:#666666">(</span><span style="color:#80A665">fileURLToPath</span><span style="color:#666666">(</span><span style="color:#4D9375">import</span><span style="color:#666666">.</span><span style="color:#B8A965">meta</span><span style="color:#666666">.</span><span style="color:#BD976A"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#BD976A">ImportMeta</span><span style="color:#666666">.</span><span style="color:#BD976A">url</span><span style="color:#DBD7CAEE">: </span><span style="color:#BD976A">string</span></code><div class="twoslash-popup-docs">The absolute &#96;file:&#96; URL of the module.</div></span>url</span></span><span style="color:#666666">)))</span></span>
 <span class="line"><span style="color:#CB7676">const </span><span style="color:#BD976A"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#CB7676">const </span><span style="color:#BD976A">devtoolsFolderPath</span><span style="color:#666666">: </span><span style="color:#5DA994">string</span></code></span>devtoolsFolderPath</span></span><span style="color:#666666"> =</span><span style="color:#BD976A"> </span><span style="color:#BD976A"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#CB7676">const </span><span style="color:#BD976A">srcFolderPath</span><span style="color:#666666">: </span><span style="color:#5DA994">any</span></code></span>srcFolderPath</span></span><span style="color:#CB7676"> + </span><span style="color:#C98A7D99">"</span><span style="color:#C98A7D">/devtools</span><span style="color:#C98A7D99">"</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#CB7676">const </span><span style="color:#BD976A"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#CB7676">const </span><span style="color:#BD976A">MAGIC_MODULE_PREFIX</span><span style="color:#666666">: </span><span style="color:#C98A7D99">"</span><span style="color:#C98A7D">my-package:devtools</span><span style="color:#C98A7D99">"</span></code></span>MAGIC_MODULE_PREFIX</span></span><span style="color:#666666"> =</span><span style="color:#C98A7D99"> "</span><span style="color:#C98A7D">my-package:devtools</span><span style="color:#C98A7D99">"</span></span>
@@ -344,7 +344,65 @@ fileURLToPath('file:///hello world');      // Correct:   /hello world (POSIX)
 <span class="line"><span style="color:#BD976A">            </span><span style="color:#BD976A"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#CB7676">let </span><span style="color:#BD976A">cleanPath</span><span style="color:#666666">: </span><span style="color:#5DA994">any</span></code></span>cleanPath</span></span><span style="color:#666666"> = </span><span style="color:#BD976A">cleanId</span><span style="color:#666666">.</span><span style="color:#80A665">split</span><span style="color:#666666">(</span><span style="color:#C98A7D99">"</span><span style="color:#C98A7D">#</span><span style="color:#C98A7D99">"</span><span style="color:#666666">)[</span><span style="color:#4C9A91">0</span><span style="color:#666666">] </span><span style="color:#CB7676">??</span><span style="color:#C98A7D99"> ""</span><span style="color:#666666">; </span><span style="color:#758575DD">//remove hash</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#4D9375">            if</span><span style="color:#666666">(</span><span style="color:#BD976A">fs</span><span style="color:#666666">.</span><span style="color:#80A665">existsSync</span><span style="color:#666666">(</span><span style="color:#BD976A"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#CB7676">let </span><span style="color:#BD976A">cleanPath</span><span style="color:#666666">: </span><span style="color:#5DA994">any</span></code></span>cleanPath</span></span><span style="color:#666666">)) &#123;</span><span style="color:#4D9375">return</span><span style="color:#BD976A"> </span><span style="color:#BD976A">fs</span><span style="color:#666666">.</span><span style="color:#80A665">readFile</span><span style="color:#666666">(</span><span style="color:#BD976A"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#CB7676">let </span><span style="color:#BD976A">cleanPath</span><span style="color:#666666">: </span><span style="color:#5DA994">any</span></code></span>cleanPath</span></span><span style="color:#666666">, </span><span style="color:#C98A7D99">"</span><span style="color:#C98A7D">utf-8</span><span style="color:#C98A7D99">"</span><span style="color:#666666">) &#125;</span></span>
-<span class="line"><span style="color:#4D9375">            else</span><span style="color:#666666"> &#123; </span><span style="color:#BD976A"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#CB7676">var </span><span style="color:#BD976A">console</span><span style="color:#666666">: </span><span style="color:#5DA994">Console</span></code></span>console</span></span><span style="color:#666666">.</span><span style="color:#80A665"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#BD976A">Console</span><span style="color:#666666">.</span><span style="color:#80A665">warn</span><span style="color:#666666">(...</span><span style="color:#BD976A">data</span><span style="color:#DBD7CAEE">: </span><span style="color:#BD976A">any</span><span style="color:#666666">[])</span><span style="color:#DBD7CAEE">: </span><span style="color:#CB7676">void</span></code></span>warn</span></span><span style="color:#666666">(</span><span style="color:#C98A7D99">&#96;</span><span style="color:#C98A7D">Could not find file </span><span style="color:#666666">$&#123;</span><span style="color:#C98A7D"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#CB7676">let </span><span style="color:#BD976A">cleanPath</span><span style="color:#666666">: </span><span style="color:#5DA994">any</span></code></span>cleanPath</span></span><span style="color:#666666">&#125;</span><span style="color:#C98A7D99">&#96;</span><span style="color:#666666">) &#125;</span></span>
+<span class="line"><span style="color:#4D9375">            else</span><span style="color:#666666"> &#123; </span><span style="color:#BD976A"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#CB7676">var </span><span style="color:#BD976A">console</span><span style="color:#666666">: </span><span style="color:#5DA994">Console</span></code><div class="twoslash-popup-docs">The &#96;console&#96; module provides a simple debugging console that is similar to the
+JavaScript console mechanism provided by web browsers.
+
+The module exports two specific components:
+
+* A &#96;Console&#96; class with methods such as &#96;console.log()&#96;, &#96;console.error()&#96; and &#96;console.warn()&#96; that can be used to write to any Node.js stream.
+* A global &#96;console&#96; instance configured to write to [&#96;process.stdout&#96;](https://nodejs.org/docs/latest-v22.x/api/process.html#processstdout) and
+[&#96;process.stderr&#96;](https://nodejs.org/docs/latest-v22.x/api/process.html#processstderr). The global &#96;console&#96; can be used without calling &#96;require('console')&#96;.
+
+_**Warning**_: The global console object's methods are neither consistently
+synchronous like the browser APIs they resemble, nor are they consistently
+asynchronous like all other Node.js streams. See the [&#96;note on process I/O&#96;](https://nodejs.org/docs/latest-v22.x/api/process.html#a-note-on-process-io) for
+more information.
+
+Example using the global &#96;console&#96;:
+
+&#96;&#96;&#96;js
+console.log('hello world');
+// Prints: hello world, to stdout
+console.log('hello %s', 'world');
+// Prints: hello world, to stdout
+console.error(new Error('Whoops, something bad happened'));
+// Prints error message and stack trace to stderr:
+//   Error: Whoops, something bad happened
+//     at [eval]:5:15
+//     at Script.runInThisContext (node:vm:132:18)
+//     at Object.runInThisContext (node:vm:309:38)
+//     at node:internal/process/execution:77:19
+//     at [eval]-wrapper:6:22
+//     at evalScript (node:internal/process/execution:76:60)
+//     at node:internal/main/eval_string:23:3
+
+const name = 'Will Robinson';
+console.warn(&#96;Danger $&#123;name&#125;! Danger!&#96;);
+// Prints: Danger Will Robinson! Danger!, to stderr
+&#96;&#96;&#96;
+
+Example using the &#96;Console&#96; class:
+
+&#96;&#96;&#96;js
+const out = getStreamSomehow();
+const err = getStreamSomehow();
+const myConsole = new console.Console(out, err);
+
+myConsole.log('hello world');
+// Prints: hello world, to out
+myConsole.log('hello %s', 'world');
+// Prints: hello world, to out
+myConsole.error(new Error('Whoops, something bad happened'));
+// Prints: [Error: Whoops, something bad happened], to err
+
+const name = 'Will Robinson';
+myConsole.warn(&#96;Danger $&#123;name&#125;! Danger!&#96;);
+// Prints: Danger Will Robinson! Danger!, to err
+&#96;&#96;&#96;</div><div class="twoslash-popup-docs twoslash-popup-docs-tags"><span class="twoslash-popup-docs-tag"><span class="twoslash-popup-docs-tag-name">@see</span><span class="twoslash-popup-docs-tag-value">[source](https://github.com/nodejs/node/blob/v22.x/lib/console.js)</span></span></div></span>console</span></span><span style="color:#666666">.</span><span style="color:#80A665"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#BD976A">Console</span><span style="color:#666666">.</span><span style="color:#80A665">warn</span><span style="color:#666666">(</span><span style="color:#BD976A">message</span><span style="color:#CB7676">?:</span><span style="color:#BD976A"> any</span><span style="color:#666666">,</span><span style="color:#666666"> ...</span><span style="color:#BD976A">optionalParams</span><span style="color:#DBD7CAEE">: </span><span style="color:#BD976A">any</span><span style="color:#666666">[])</span><span style="color:#DBD7CAEE">: </span><span style="color:#CB7676">void</span><span style="color:#666666"> (</span><span style="color:#CB7676">+</span><span style="color:#4C9A91">1</span><span style="color:#BD976A"> overload</span><span style="color:#666666">)</span></code><div class="twoslash-popup-docs">The &#96;console.warn()&#96; function is an alias for 
+&#123;@link 
+error
+&#125;
+.</div><div class="twoslash-popup-docs twoslash-popup-docs-tags"><span class="twoslash-popup-docs-tag"><span class="twoslash-popup-docs-tag-name">@since</span><span class="twoslash-popup-docs-tag-value">v0.1.100</span></span></div></span>warn</span></span><span style="color:#666666">(</span><span style="color:#C98A7D99">&#96;</span><span style="color:#C98A7D">Could not find file </span><span style="color:#666666">$&#123;</span><span style="color:#C98A7D"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#CB7676">let </span><span style="color:#BD976A">cleanPath</span><span style="color:#666666">: </span><span style="color:#5DA994">any</span></code></span>cleanPath</span></span><span style="color:#666666">&#125;</span><span style="color:#C98A7D99">&#96;</span><span style="color:#666666">) &#125;</span></span>
 <span class="line"><span style="color:#666666">        &#125;</span></span>
 <span class="line"><span style="color:#666666">    &#125;,</span></span>
 <span class="line"></span>
