@@ -351,7 +351,7 @@ The module exports two specific components:
 
 * A &#96;Console&#96; class with methods such as &#96;console.log()&#96;, &#96;console.error()&#96; and &#96;console.warn()&#96; that can be used to write to any Node.js stream.
 * A global &#96;console&#96; instance configured to write to [&#96;process.stdout&#96;](https://nodejs.org/docs/latest-v22.x/api/process.html#processstdout) and
-[&#96;process.stderr&#96;](https://nodejs.org/docs/latest-v22.x/api/process.html#processstderr). The global &#96;console&#96; can be used without calling &#96;require('console')&#96;.
+[&#96;process.stderr&#96;](https://nodejs.org/docs/latest-v22.x/api/process.html#processstderr). The global &#96;console&#96; can be used without importing the &#96;node:console&#96; module.
 
 _**Warning**_: The global console object's methods are neither consistently
 synchronous like the browser APIs they resemble, nor are they consistently
