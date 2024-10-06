@@ -1,4 +1,4 @@
-import { s as stores } from "./entry.DXYA_tfF.js";
+import { s as stores } from "./entry.BDOXY1cd.js";
 const getStores = () => {
   const stores$1 = stores;
   return {
