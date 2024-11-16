@@ -1,11 +1,7 @@
-import { s as safe_not_equal, a as create_slot, u as update_slot_base, g as get_all_dirty_from_scope, b as get_slot_changes } from "../chunks/scheduler.DwkGEAYb.js";
-import { S as SvelteComponent, i as init, o as transition_in, p as transition_out } from "../chunks/index.BoYP9eQs.js";
-const prerender = true;
-const _layout = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  prerender
-}, Symbol.toStringTag, { value: "Module" }));
+import { s as safe_not_equal, a as create_slot, u as update_slot_base, g as get_all_dirty_from_scope, b as get_slot_changes } from "./scheduler.DhO_7JC-.js";
+import { S as SvelteComponent, i as init, d as detach, o as transition_out, p as transition_in, a as insert_hydration, k as attr, c as claim_element, e as children, h as element } from "./index.BSC7__lV.js";
 function create_fragment(ctx) {
+  let div;
   let current;
   const default_slot_template = (
     /*#slots*/
@@ -20,16 +16,26 @@ function create_fragment(ctx) {
   );
   return {
     c() {
+      div = element("div");
       if (default_slot)
         default_slot.c();
+      this.h();
     },
     l(nodes) {
+      div = claim_element(nodes, "DIV", { class: true });
+      var div_nodes = children(div);
       if (default_slot)
-        default_slot.l(nodes);
+        default_slot.l(div_nodes);
+      div_nodes.forEach(detach);
+      this.h();
+    },
+    h() {
+      attr(div, "class", "not-prose font-sans bg-gray-100 dark:bg-gray-800 p-4 sm:p-8 rounded-lg max-w-full overflow-x-scroll");
     },
     m(target, anchor) {
+      insert_hydration(target, div, anchor);
       if (default_slot) {
-        default_slot.m(target, anchor);
+        default_slot.m(div, null);
       }
       current = true;
     },
@@ -69,6 +75,9 @@ function create_fragment(ctx) {
       current = false;
     },
     d(detaching) {
+      if (detaching) {
+        detach(div);
+      }
       if (default_slot)
         default_slot.d(detaching);
     }
@@ -82,13 +91,12 @@ function instance($$self, $$props, $$invalidate) {
   };
   return [$$scope, slots];
 }
-class Layout extends SvelteComponent {
+class Showcase extends SvelteComponent {
   constructor(options) {
     super();
     init(this, options, instance, create_fragment, safe_not_equal, {});
   }
 }
 export {
-  Layout as component,
-  _layout as universal
+  Showcase as S
 };

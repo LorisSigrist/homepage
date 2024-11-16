@@ -1,6 +1,6 @@
 var _a, _b;
-import { t as tick } from "./scheduler.DwkGEAYb.js";
-import { w as writable } from "./index.CU0sutvA.js";
+import { t as tick } from "./scheduler.DhO_7JC-.js";
+import { w as writable } from "./index.BrLrOLGI.js";
 new URL("sveltekit-internal://");
 function normalize_path(path, trailing_slash) {
   if (path === "/" || trailing_slash === "ignore")
@@ -310,9 +310,9 @@ function set(key, value, stringify = JSON.stringify) {
   } catch {
   }
 }
-const base = ((_a = globalThis.__sveltekit_jkdiba) == null ? void 0 : _a.base) ?? "";
-const assets = ((_b = globalThis.__sveltekit_jkdiba) == null ? void 0 : _b.assets) ?? base;
-const version = "1731629479404";
+const base = ((_a = globalThis.__sveltekit_196rbkq) == null ? void 0 : _a.base) ?? "";
+const assets = ((_b = globalThis.__sveltekit_196rbkq) == null ? void 0 : _b.assets) ?? base;
+const version = "1731715853341";
 const SNAPSHOT_KEY = "sveltekit:snapshot";
 const SCROLL_KEY = "sveltekit:scroll";
 const STATES_KEY = "sveltekit:states";

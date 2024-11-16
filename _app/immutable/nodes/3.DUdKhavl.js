@@ -1,8 +1,12 @@
-import { s as safe_not_equal, a as create_slot, u as update_slot_base, g as get_all_dirty_from_scope, b as get_slot_changes } from "./scheduler.DwkGEAYb.js";
-import { S as SvelteComponent, i as init, e as element, c as claim_element, a as children, d as detach, m as attr, g as insert_hydration, o as transition_in, p as transition_out } from "./index.BoYP9eQs.js";
+import { s as safe_not_equal, a as create_slot, u as update_slot_base, g as get_all_dirty_from_scope, b as get_slot_changes } from "../chunks/scheduler.DhO_7JC-.js";
+import { S as SvelteComponent, i as init, d as detach, o as transition_out, p as transition_in, a as insert_hydration, r as listen, k as attr, c as claim_element, e as children, g as claim_space, h as element, j as space } from "../chunks/index.BSC7__lV.js";
 function create_fragment(ctx) {
+  let article;
+  let t;
   let div;
   let current;
+  let mounted;
+  let dispose;
   const default_slot_template = (
     /*#slots*/
     ctx[1].default
@@ -16,28 +20,40 @@ function create_fragment(ctx) {
   );
   return {
     c() {
-      div = element("div");
+      article = element("article");
       if (default_slot)
         default_slot.c();
+      t = space();
+      div = element("div");
       this.h();
     },
     l(nodes) {
-      div = claim_element(nodes, "DIV", { class: true });
-      var div_nodes = children(div);
+      article = claim_element(nodes, "ARTICLE", { class: true });
+      var article_nodes = children(article);
       if (default_slot)
-        default_slot.l(div_nodes);
-      div_nodes.forEach(detach);
+        default_slot.l(article_nodes);
+      article_nodes.forEach(detach);
+      t = claim_space(nodes);
+      div = claim_element(nodes, "DIV", { class: true });
+      children(div).forEach(detach);
       this.h();
     },
     h() {
-      attr(div, "class", "not-prose font-sans bg-gray-100 dark:bg-gray-800 p-4 sm:p-8 rounded-lg max-w-full overflow-x-scroll");
+      attr(article, "class", "prose max-w-[70ch] prose-slate dark:prose-invert container mx-auto px-4 my-8 print:m-0 print:p-0 print:w-100");
+      attr(div, "class", "progress-bar h-3 bg-blue-700 svelte-co5fg3");
     },
     m(target, anchor) {
-      insert_hydration(target, div, anchor);
+      insert_hydration(target, article, anchor);
       if (default_slot) {
-        default_slot.m(div, null);
+        default_slot.m(article, null);
       }
+      insert_hydration(target, t, anchor);
+      insert_hydration(target, div, anchor);
       current = true;
+      if (!mounted) {
+        dispose = listen(article, "click", handleProseClick);
+        mounted = true;
+      }
     },
     p(ctx2, [dirty]) {
       if (default_slot) {
@@ -76,12 +92,21 @@ function create_fragment(ctx) {
     },
     d(detaching) {
       if (detaching) {
+        detach(article);
+        detach(t);
         detach(div);
       }
       if (default_slot)
         default_slot.d(detaching);
+      mounted = false;
+      dispose();
     }
   };
+}
+async function handleProseClick(e) {
+  if (e.target instanceof HTMLAnchorElement && e.target.parentElement instanceof HTMLHeadingElement) {
+    await navigator.clipboard.writeText(e.target.href);
+  }
 }
 function instance($$self, $$props, $$invalidate) {
   let { $$slots: slots = {}, $$scope } = $$props;
@@ -91,12 +116,12 @@ function instance($$self, $$props, $$invalidate) {
   };
   return [$$scope, slots];
 }
-class Showcase extends SvelteComponent {
+class Layout extends SvelteComponent {
   constructor(options) {
     super();
     init(this, options, instance, create_fragment, safe_not_equal, {});
   }
 }
 export {
-  Showcase as S
+  Layout as component
 };

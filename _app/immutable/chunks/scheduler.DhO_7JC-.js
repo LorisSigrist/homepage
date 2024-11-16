@@ -230,8 +230,8 @@ export {
   get_all_dirty_from_scope as g,
   binding_callbacks as h,
   identity as i,
-  src_url_equal as j,
-  add_flush_callback as k,
+  add_flush_callback as j,
+  src_url_equal as k,
   assign as l,
   compute_rest_props as m,
   noop as n,
@@ -242,9 +242,9 @@ export {
   safe_not_equal as s,
   tick as t,
   update_slot_base as u,
-  blank_object as v,
-  flush as w,
-  is_empty as x,
-  flush_render_callbacks as y,
-  current_component as z
+  flush_render_callbacks as v,
+  is_empty as w,
+  current_component as x,
+  blank_object as y,
+  flush as z
 };
