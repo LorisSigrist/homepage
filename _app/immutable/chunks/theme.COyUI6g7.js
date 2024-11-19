@@ -1,4 +1,4 @@
-import { w as writable } from "./index.BrLrOLGI.js";
+import { w as writable } from "./index.CU0sutvA.js";
 const LOCAL_STORAGE_KEY = "theme";
 const initial_theme = "localStorage" in globalThis ? localStorage.getItem(LOCAL_STORAGE_KEY) === "dark" ? "dark" : "light" : "light";
 const theme = writable(initial_theme);

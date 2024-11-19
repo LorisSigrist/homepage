@@ -1,5 +1,5 @@
-import { s as safe_not_equal, n as noop } from "../chunks/scheduler.DhO_7JC-.js";
-import { S as SvelteComponent, i as init, d as detach, a as insert_hydration, k as attr, c as claim_element, l as get_svelte_dataset, g as claim_space, m as claim_html_tag, n as empty, h as element, j as space, H as HtmlTagHydration } from "../chunks/index.BSC7__lV.js";
+import { s as safe_not_equal, n as noop } from "../chunks/scheduler.DwkGEAYb.js";
+import { S as SvelteComponent, i as init, e as element, s as space, H as HtmlTagHydration, n as empty, c as claim_element, k as get_svelte_dataset, f as claim_space, l as claim_html_tag, m as attr, g as insert_hydration, d as detach } from "../chunks/index.BoYP9eQs.js";
 function create_fragment(ctx) {
   let h1;
   let textContent = `<a href="#declarative-exception-handling">Declarative Exception Handling</a>`;
