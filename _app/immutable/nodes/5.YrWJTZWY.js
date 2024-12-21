@@ -461,7 +461,7 @@ var picocolors_browserExports = picocolors_browser.exports;
   });
   const _log = /* @__PURE__ */ _interop_require_default(log);
   function _interop_require_default(obj) {
-    return obj && obj.__esModule ? obj : {
+    return obj.__esModule ? obj : {
       default: obj
     };
   }
