@@ -1,5 +1,5 @@
-import { s as safe_not_equal, a as create_slot, u as update_slot_base, g as get_all_dirty_from_scope, b as get_slot_changes } from "../chunks/scheduler.DwkGEAYb.js";
-import { S as SvelteComponent, i as init, e as element, s as space, c as claim_element, a as children, d as detach, f as claim_space, m as attr, g as insert_hydration, r as listen, o as transition_in, p as transition_out } from "../chunks/index.BoYP9eQs.js";
+import { s as safe_not_equal, a as create_slot, u as update_slot_base, g as get_all_dirty_from_scope, b as get_slot_changes } from "../chunks/scheduler.C1H_TXk1.js";
+import { S as SvelteComponent, i as init, d as detach, o as transition_out, p as transition_in, a as insert_hydration, r as listen, k as attr, c as claim_element, e as children, g as claim_space, h as element, j as space } from "../chunks/index.DwiInUfm.js";
 function create_fragment(ctx) {
   let article;
   let t;

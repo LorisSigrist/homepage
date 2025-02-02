@@ -1,6 +1,6 @@
 import { _ as __vitePreload } from "../chunks/preload-helper.CP-VSAQc.js";
-import { s as safe_not_equal, f as afterUpdate, o as onMount, h as binding_callbacks, t as tick } from "../chunks/scheduler.DwkGEAYb.js";
-import { S as SvelteComponent, i as init, s as space, n as empty, f as claim_space, g as insert_hydration, p as transition_out, w as check_outros, o as transition_in, d as detach, e as element, c as claim_element, a as children, m as attr, C as set_style, t as text, b as claim_text, j as set_data, v as group_outros, D as construct_svelte_component, y as create_component, z as claim_component, A as mount_component, B as destroy_component } from "../chunks/index.BoYP9eQs.js";
+import { s as safe_not_equal, f as afterUpdate, o as onMount, t as tick, h as binding_callbacks } from "../chunks/scheduler.C1H_TXk1.js";
+import { S as SvelteComponent, i as init, d as detach, o as transition_out, p as transition_in, v as group_outros, w as check_outros, a as insert_hydration, g as claim_space, n as empty, j as space, C as construct_svelte_component, y as destroy_component, B as create_component, z as mount_component, A as claim_component, k as attr, D as set_style, c as claim_element, e as children, h as element, s as set_data, f as claim_text, t as text } from "../chunks/index.DwiInUfm.js";
 function e(e6, t2) {
   var n2 = Object.keys(e6);
   if (Object.getOwnPropertySymbols) {
@@ -48,7 +48,7 @@ function s(e6, t2, n2) {
 function a(e6, t2) {
   if ("function" != typeof t2 && null !== t2)
     throw new TypeError("Super expression must either be null or a function");
-  e6.prototype = Object.create(t2.prototype, { constructor: { value: e6, writable: true, configurable: true } }), Object.defineProperty(e6, "prototype", { writable: false }), l(e6, t2);
+  e6.prototype = Object.create(t2 && t2.prototype, { constructor: { value: e6, writable: true, configurable: true } }), Object.defineProperty(e6, "prototype", { writable: false }), t2 && l(e6, t2);
 }
 function u(e6) {
   return u = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function(e7) {
@@ -4064,25 +4064,25 @@ class Root extends SvelteComponent {
   }
 }
 const nodes = [
-  () => __vitePreload(() => import("../nodes/0.CMIPQFkk.js"), true ? __vite__mapDeps([0,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/1.CEbViE9P.js"), true ? __vite__mapDeps([3,1,2,4,5,6]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/2.Vcrq5wfi.js"), true ? __vite__mapDeps([7,1,2,8,4,5,6,9,10,11]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/3.BMPqw2Om.js"), true ? __vite__mapDeps([12,1,2,13]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/4.cGdEnYsv.js"), true ? __vite__mapDeps([14,1,2,8,4,5,6,9]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/5.YrWJTZWY.js"), true ? __vite__mapDeps([15,1,2,10,11,6,16,17]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/6.Cm6WBkrv.js"), true ? __vite__mapDeps([18,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/7.7J3Dh_0O.js"), true ? __vite__mapDeps([19,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/8.BjfjDFgb.js"), true ? __vite__mapDeps([20,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/9.DcFycQyw.js"), true ? __vite__mapDeps([21,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/10.DYw3yv1V.js"), true ? __vite__mapDeps([22,1,2,23,6,24]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/11.Bqipk0aN.js"), true ? __vite__mapDeps([25,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/12.C8xP_BLy.js"), true ? __vite__mapDeps([26,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/13.DHo-KTOd.js"), true ? __vite__mapDeps([27,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/14.fTvgoynY.js"), true ? __vite__mapDeps([28,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/15.BkzjzWD0.js"), true ? __vite__mapDeps([29,1,2,24,10,6]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/16.DeDV1Yy2.js"), true ? __vite__mapDeps([30,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/17.f7e5KaRI.js"), true ? __vite__mapDeps([31,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/18.D07N7BNU.js"), true ? __vite__mapDeps([32,1,2]) : void 0, import.meta.url)
+  () => __vitePreload(() => import("../nodes/0.CU57k8Bw.js"), true ? __vite__mapDeps([0,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/1.-Wzs81QD.js"), true ? __vite__mapDeps([3,1,2,4,5,6]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/2.Br6_1lpT.js"), true ? __vite__mapDeps([7,1,2,8,4,5,6,9,10,11]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/3.Doc3i_3l.js"), true ? __vite__mapDeps([12,1,2,13]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/4.DABW-mZ0.js"), true ? __vite__mapDeps([14,1,2,8,4,5,6,9]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/5.BkvTognT.js"), true ? __vite__mapDeps([15,1,2,10,11,6,16,17]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/6.BxvDtSzf.js"), true ? __vite__mapDeps([18,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/7.0uj3DXXT.js"), true ? __vite__mapDeps([19,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/8.PmJJbCnY.js"), true ? __vite__mapDeps([20,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/9.CPxI9HYk.js"), true ? __vite__mapDeps([21,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/10.6gYXjRwA.js"), true ? __vite__mapDeps([22,1,2,23,6,24]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/11.CFOWobuU.js"), true ? __vite__mapDeps([25,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/12.B7gIJRXb.js"), true ? __vite__mapDeps([26,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/13.B72a9IlW.js"), true ? __vite__mapDeps([27,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/14.BDQYm7pH.js"), true ? __vite__mapDeps([28,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/15.B5QUhbx-.js"), true ? __vite__mapDeps([29,1,2,24,10,6]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/16.VAh6-FrV.js"), true ? __vite__mapDeps([30,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/17.C8i4c39C.js"), true ? __vite__mapDeps([31,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/18.CkEsSyPs.js"), true ? __vite__mapDeps([32,1,2]) : void 0, import.meta.url)
 ];
 const server_loads = [];
 const dictionary = {
@@ -4103,7 +4103,9 @@ const dictionary = {
   "/(site)/(articles)/zod-driven-development": [-19, [2, 3]]
 };
 const hooks = {
-  handleError,
+  handleError: handleError || (({ error }) => {
+    console.error(error);
+  }),
   reroute: () => {
   }
 };
@@ -4117,7 +4119,7 @@ export {
 };
 function __vite__mapDeps(indexes) {
   if (!__vite__mapDeps.viteFileDeps) {
-    __vite__mapDeps.viteFileDeps = ["../nodes/0.CMIPQFkk.js","../chunks/scheduler.DwkGEAYb.js","../chunks/index.BoYP9eQs.js","../nodes/1.CEbViE9P.js","../chunks/stores.CEV3cFLn.js","../chunks/entry.ChAxYd8h.js","../chunks/index.CU0sutvA.js","../nodes/2.Vcrq5wfi.js","../chunks/Metadata.DJYtAk6p.js","../assets/Metadata.DyfCrczt.css","../chunks/each.CuygwpM4.js","../chunks/theme.COyUI6g7.js","../nodes/3.BMPqw2Om.js","../assets/3.CqjOwtjT.css","../nodes/4.cGdEnYsv.js","../nodes/5.YrWJTZWY.js","../chunks/_commonjsHelpers.DWwsNxpa.js","../assets/5.BZyQRmUM.css","../nodes/6.Cm6WBkrv.js","../nodes/7.7J3Dh_0O.js","../nodes/8.BjfjDFgb.js","../nodes/9.DcFycQyw.js","../nodes/10.DYw3yv1V.js","../chunks/preload-helper.CP-VSAQc.js","../chunks/Showcase.Dhs04y0u.js","../nodes/11.Bqipk0aN.js","../nodes/12.C8xP_BLy.js","../nodes/13.DHo-KTOd.js","../nodes/14.fTvgoynY.js","../nodes/15.BkzjzWD0.js","../nodes/16.DeDV1Yy2.js","../nodes/17.f7e5KaRI.js","../nodes/18.D07N7BNU.js"]
+    __vite__mapDeps.viteFileDeps = ["../nodes/0.CU57k8Bw.js","../chunks/scheduler.C1H_TXk1.js","../chunks/index.DwiInUfm.js","../nodes/1.-Wzs81QD.js","../chunks/stores.BbW6LJ-c.js","../chunks/entry.CXeRK_Lz.js","../chunks/index.CUyn1HNB.js","../nodes/2.Br6_1lpT.js","../chunks/Metadata.C1coV6fZ.js","../assets/Metadata.DyfCrczt.css","../chunks/each.CuygwpM4.js","../chunks/theme.DJC6SJL4.js","../nodes/3.Doc3i_3l.js","../assets/3.CqjOwtjT.css","../nodes/4.DABW-mZ0.js","../nodes/5.BkvTognT.js","../chunks/_commonjsHelpers.DWwsNxpa.js","../assets/5.BZyQRmUM.css","../nodes/6.BxvDtSzf.js","../nodes/7.0uj3DXXT.js","../nodes/8.PmJJbCnY.js","../nodes/9.CPxI9HYk.js","../nodes/10.6gYXjRwA.js","../chunks/preload-helper.CP-VSAQc.js","../chunks/Showcase.tksdNfPy.js","../nodes/11.CFOWobuU.js","../nodes/12.B7gIJRXb.js","../nodes/13.B72a9IlW.js","../nodes/14.BDQYm7pH.js","../nodes/15.B5QUhbx-.js","../nodes/16.VAh6-FrV.js","../nodes/17.C8i4c39C.js","../nodes/18.CkEsSyPs.js"]
   }
   return indexes.map((i) => __vite__mapDeps.viteFileDeps[i])
 }

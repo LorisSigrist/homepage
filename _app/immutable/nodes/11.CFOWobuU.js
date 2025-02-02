@@ -1,5 +1,5 @@
-import { s as safe_not_equal, n as noop } from "../chunks/scheduler.DwkGEAYb.js";
-import { S as SvelteComponent, i as init, e as element, s as space, c as claim_element, k as get_svelte_dataset, f as claim_space, m as attr, g as insert_hydration, d as detach } from "../chunks/index.BoYP9eQs.js";
+import { s as safe_not_equal, n as noop } from "../chunks/scheduler.C1H_TXk1.js";
+import { S as SvelteComponent, i as init, d as detach, a as insert_hydration, k as attr, c as claim_element, l as get_svelte_dataset, g as claim_space, h as element, j as space } from "../chunks/index.DwiInUfm.js";
 function create_fragment(ctx) {
   let h1;
   let textContent = `<a href="#ive-started-taking-notes">I’ve Started Taking Notes</a>`;

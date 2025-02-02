@@ -216,7 +216,7 @@ function flush_render_callbacks(fns) {
   render_callbacks = filtered;
 }
 export {
-  set_current_component as A,
+  flush_render_callbacks as A,
   run as B,
   dirty_components as C,
   schedule_update as D,
@@ -242,9 +242,9 @@ export {
   safe_not_equal as s,
   tick as t,
   update_slot_base as u,
-  blank_object as v,
-  flush as w,
-  is_empty as x,
-  flush_render_callbacks as y,
-  current_component as z
+  is_empty as v,
+  current_component as w,
+  blank_object as x,
+  flush as y,
+  set_current_component as z
 };
