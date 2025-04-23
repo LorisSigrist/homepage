@@ -34,14 +34,14 @@ export default {
 							content: 'none'
 						},
 						code: {
-							color: "inherit",
-							backgroundColor: "transparent",
+							color: 'inherit',
+							backgroundColor: 'transparent',
 							borderRadius: theme('borderRadius.DEFAULT'),
 							paddingLeft: theme('spacing[1.5]'),
 							paddingRight: theme('spacing[1.5]'),
 							paddingTop: theme('spacing.1'),
 							paddingBottom: theme('spacing.1'),
-							fontSize: '0.875rem',
+							fontSize: '0.875rem'
 						}
 					}
 				}

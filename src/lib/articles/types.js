@@ -1,14 +1,18 @@
-import { MetadataSchema } from "$lib/metadata/types";
-import { z } from "zod";
+import * as v from 'valibot';
 
-export const ArticleMetadataSchema = MetadataSchema.required().extend({
-    draft: z.boolean().default(false).optional(),
+export const ArticleMetadataSchema = v.object({
+	title: v.string(),
+
+	description: v.string(),
+	published: v.optional(v.date()),
+	author: v.optional(v.string(), 'Loris Sigrist'),
+
+	draft: v.optional(v.boolean(), false)
 });
 
-export const ArticleSchema = ArticleMetadataSchema.extend({
-    link: z.string(),
-});
+/** @typedef {v.InferInput<typeof ArticleMetadataSchema>} ArticleMetadata */
 
 
-/** @typedef {z.infer<typeof ArticleMetadataSchema>} ArticleMetadata */
-/** @typedef {z.infer<typeof ArticleSchema>} Article */
+/**
+ * @typedef {{ link: string, metadata: ArticleMetadata }} Article
+ */

@@ -1,10 +1,12 @@
-import { mdsvex } from 'mdsvex';
+import { mdsvex, escapeSvelte } from 'mdsvex';
 import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeSlug from 'rehype-slug';
 import rehypeExternalLinks from 'rehype-external-links';
 import remarkAbbr from 'remark-abbr';
+import { transformerTwoslash } from '@shikijs/twoslash';
+import { codeToHtml } from 'shiki';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -19,21 +21,44 @@ const config = {
 			smartypants: {
 				dashes: 'oldschool'
 			},
+			highlight: {
+				highlighter: async (code, lang = 'text') => {
+					const twoslashable = [
+						'js',
+						'javascript',
+						'ts',
+						'typescript',
+						'tsx',
+						'jsx',
+						'json',
+						'jsn'
+					].includes(lang);
+
+					let rendered = '';
+					if (twoslashable) {
+						try {
+							rendered = await codeToHtml(code, {
+								lang,
+								theme: 'vitesse-dark',
+								transformers: [transformerTwoslash()]
+							});
+						} catch (e) {
+							throw Error('Could not transform code: \n' + code, { cause: e });
+						}
+					} else {
+						rendered = await codeToHtml(code, { lang, theme: 'vitesse-dark' });
+					}
+
+					const html = escapeSvelte(rendered);
+					return `{@html \`${html}\` }`;
+				}
+			},
 			rehypePlugins: [
-				// @ts-ignore It works so shut up
 				[rehypeSlug, undefined],
-				//@ts-ignore
 				[rehypeAutolinkHeadings, { behavior: 'wrap' }],
-				// @ts-ignore
 				[rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }]
 			],
-			remarkPlugins: [
-				// @ts-ignore
-				remarkAbbr
-			],
-			layout: {
-				snippet: "./src/lib/mdsvex/SnippetLayout.svelte",
-			}
+			remarkPlugins: [remarkAbbr]
 		})
 	],
 

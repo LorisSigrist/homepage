@@ -8,7 +8,7 @@ The solution I came up with is quite a brute force one, but it works very well. 
 
 Doing this is quite straight forward. Go into your GitHub Actions workflow file, and add a `schedule` trigger. Make it run every day at midnight.
 
-```yml
+```yaml
 name: Build and Deploy
 on: 
   # The Schedule on which to redeploy the site (every day at midnight)

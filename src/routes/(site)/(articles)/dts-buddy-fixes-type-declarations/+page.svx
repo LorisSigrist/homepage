@@ -23,6 +23,7 @@ The file contains module declarations for the public interface of the package an
 Here's an example output it generated for one of my (private, sorry) packages:
 
 ```ts
+// @filename: dist/types.d.ts
 declare module '@sigrist.dev/framework/pdf' {
     /**
     * Adds a QR-ESR Invoice footer to the given PDF.
@@ -35,13 +36,14 @@ declare module '@sigrist.dev/framework/pdf' {
     export type ESRData = {
         amount: number;
         reference: string;
-        ...
+		//...
     }
-    ...
+
+	// ...
 }
 
 declare module '@sigrist.dev/framework/ui' {
-  ...
+	// ...
 }
 ```
 
@@ -51,7 +53,7 @@ Alongside this, it also generates a `.map.d.ts` file, which maps the public type
 
 First install it:
 
-```sh
+```bash
 pnpm i -D dts-buddy
 ```
 
@@ -66,7 +68,7 @@ Then create a `build.js` file in your project, and use it as your build script:
 ```
 
 ```js
-// build.js
+// @filename: build.js
 import { createBundle } from 'dts-buddy';
 
 //Generate a bundle of all type-declarations

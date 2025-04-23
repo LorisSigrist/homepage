@@ -4,23 +4,27 @@ In this article we will explore a potential remedy to the nightmare that is erro
 ## The State of Error Handling in JS
 If you have a function that might fail, you would probably do something like this.
 
-```js
+```ts
+const unsafe = () => ({ name: "Loris" })
+// ---cut-before---
 let result;
 try {
   const user = unsafe();
   result = user.name;
-catch(e) {
+} catch(e) {
   result = null;
 }
 ```
 
 This very common implementation has a bug though. It handles all exceptions, not just the ones we expect to happen during normal operation. 
-If `usafe` has a Syntax error in it's implementation this would silently swallow it. We don't want that.
+If `unsafe` has a Syntax error in it's implementation this would silently swallow it. We don't want that.
 
 A better implementation would be to throw custom error-types for all your expected exceptions 
 and test anything that's thrown against those.
 
-```js
+```ts
+const unsafe = () => ({ name: "Loris" })
+// ---cut-before---
 class CustomException1 extends Error {}
 class CustomException2 extends Error {}
 
@@ -28,7 +32,7 @@ let result;
 try {
    const user = unsafe(); //throws CustomException1 & 2
    result = user.name;
-catch(e) {
+} catch(e) {
   if(e instanceof CustomException1) result = null;
   else if (e instanceof CustomException2) {
     console.warn("CustomeException2");
@@ -62,7 +66,25 @@ This way we can declaratively define each possible execution branch, drastically
 ## `ResultMatcher` a potential solution
 I took a stab at implementing a similar API in JS, and I came up with the `ResultMatcher` class. You can find the full source code at the bottom of this article. It is used like this:
 
-```js
+```ts
+const unsafe = () => ({ name: "Loris" })
+class CustomException1 extends Error {}
+class CustomException2 extends Error {}
+
+class ResultMatcher {
+  constructor(data: any) {
+    return
+  }
+  ok(cb: (user: { name: string}) => any): ResultMatcher {
+    return this
+  }
+  catch<T>(prototype: { new (): T;} | { prototype: T; },cb: (instance: T) => any): ResultMatcher {
+    return this
+  }
+  run() {}
+}
+
+// ---cut-before---
 const result = new ResultMatcher(unsafe)
     .ok(user => user.name)
     .catch(CustomException1, e => null)

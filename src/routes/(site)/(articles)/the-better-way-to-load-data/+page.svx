@@ -33,14 +33,30 @@
 When we are loading lists in out web-apps, we usually do the following. Our app makes a fetch request to a server, waits for all the data to arrive, maybe the app validates it, and then displays the items.
 
 ```ts
+// @filename: model.ts
+import { z } from "zod"
+export const TodoSchema = z.object({
+	description: z.string(),
+	done: z.boolean()
+})
+export const TodosSchema = z.array(TodoSchema)
+export type Todo = z.infer<typeof  TodoSchema>
+
+// @filename: render.ts
+import type { Todo } from "./model"
+declare function display(todo: Todo): void
+export { display }
+
+// @filename: fetch.ts
+// ---cut-before---
 import { TodosSchema, type Todo } from "./model"
-import { display } from "my-framework"
+import { display } from "./render"
 
 const response = await fetch("/todos");    //fetch
 const data = await response.json();        //wait
-const todos = TodosSchema.parse(data).     //validate
+const todos = TodosSchema.parse(data);     //validate
 
-for(const todo of todos) {
+for (const todo of todos) {
 	display(todo);
 }
 ```
@@ -72,7 +88,7 @@ We can access a stream's data by getting it's reader and waiting for a value to 
 
 ```ts
 const response = await fetch('/list');
-const stream = response.body;
+const stream = response.body!;
 
 const reader = stream.getReader(); //Get reader (boilerplate)
 while (true) {
@@ -98,7 +114,9 @@ In our case, we want a TransformStream that takes in a stream of raw binary data
 Let's hook the TextDecoder up to our stream using the `pipeThrough` method. This will return a new stream with the transform applied.
 
 ```ts
-const stream = request.body.pipeThrough(new TextDecoderStream());
+declare const request: Request;
+// ---cut-before---
+const stream = request.body!.pipeThrough(new TextDecoderStream());
 ```
 
 We now have a bunch of readable strings in the console.
@@ -125,10 +143,12 @@ We can initialise the TransformStream using the `JSONParser` constructor. We wan
 Let's add this parser to our stream-chain. This parser can also do the text-decoding internally so we don't need the `TextDecoderStream` anymore.
 
 ```ts
+declare const response: Response;
+// ---cut-before---
 import { JSONParser } from "@streamparser/json-whatwg"
-...
+// ...
 const parser = new JSONParser({ paths: ["$.*"] })
-const stream = response.body
+const stream = response.body!
 	.pipeThrough(parser)
 ```
 
@@ -158,7 +178,13 @@ const mapToValueStream = new TransformStream({
 Let's tack on our TransformStream and look at the console.
 
 ```ts
-const stream = response.body
+import { JSONParser, type ParsedElementInfo } from "@streamparser/json-whatwg"
+
+declare const response : Response;
+declare const parser: JSONParser;
+declare const valueStream: TransformStream<typeof ParsedElementInfo, unknown>
+// ---cut-before---
+const stream = response.body!
 	.pipeThrough(parser)
 	.pipeThrough(valueStream);
 ```
@@ -177,8 +203,17 @@ That's looking good already! We get list-items trickling in as the data is arriv
 Let's replace the log-statement with our rendering logic. I want to keep this post framework agnostic, so I won't spend much time here. This is where you would hook into your UI framework.
 
 ```ts
-import { display } from "my-framework"
-...
+// @filename: render.ts
+type Todo = { description: string, done: boolean }
+declare function display(todo: Todo): void
+export { display, Todo }
+
+// @filename: fetch.ts
+import type { Todo } from "./render"
+declare const reader : ReadableStreamDefaultReader<Todo>
+// ---cut-before---
+import { display } from "./render"
+//...
 while(true) {
 	const { value, done } = await reader.read();
 	if(done) break;
@@ -200,10 +235,19 @@ Just what we wanted!
 The original code we had did one more thing that we are not yet doing. It validated the data. Let's add that. We're going to need another TransformStream. This one is very similar to the one we already made. We need to validate each element in the stream, and write it to the output if and only if it's valid. You could throw an error if an item is invalid; I'm just going to fail silently.
 
 ```ts
-const validateItemStream = new TransformStream<unknown, Item>({
+import { z } from "zod"
+const TodoSchema = z.object({
+	description: z.string(),
+	done: z.boolean()
+})
+
+type Todo = z.infer<typeof TodoSchema>
+
+// ---cut-before---
+const validateTodoStream = new TransformStream<unknown, Todo>({
 	transform(value, controller) {
 		try {
-			controller.enqueue(ItemSchema.parse(value));
+			controller.enqueue(TodoSchema.parse(value));
 		} catch (e) {}
 	}
 });
@@ -212,7 +256,21 @@ const validateItemStream = new TransformStream<unknown, Item>({
 Let's add it to the stream-chain. Still Works!
 
 ```ts
-const stream = response.body
+import type { ParsedElementInfo } from "@streamparser/json-whatwg"
+type Todo = {
+	descrption: string,
+	done: boolean
+}
+declare const valueStream: TransformStream<typeof ParsedElementInfo, unknown>
+declare const validateTodoStream:  TransformStream<unknown, Todo>
+
+// ---cut-before---
+import { JSONParser } from "@streamparser/json-whatwg";
+declare const response : Response;
+declare const parser: JSONParser;
+
+// ---cut-before-
+const stream = response.body!
 	.pipeThrough(parser)
 	.pipeThrough(valueStream)
 	.pipeThrough(validateTodoStream);
@@ -235,10 +293,26 @@ export function MapStream<I, O>(map: (i: I) => O): TransformStream<I, O> {
 
 We can now rewrite both our TransformStreams using the helper.
 
-```js
+```ts
+//@filename: helpers.ts
+declare function MapStream<I, O>(map: (i: I) => O) : TransformStream<I, O>
+export { MapStream }
+
+//@filename: fetch.ts
+import { JSONParser } from "@streamparser/json-whatwg"
+declare const response : Response
+declare const parser: JSONParser
+
+import { z } from "zod"
+const TodoSchema = z.object({
+	description: z.string(),
+	done: z.boolean()
+})
+
+// ---cut-before---
 import { MapStream } from "./helpers"
-...
-const stream = response.body
+//...
+const stream = response.body!
 	.pipeThrough(parser)
 	.pipeThrough(MapStream(result => result.value))
 	.pipeThrough(MapStream(TodoSchema.parse))
@@ -248,7 +322,16 @@ Very expressive, isn't it?
 
 With that, our implementation is done. But there is one more thing I would like to refactor; this while loop at the bottom. According to the spec, you're supposed to be able to consume streams using a `for await of` loop, but not everyone implements this.
 
-```js
+```ts
+type Todo = {
+	description: string,
+	done: boolean
+}
+
+declare const stream : AsyncGenerator<Todo>
+declare const display: (todo: Todo) => void
+
+// ---cut-before---
 for await (const todo of stream) {
 	display(todo);
 }
@@ -280,8 +363,18 @@ export async function* asIterable<T>(stream: ReadableStream<T>): AsyncGenerator<
 We can now use `for await (const todo of asIterable(stream))` to asynchronously loop over the elements in the stream. I find this easier to read, since there is no control-flow.
 
 ```js
+// @filename: helpers.ts
+declare function MapStream<I, O>(map: (i: I) => O) : TransformStream<I, O>
+declare function asIterable<T>(stream: ReadableStream<T>): AsyncGenerator<T> 
+export { MapStream, asIterable }
+
+// @filename: fetch.ts
+type Todo = { description: string, done: boolean }
+declare const stream: ReadableStream<Todo>
+declare const display: (todo: Todo) => void
+// ---cut-before---
 import { MapStream, asIterable } from "./helpers"
-...
+//...
 for await (const todo of asIterable(stream)) {
 	display(todo);
 }
@@ -290,9 +383,27 @@ for await (const todo of asIterable(stream)) {
 The final code looks like this:
 
 ```ts
+// @filename: helpers.ts
+declare function MapStream<I, O>(map: (i: I) => O) : TransformStream<I, O>
+declare function asIterable<T>(stream: ReadableStream<T>): AsyncGenerator<T> 
+export { MapStream, asIterable }
+
+// @filename: model.ts
+import {z} from "zod"
+export const TodoSchema = z.object({
+	description: z.string(),
+	done: z.boolean()
+})
+export const TodosSchema = z.array(TodoSchema)
+export type Todo = z.infer<typeof TodoSchema>
+
+// @filename: fetch.ts
+import { Todo } from './model';
+declare const display: (todo: Todo) => void
+// ---cut-before---
 import { JSONParser } from '@streamparser/json-whatwg';
 import { MapStream, asIterable } from './helpers';
-import { TodoSchema } from './TodoSchema';
+import { TodoSchema } from './model';
 
 const response = await fetch('/todos.json');
 
@@ -300,7 +411,7 @@ const parser = new JSONParser({
 	paths: ['$.*']
 });
 
-const stream = response.body
+const stream = response.body!
 	.pipeThrough(parser)
 	.pipeThrough(MapStream((result) => result.value))
 	.pipeThrough(MapStream(TodoSchema.parse));

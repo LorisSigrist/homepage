@@ -46,6 +46,9 @@ That was obviously a very simple example. Zocker can handle much more complex sc
 cyclic schemas, anys, unkowns, regular expressions, and much more. This here works just fine:
 
 ```typescript
+import { z } from "zod"
+import { zocker } from "zocker"
+// ---cut-before---
 const difficult_schema = z.object({
 	id: z.string().uuid(),
 	name: z.string().min(3).max(20),
@@ -57,9 +60,9 @@ const difficult_schema = z.object({
 		z.string(),
 		z.lazy(() => difficult_schema)
 	)
-});
+}) as any;
 
-const mockData = zocker(schema).generate();
+const mockData = zocker(difficult_schema).generate();
 ```
 
 ### Supplying values
@@ -72,12 +75,15 @@ used whenever a value is needed for a (sub)schema that matches the given schema 
 This is easier to undestand with an example:
 
 ```typescript
+import { z } from "zod"
+import { zocker } from "zocker"
+// ---cut-before---
 const user = z.object({
 	name: z.string(),
 	age: z.number()
 });
 
-const mockData = zocker(schema).supply(user.shape.name, 'Jimmy Smith').generate();
+const mockData = zocker(user).supply(user.shape.name, 'Jimmy Smith').generate();
 
 // { name: "Jimmy Smith", age: 42 } - The name is now fixed
 ```
@@ -96,6 +102,11 @@ but can lead to flaky tests if you're not careful. If you want to generate the s
 time, you can set a seed using the `setSeed` method. This will generate the same data every time.
 
 ```typescript
+import { zocker } from "zocker"
+import { ZodAny } from "zod"
+const schema = "asd" as unknown as ZodAny
+
+// ---cut-before---
 const mockData = zocker(schema).setSeed(42).generate();
 ```
 

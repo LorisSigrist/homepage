@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-	export type { Metadata } from './types';
+	export type { Metadata } from './types.js';
 </script>
 
 <script lang="ts">
