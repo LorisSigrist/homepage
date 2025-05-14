@@ -1,6 +1,6 @@
 import { s as safe_not_equal, d as src_url_equal, E as action_destroyer, q as is_function } from "../chunks/scheduler.6c6_dOpU.js";
 import { S as SvelteComponent, i as init, d as detach, y as destroy_component, o as transition_out, p as transition_in, u as set_input_value, s as set_data, z as mount_component, a as insert_hydration, r as listen, k as attr, A as claim_component, g as claim_space, c as claim_element, f as claim_text, n as empty, B as create_component, j as space, h as element, t as text, b as append_hydration, e as children } from "../chunks/index.Cr7Iuz5O.js";
-import { M as Metadata } from "../chunks/Metadata.DzP3VGUv.js";
+import { M as Metadata } from "../chunks/Metadata.BdnjEyc7.js";
 function load() {
   return {
     title: "Blurhash",
