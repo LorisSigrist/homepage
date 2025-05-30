@@ -1,0 +1,27 @@
+# Assertions in JavaScript
+
+Assertions are a great way of catching errors during development. Since they're inlined with your code they're much cheaper to write than unit tests, while doing a better job of acting as documentation. I like to think of them as comments that actually enfore what they're saying. 
+
+```js
+const value = values[i]!;
+assert(value !== undefined, `values[${i}] must be defined`) 
+```
+
+Many languages have first party assertions, but JS doesn't. The closest thing is the [`node:assert`](https://nodejs.org/api/assert.html#assertvalue-message) module, which isn't available in browsers. 
+
+There are some additional complexities surrounding assertions with the JS ecosystem specifically. 
+1. Code is often bundle-size constrained. Adding assertions everywhere would bloat bundles. 
+2. JS projects often use a lot of libraries. Consumers of libraries should get the final say about what happens if an assertion in a library fails (fatal/log/ignore). 
+
+Ideally we would want assertions that:
+1. Run in every JS environment
+2. Can automatically be stripped from client side bundles to avoid bloat
+3. Are non-fatal by default & can be made fatal by the final consumer 
+
+I've found that [`console.assert`](https://developer.mozilla.org/en-US/docs/Web/API/console/assert_static) meets these criteria really well. It is universally supported, non-fatal by default, and easy for build tools to remove. Here is what I've been doing: 
+1. Add `console.assert` calls liberally througout my code
+2. If I'm writing a library I do _not_ strip out assertions before publishing
+3. If I'm writing an app I use EsBuild's [`drop`](https://esbuild.github.io/api/#drop) option to remove`console.assert` calls from client builds. In vite this can be done via the `esbuild` option. I don't remove assertions from the server-side build. 
+4. I monkey-patch `console.assert` to be fatal in server-side code. 
+
+So far this has been working well for me
