@@ -310,9 +310,9 @@ function set(key, value, stringify = JSON.stringify) {
   } catch {
   }
 }
-const base = ((_a = globalThis.__sveltekit_e89t2s) == null ? void 0 : _a.base) ?? "";
-const assets = ((_b = globalThis.__sveltekit_e89t2s) == null ? void 0 : _b.assets) ?? base;
-const version = "1748477531877";
+const base = ((_a = globalThis.__sveltekit_km2yj7) == null ? void 0 : _a.base) ?? "";
+const assets = ((_b = globalThis.__sveltekit_km2yj7) == null ? void 0 : _b.assets) ?? base;
+const version = "1748563955151";
 const SNAPSHOT_KEY = "sveltekit:snapshot";
 const SCROLL_KEY = "sveltekit:scroll";
 const STATES_KEY = "sveltekit:states";
