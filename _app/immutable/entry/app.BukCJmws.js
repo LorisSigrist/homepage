@@ -4065,42 +4065,44 @@ class Root extends SvelteComponent {
 }
 const nodes = [
   () => __vitePreload(() => import("../nodes/0.Uln05hh8.js"), true ? __vite__mapDeps([0,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/1.CXjoh1sV.js"), true ? __vite__mapDeps([3,1,2,4,5,6]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/2.HZxOD0yg.js"), true ? __vite__mapDeps([7,1,2,8,4,5,6,9,10,11]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/1.BGAgzeDX.js"), true ? __vite__mapDeps([3,1,2,4,5,6]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/2.D0FuPxe6.js"), true ? __vite__mapDeps([7,1,2,8,4,5,6,9,10,11]) : void 0, import.meta.url),
   () => __vitePreload(() => import("../nodes/3.CjJ2cDsM.js"), true ? __vite__mapDeps([12,1,2,13]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/4.Cstsfo09.js"), true ? __vite__mapDeps([14,1,2,8,4,5,6,9]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/4.DGffVgm8.js"), true ? __vite__mapDeps([14,1,2,8,4,5,6,9]) : void 0, import.meta.url),
   () => __vitePreload(() => import("../nodes/5.CIKqc5NQ.js"), true ? __vite__mapDeps([15,1,2]) : void 0, import.meta.url),
   () => __vitePreload(() => import("../nodes/6.Clk0xSNZ.js"), true ? __vite__mapDeps([16,1,2,10,11,6,17,18]) : void 0, import.meta.url),
   () => __vitePreload(() => import("../nodes/7.KhYp90XH.js"), true ? __vite__mapDeps([19,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/8.CDVPZLj7.js"), true ? __vite__mapDeps([20,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/9.DVMivPcd.js"), true ? __vite__mapDeps([21,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/10.BaGL533h.js"), true ? __vite__mapDeps([22,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/11.DroKuqWr.js"), true ? __vite__mapDeps([23,1,2,24,6,25]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/12.B4Hi0VdM.js"), true ? __vite__mapDeps([26,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/13.3OT0c-wZ.js"), true ? __vite__mapDeps([27,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/14.Dtv6SjAo.js"), true ? __vite__mapDeps([28,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/15.BVGZTuS_.js"), true ? __vite__mapDeps([29,1,2,25,10,6]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/16.J0rrEN5w.js"), true ? __vite__mapDeps([30,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/17.u6jGlDPo.js"), true ? __vite__mapDeps([31,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/18.Zm2Wxeaw.js"), true ? __vite__mapDeps([32,1,2]) : void 0, import.meta.url)
+  () => __vitePreload(() => import("../nodes/8.C1i7lKHk.js"), true ? __vite__mapDeps([20,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/9.CDVPZLj7.js"), true ? __vite__mapDeps([21,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/10.DVMivPcd.js"), true ? __vite__mapDeps([22,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/11.BaGL533h.js"), true ? __vite__mapDeps([23,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/12.DroKuqWr.js"), true ? __vite__mapDeps([24,1,2,25,6,26]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/13.B4Hi0VdM.js"), true ? __vite__mapDeps([27,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/14.3OT0c-wZ.js"), true ? __vite__mapDeps([28,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/15.Dtv6SjAo.js"), true ? __vite__mapDeps([29,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/16.BVGZTuS_.js"), true ? __vite__mapDeps([30,1,2,26,10,6]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/17.J0rrEN5w.js"), true ? __vite__mapDeps([31,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/18.u6jGlDPo.js"), true ? __vite__mapDeps([32,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/19.Zm2Wxeaw.js"), true ? __vite__mapDeps([33,1,2]) : void 0, import.meta.url)
 ];
 const server_loads = [];
 const dictionary = {
   "/(site)": [-7, [2]],
   "/(site)/(articles)/adding-devtools-to-vite-plugins": [-8, [2, 3]],
+  "/(site)/(articles)/assertions-in-javascript": [-9, [2, 3]],
   "/(experiments)/blurhash": [4],
-  "/(site)/(articles)/building-an-i18n-library-for-the-modern-web": [-9, [2, 3]],
-  "/(site)/(articles)/declarative-exception-handling": [-10, [2, 3]],
-  "/(site)/(articles)/dts-buddy-fixes-type-declarations": [-11, [2, 3]],
+  "/(site)/(articles)/building-an-i18n-library-for-the-modern-web": [-10, [2, 3]],
+  "/(site)/(articles)/declarative-exception-handling": [-11, [2, 3]],
+  "/(site)/(articles)/dts-buddy-fixes-type-declarations": [-12, [2, 3]],
   "/(experiments)/flaci-to-godel": [5],
-  "/(site)/(articles)/fluent-inputs": [-12, [2, 3]],
-  "/(site)/(articles)/melt-ui-neat-pattern": [-13, [2, 3]],
-  "/(site)/(articles)/mock-data-with-zocker": [-14, [2, 3]],
-  "/(site)/(articles)/reliably-avoiding-theme-flashes": [-15, [2, 3]],
-  "/(site)/(articles)/tailwind-ui": [-16, [2, 3]],
-  "/(site)/(articles)/the-better-way-to-load-data": [-17, [2, 3]],
-  "/(site)/(articles)/the-poor-mans-scheduled-post": [-18, [2, 3]],
-  "/(site)/(articles)/zod-driven-development": [-19, [2, 3]]
+  "/(site)/(articles)/fluent-inputs": [-13, [2, 3]],
+  "/(site)/(articles)/melt-ui-neat-pattern": [-14, [2, 3]],
+  "/(site)/(articles)/mock-data-with-zocker": [-15, [2, 3]],
+  "/(site)/(articles)/reliably-avoiding-theme-flashes": [-16, [2, 3]],
+  "/(site)/(articles)/tailwind-ui": [-17, [2, 3]],
+  "/(site)/(articles)/the-better-way-to-load-data": [-18, [2, 3]],
+  "/(site)/(articles)/the-poor-mans-scheduled-post": [-19, [2, 3]],
+  "/(site)/(articles)/zod-driven-development": [-20, [2, 3]]
 };
 const hooks = {
   handleError: handleError || (({ error }) => {
@@ -4119,7 +4121,7 @@ export {
 };
 function __vite__mapDeps(indexes) {
   if (!__vite__mapDeps.viteFileDeps) {
-    __vite__mapDeps.viteFileDeps = ["../nodes/0.Uln05hh8.js","../chunks/scheduler.6c6_dOpU.js","../chunks/index.Cr7Iuz5O.js","../nodes/1.CXjoh1sV.js","../chunks/stores.DQlsahV_.js","../chunks/entry.CZj5HYiJ.js","../chunks/index.x8ml4JsE.js","../nodes/2.HZxOD0yg.js","../chunks/Metadata.L4fYMbwK.js","../assets/Metadata.C8sECuRy.css","../chunks/each.CuygwpM4.js","../chunks/theme.D4FljJFp.js","../nodes/3.CjJ2cDsM.js","../assets/3.CqjOwtjT.css","../nodes/4.Cstsfo09.js","../nodes/5.CIKqc5NQ.js","../nodes/6.Clk0xSNZ.js","../chunks/_commonjsHelpers.DWwsNxpa.js","../assets/6.BZyQRmUM.css","../nodes/7.KhYp90XH.js","../nodes/8.CDVPZLj7.js","../nodes/9.DVMivPcd.js","../nodes/10.BaGL533h.js","../nodes/11.DroKuqWr.js","../chunks/preload-helper.CP-VSAQc.js","../chunks/Showcase.CqC80W22.js","../nodes/12.B4Hi0VdM.js","../nodes/13.3OT0c-wZ.js","../nodes/14.Dtv6SjAo.js","../nodes/15.BVGZTuS_.js","../nodes/16.J0rrEN5w.js","../nodes/17.u6jGlDPo.js","../nodes/18.Zm2Wxeaw.js"]
+    __vite__mapDeps.viteFileDeps = ["../nodes/0.Uln05hh8.js","../chunks/scheduler.6c6_dOpU.js","../chunks/index.Cr7Iuz5O.js","../nodes/1.BGAgzeDX.js","../chunks/stores.CM-YkSM5.js","../chunks/entry.CjymaUkx.js","../chunks/index.x8ml4JsE.js","../nodes/2.D0FuPxe6.js","../chunks/Metadata.Di_In7li.js","../assets/Metadata.C8sECuRy.css","../chunks/each.CuygwpM4.js","../chunks/theme.D4FljJFp.js","../nodes/3.CjJ2cDsM.js","../assets/3.CqjOwtjT.css","../nodes/4.DGffVgm8.js","../nodes/5.CIKqc5NQ.js","../nodes/6.Clk0xSNZ.js","../chunks/_commonjsHelpers.DWwsNxpa.js","../assets/6.BZyQRmUM.css","../nodes/7.KhYp90XH.js","../nodes/8.C1i7lKHk.js","../nodes/9.CDVPZLj7.js","../nodes/10.DVMivPcd.js","../nodes/11.BaGL533h.js","../nodes/12.DroKuqWr.js","../chunks/preload-helper.CP-VSAQc.js","../chunks/Showcase.CqC80W22.js","../nodes/13.B4Hi0VdM.js","../nodes/14.3OT0c-wZ.js","../nodes/15.Dtv6SjAo.js","../nodes/16.BVGZTuS_.js","../nodes/17.J0rrEN5w.js","../nodes/18.u6jGlDPo.js","../nodes/19.Zm2Wxeaw.js"]
   }
   return indexes.map((i) => __vite__mapDeps.viteFileDeps[i])
 }
