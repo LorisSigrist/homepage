@@ -138,12 +138,12 @@ JavaScript console mechanism provided by web browsers.
 The module exports two specific components:
 
 * A &#96;Console&#96; class with methods such as &#96;console.log()&#96;, &#96;console.error()&#96; and &#96;console.warn()&#96; that can be used to write to any Node.js stream.
-* A global &#96;console&#96; instance configured to write to [&#96;process.stdout&#96;](https://nodejs.org/docs/latest-v22.x/api/process.html#processstdout) and
-[&#96;process.stderr&#96;](https://nodejs.org/docs/latest-v22.x/api/process.html#processstderr). The global &#96;console&#96; can be used without importing the &#96;node:console&#96; module.
+* A global &#96;console&#96; instance configured to write to [&#96;process.stdout&#96;](https://nodejs.org/docs/latest-v24.x/api/process.html#processstdout) and
+[&#96;process.stderr&#96;](https://nodejs.org/docs/latest-v24.x/api/process.html#processstderr). The global &#96;console&#96; can be used without importing the &#96;node:console&#96; module.
 
 _**Warning**_: The global console object's methods are neither consistently
 synchronous like the browser APIs they resemble, nor are they consistently
-asynchronous like all other Node.js streams. See the [&#96;note on process I/O&#96;](https://nodejs.org/docs/latest-v22.x/api/process.html#a-note-on-process-io) for
+asynchronous like all other Node.js streams. See the [&#96;note on process I/O&#96;](https://nodejs.org/docs/latest-v24.x/api/process.html#a-note-on-process-io) for
 more information.
 
 Example using the global &#96;console&#96;:
@@ -186,10 +186,10 @@ myConsole.error(new Error('Whoops, something bad happened'));
 const name = 'Will Robinson';
 myConsole.warn(&#96;Danger $&#123;name&#125;! Danger!&#96;);
 // Prints: Danger Will Robinson! Danger!, to err
-&#96;&#96;&#96;</div><div class="twoslash-popup-docs twoslash-popup-docs-tags"><span class="twoslash-popup-docs-tag"><span class="twoslash-popup-docs-tag-name">@see</span><span class="twoslash-popup-docs-tag-value">[source](https://github.com/nodejs/node/blob/v22.x/lib/console.js)</span></span></div></span>console</span></span><span style="color:#666666">.</span><span style="color:#80A665"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#BD976A">Console</span><span style="color:#666666">.</span><span style="color:#80A665">log</span><span style="color:#666666">(</span><span style="color:#BD976A">message</span><span style="color:#CB7676">?:</span><span style="color:#BD976A"> any</span><span style="color:#666666">,</span><span style="color:#666666"> ...</span><span style="color:#BD976A">optionalParams</span><span style="color:#DBD7CAEE">: </span><span style="color:#BD976A">any</span><span style="color:#666666">[])</span><span style="color:#DBD7CAEE">: </span><span style="color:#CB7676">void</span><span style="color:#666666"> (</span><span style="color:#CB7676">+</span><span style="color:#4C9A91">1</span><span style="color:#BD976A"> overload</span><span style="color:#666666">)</span></code><div class="twoslash-popup-docs">Prints to &#96;stdout&#96; with newline. Multiple arguments can be passed, with the
+&#96;&#96;&#96;</div><div class="twoslash-popup-docs twoslash-popup-docs-tags"><span class="twoslash-popup-docs-tag"><span class="twoslash-popup-docs-tag-name">@see</span><span class="twoslash-popup-docs-tag-value">[source](https://github.com/nodejs/node/blob/v24.x/lib/console.js)</span></span></div></span>console</span></span><span style="color:#666666">.</span><span style="color:#80A665"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#BD976A">Console</span><span style="color:#666666">.</span><span style="color:#80A665">log</span><span style="color:#666666">(</span><span style="color:#BD976A">message</span><span style="color:#CB7676">?:</span><span style="color:#BD976A"> any</span><span style="color:#666666">,</span><span style="color:#666666"> ...</span><span style="color:#BD976A">optionalParams</span><span style="color:#DBD7CAEE">: </span><span style="color:#BD976A">any</span><span style="color:#666666">[])</span><span style="color:#DBD7CAEE">: </span><span style="color:#CB7676">void</span><span style="color:#666666"> (</span><span style="color:#CB7676">+</span><span style="color:#4C9A91">1</span><span style="color:#BD976A"> overload</span><span style="color:#666666">)</span></code><div class="twoslash-popup-docs">Prints to &#96;stdout&#96; with newline. Multiple arguments can be passed, with the
 first used as the primary message and all additional used as substitution
 values similar to [&#96;printf(3)&#96;](http://man7.org/linux/man-pages/man3/printf.3.html)
-(the arguments are all passed to [&#96;util.format()&#96;](https://nodejs.org/docs/latest-v22.x/api/util.html#utilformatformat-args)).
+(the arguments are all passed to [&#96;util.format()&#96;](https://nodejs.org/docs/latest-v24.x/api/util.html#utilformatformat-args)).
 
 &#96;&#96;&#96;js
 const count = 5;
@@ -199,7 +199,7 @@ console.log('count:', count);
 // Prints: count: 5, to stdout
 &#96;&#96;&#96;
 
-See [&#96;util.format()&#96;](https://nodejs.org/docs/latest-v22.x/api/util.html#utilformatformat-args) for more information.</div><div class="twoslash-popup-docs twoslash-popup-docs-tags"><span class="twoslash-popup-docs-tag"><span class="twoslash-popup-docs-tag-name">@since</span><span class="twoslash-popup-docs-tag-value">v0.1.100</span></span></div></span>log</span></span><span style="color:#666666">(</span><span style="color:#BD976A"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#CB7676">const </span><span style="color:#BD976A">value</span><span style="color:#666666">: </span><span style="color:#5DA994">Uint8Array</span></code></span>value</span></span><span style="color:#666666">);</span></span>
+See [&#96;util.format()&#96;](https://nodejs.org/docs/latest-v24.x/api/util.html#utilformatformat-args) for more information.</div><div class="twoslash-popup-docs twoslash-popup-docs-tags"><span class="twoslash-popup-docs-tag"><span class="twoslash-popup-docs-tag-name">@since</span><span class="twoslash-popup-docs-tag-value">v0.1.100</span></span></div></span>log</span></span><span style="color:#666666">(</span><span style="color:#BD976A"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#CB7676">const </span><span style="color:#BD976A">value</span><span style="color:#666666">: </span><span style="color:#5DA994">Uint8Array</span></code></span>value</span></span><span style="color:#666666">);</span></span>
 <span class="line"><span style="color:#666666">&#125;</span></span></code></pre>`;
   let t24;
   let p9;
