@@ -1,4 +1,4 @@
-import { s as stores } from "./entry.BdFFR_F2.js";
+import { s as stores } from "./entry.DVRnVI-l.js";
 const getStores = () => {
   const stores$1 = stores;
   return {
