@@ -382,9 +382,9 @@ var create = function() {
 picocolors_browser.exports = create();
 picocolors_browser.exports.createColors = create;
 var picocolors_browserExports = picocolors_browser.exports;
-(function(exports) {
+(function(exports$1) {
   var define_process_env_default = {};
-  Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(exports$1, "__esModule", {
     value: true
   });
   function _export(target, all) {
@@ -394,7 +394,7 @@ var picocolors_browserExports = picocolors_browser.exports;
         get: all[name]
       });
   }
-  _export(exports, {
+  _export(exports$1, {
     dim: function() {
       return dim;
     },
@@ -449,11 +449,11 @@ var picocolors_browserExports = picocolors_browser.exports;
     }
   };
 })(log);
-(function(exports) {
-  Object.defineProperty(exports, "__esModule", {
+(function(exports$1) {
+  Object.defineProperty(exports$1, "__esModule", {
     value: true
   });
-  Object.defineProperty(exports, "default", {
+  Object.defineProperty(exports$1, "default", {
     enumerable: true,
     get: function() {
       return _default;
