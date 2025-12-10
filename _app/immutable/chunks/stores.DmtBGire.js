@@ -1,4 +1,4 @@
-import { s as stores } from "./entry.CEzGvIXg.js";
+import { s as stores } from "./entry.DSDi6C43.js";
 const getStores = () => {
   const stores$1 = stores;
   return {
