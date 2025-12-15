@@ -3,12 +3,12 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build",
-		"preview": "vite preview",
+		"dev": "NODE_OPTIONS=\"--no-webstorage\" vite dev",
+		"build": "NODE_OPTIONS=\"--no-webstorage\" vite build",
+		"preview": "NODE_OPTIONS=\"--no-webstorage\" vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"test:unit": "vitest",
+		"test:unit": "NODE_OPTIONS=\"--no-webstorage\" vitest",
 		"lint": "eslint .",
 		"format": "prettier --plugin-search-dir . --write ."
 	},
@@ -47,7 +47,7 @@
 		"tslib": "^2.5.0",
 		"twoslash": "^0.1.0",
 		"typescript": "^5.0.4",
-		"vite": "^5.0.12",
+		"vite": "^5.4.21",
 		"vitest": "^1.2.2",
 		"zocker": "^1.4.1",
 		"zod": "^3.23.8"
@@ -64,7 +64,6 @@
 		"image-size": "^1.0.2",
 		"node-chrono": "^0.0.3",
 		"pointer-tracker": "^2.5.3",
-		"posthog-js": "^1.96.1",
 		"satori": "^0.7.4",
 		"satori-html": "^0.3.2",
 		"shiki": "^1.6.3",
