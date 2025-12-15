@@ -1,0 +1,62 @@
+# I tried implementing Per-Agent Branching in OpenCode
+
+Ideally this post would have been called _"I implemented per-agent branches in OpenCode"_, but due to skill issues & time constraints this didn't come to pass. 
+
+However, I still believe the idea is good, so I'm gonna share it here. But first, what problem am I even trying to solve:
+## I love running Agents concurrently
+I've been using [OpenCode](https://opencode.ai/) a LOT. I really enjoy it's session management, allowing me to work on multiple tasks concurrently. This is vital, since it usually takes ~5 to 15 minutes for each one to complete.
+## I hate running Agents concurrently
+Unfortunately, I've been running into more and more scenarios where agents, even ones working on unrelated areas, get in each other's way. Common Conflict Scenarios include:
+
+- Running Tests or Builds while another Agent is still working on an unrelated area. The resulting errors frequently throw the Agent off & they go chasing down unrelated errors. 
+- Write conflicts. OpenCode is smart enough to force the agents to re-read a file before writing to it if it changed since they last read it. This prevents conflicts, but also loses time. With more session this has been happening more frequently, slowing down all of them.
+- Move Conflicts, where one Agent moves a file and the other ones still expect it to be there. 
+
+This also prevents ME from working on stuff while the agents are working, causing frustration (grrrr). I frequently feel locked out from my own work. 
+## How do we fix this?
+This is not too different from the problems us human programmers had when we didn't have distributed version control yet. And we solved them. With distributed version control. 
+
+We somehow want multiple instances of the same repo on the same machine. We could just clone it into a different folder for each agent & then merge, but then I would have to deal with all that. 
+
+I want something better. Remember, the point is to have the computer do all the work while I relax.
+## The Cool Tech Powering it all
+That's why I find [Legit](https://www.legitcontrol.com/) so interesting. It is a Git-compatible Version Control System where each branch is a folder in your filesystem. You can just cd into it & start working. 
+
+```
+cd my-project 
+
+# You can CD into branches. 
+cd .legit/branches/feature-branch
+```
+
+Writing inside a branch will automatically create new commits. 
+New branches are created with a simple `mkdir` in the `.legit/branches` directory. 
+
+The one simple change, from having the content of branches be an opaque thing in the `.git` repo, to something you can `cd` into is immensely powerful. [Legit]()  exposes most git operations via the filesystem (they unhelpfully call this ["Virtual Endpoints"](https://www.legitcontrol.com/docs/api/virtual-endpoints))(You can `cd` into commits too).
+## The Workflow Legit Enables
+I'm picturing the following workflow: 
+1. I submit a Task
+2. The Agent creates a feature branch does all it's work in there. As it does so, it keeps track of it's decisions in commit messages. Since the Agent is working in a normal folder, it can use all the CLI tools it wants.
+3. We iterate a few times until I'm happy with the result
+4. I approve the change & it gets merged back into `main`.
+5. If there are conflicts, a dedicated Merging-Agent automatically resolves them, using the context provided by the commit messages. 
+
+This workflow can be done fully asynchronously & does not block me, or other agents, from working in the repo while it's chugging along. More tools should work like this. 
+## Legit is the way of the Future
+Ok, maybe not the [Legit](https://www.legitcontrol.com/) Project specifically, but the workflow it enables. Branching as a concept is incredibly powerful & I'm very excited to see people building serious tools around it. 
+
+A few Notes on [Legit](https://www.legitcontrol.com/) from my experience using it
+- It's currently only available as a [JavaScript SDK](https://www.legitcontrol.com/docs). I think they chose the right language. We've seen many AI Interfaces Converge on TypeScript  ([Cloudflare Code Mode uses typescript](https://blog.cloudflare.com/code-mode/), [Anthropic just bought Bun](https://bun.com/blog/bun-joins-anthropic), [OpenCode itself uses Typescript](https://github.com/sst/opencode)). 
+- It's still young, but from my tests it works very reliably. 
+- The Git-Compatibility does just work
+- There is some weirdness around files in the `.gitignore`. I'm not sure what my mental model was supposed to be around those.
+- I'll keep adding more here as I think of them.
+
+Anyways, I think [Legit](https://www.legitcontrol.com/) is really cool. Branching is something I want to see in more of my Apps & I'll keep trying to implement it where I can. Sad that I didn't manage it for [OpenCode](https://opencode.ai/), but I'll keep trying. 
+## Why I failed
+I've been talking this project up so much, you might forget that I didn't succeed in implementing it. Here are some of the difficulties I faced that forced me to call time.
+- I'm not that familiar with OpenCode's codebase
+- Overriding OpenCode's FS operations requires Monkey-patching [Bun's Filesystem API](https://bun.sh/reference/bun/file). Due to OpenCode's multi-process architecture this is hard.
+- [Legit's SDK](https://www.legitcontrol.com/) currently only supports  [Node's FileSystem API](https://nodejs.org/api/fs.html#promises-api), although the Maintainer told me they plan on supporting Bun's FS API soon.
+
+This Post is about documenting the _Idea_ behind what I was doing. Hopefully someone smarter will come along and pick it up (maybe me in the future). But for now, I'm [done](https://medium.com/@bre/the-cult-of-done-manifesto-724ca1c2ff13).
