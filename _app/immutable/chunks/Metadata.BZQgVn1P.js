@@ -1,6 +1,6 @@
 import { s as safe_not_equal, n as noop, c as component_subscribe } from "./scheduler.ZIqz7M1C.js";
 import { S as SvelteComponent, i as init, d as detach, k as attr, b as append_hydration, A as head_selector, c as claim_element, n as empty, h as element, a as insert_hydration } from "./index.D4FFmrY2.js";
-import { p as page } from "./stores.C3OQu9Lg.js";
+import { p as page } from "./stores.01m5Tve8.js";
 const default_favicon = "" + new URL("../assets/favicon.BtYv9CGA.png", import.meta.url).href;
 function create_else_block(ctx) {
   let meta;
