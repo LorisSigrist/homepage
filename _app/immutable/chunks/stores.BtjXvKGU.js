@@ -1,4 +1,4 @@
-import { s as stores } from "./entry.Cogumlec.js";
+import { s as stores } from "./entry.C2_K_foT.js";
 const getStores = () => {
   const stores$1 = stores;
   return {
