@@ -1,4 +1,4 @@
-import { s as stores } from "./entry.BMHW1x09.js";
+import { s as stores } from "./entry.DfAdoLtX.js";
 const getStores = () => {
   const stores$1 = stores;
   return {
