@@ -10,7 +10,7 @@ I've been using [OpenCode](https://opencode.ai/) a LOT. I really enjoy it's sess
 
 ## I hate running Agents concurrently
 
-Unfortunately, I've been running into more and more scenarios where agents, even ones working on unrelated areas, get in each other's way. Common Conflict Scenarios include:
+Unfortunately, I've been running into more and more scenarios where agents, even ones working on unrelated areas, get in each other's way. Common Conflict Scenarios include: 
 
 - Running Tests or Builds while another Agent is still working on an unrelated area. The resulting errors frequently throw the Agent off & they go chasing down unrelated errors.
 - Write conflicts. OpenCode is smart enough to force the agents to re-read a file before writing to it if it changed since they last read it. This prevents conflicts, but also loses time. With more session this has been happening more frequently, slowing down all of them.
