@@ -225,7 +225,20 @@ fileURLToPath('file:///你好.txt');         // Correct:   /你好.txt (POSIX)
 
 new URL('file:///hello world').pathname;   // Incorrect: /hello%20world
 fileURLToPath('file:///hello world');      // Correct:   /hello world (POSIX)
-&#96;&#96;&#96;</div><div class="twoslash-popup-docs twoslash-popup-docs-tags"><span class="twoslash-popup-docs-tag"><span class="twoslash-popup-docs-tag-name">@since</span><span class="twoslash-popup-docs-tag-value">v10.12.0</span></span><span class="twoslash-popup-docs-tag"><span class="twoslash-popup-docs-tag-name">@param</span><span class="twoslash-popup-docs-tag-value">url The file URL string or URL object to convert to a path.</span></span><span class="twoslash-popup-docs-tag"><span class="twoslash-popup-docs-tag-name">@return</span><span class="twoslash-popup-docs-tag-value">The fully-resolved platform-specific Node.js file path.</span></span></div></span>fileURLToPath</span></span><span style="color:#666666"> &#125;</span><span style="color:#4D9375"> from</span><span style="color:#C98A7D99"> "</span><span style="color:#C98A7D">node:url</span><span style="color:#C98A7D99">"</span></span>
+&#96;&#96;&#96;
+
+**Security Considerations:**
+
+This function decodes percent-encoded characters, including encoded dot-segments
+(&#96;%2e&#96; as &#96;.&#96; and &#96;%2e%2e&#96; as &#96;..&#96;), and then normalizes the resulting path.
+This means that encoded directory traversal sequences (such as &#96;%2e%2e&#96;) are
+decoded and processed as actual path traversal, even though encoded slashes
+(&#96;%2F&#96;, &#96;%5C&#96;) are correctly rejected.
+
+**Applications must not rely on &#96;fileURLToPath()&#96; alone to prevent directory
+traversal attacks.** Always perform explicit path validation and security checks
+on the returned path value to ensure it remains within expected boundaries
+before using it for file system operations.</div><div class="twoslash-popup-docs twoslash-popup-docs-tags"><span class="twoslash-popup-docs-tag"><span class="twoslash-popup-docs-tag-name">@since</span><span class="twoslash-popup-docs-tag-value">v10.12.0</span></span><span class="twoslash-popup-docs-tag"><span class="twoslash-popup-docs-tag-name">@param</span><span class="twoslash-popup-docs-tag-value">url The file URL string or URL object to convert to a path.</span></span><span class="twoslash-popup-docs-tag"><span class="twoslash-popup-docs-tag-name">@return</span><span class="twoslash-popup-docs-tag-value">The fully-resolved platform-specific Node.js file path.</span></span></div></span>fileURLToPath</span></span><span style="color:#666666"> &#125;</span><span style="color:#4D9375"> from</span><span style="color:#C98A7D99"> "</span><span style="color:#C98A7D">node:url</span><span style="color:#C98A7D99">"</span></span>
 <span class="line"><span style="color:#4D9375">import</span><span style="color:#666666"> &#123;</span><span style="color:#BD976A"> </span><span style="color:#BD976A"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#CB7676">function</span><span style="color:#80A665"> normalizePath</span><span style="color:#666666">(</span><span style="color:#BD976A">id</span><span style="color:#666666">: </span><span style="color:#5DA994">string</span><span style="color:#666666">):</span><span style="color:#5DA994"> string</span></code></span>normalizePath</span></span><span style="color:#666666"> &#125;</span><span style="color:#4D9375"> from</span><span style="color:#C98A7D99"> "</span><span style="color:#C98A7D">vite</span><span style="color:#C98A7D99">"</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#CB7676">function</span><span style="color:#80A665"> </span><span style="color:#80A665"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#CB7676">function</span><span style="color:#80A665"> getDevtoolsEntryPath</span><span style="color:#666666">():</span><span style="color:#5DA994"> string</span></code></span>getDevtoolsEntryPath</span></span><span style="color:#666666">()</span><span style="color:#666666"> &#123;</span></span>
@@ -248,7 +261,20 @@ fileURLToPath('file:///你好.txt');         // Correct:   /你好.txt (POSIX)
 
 new URL('file:///hello world').pathname;   // Incorrect: /hello%20world
 fileURLToPath('file:///hello world');      // Correct:   /hello world (POSIX)
-&#96;&#96;&#96;</div><div class="twoslash-popup-docs twoslash-popup-docs-tags"><span class="twoslash-popup-docs-tag"><span class="twoslash-popup-docs-tag-name">@since</span><span class="twoslash-popup-docs-tag-value">v10.12.0</span></span><span class="twoslash-popup-docs-tag"><span class="twoslash-popup-docs-tag-name">@param</span><span class="twoslash-popup-docs-tag-value">url The file URL string or URL object to convert to a path.</span></span><span class="twoslash-popup-docs-tag"><span class="twoslash-popup-docs-tag-name">@return</span><span class="twoslash-popup-docs-tag-value">The fully-resolved platform-specific Node.js file path.</span></span></div></span>fileURLToPath</span></span><span style="color:#666666">(</span><span style="color:#4D9375">import</span><span style="color:#666666">.</span><span style="color:#B8A965">meta</span><span style="color:#666666">.</span><span style="color:#BD976A"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#BD976A">ImportMeta</span><span style="color:#666666">.</span><span style="color:#BD976A">url</span><span style="color:#DBD7CAEE">: </span><span style="color:#BD976A">string</span></code></span>url</span></span><span style="color:#666666">)))</span></span>
+&#96;&#96;&#96;
+
+**Security Considerations:**
+
+This function decodes percent-encoded characters, including encoded dot-segments
+(&#96;%2e&#96; as &#96;.&#96; and &#96;%2e%2e&#96; as &#96;..&#96;), and then normalizes the resulting path.
+This means that encoded directory traversal sequences (such as &#96;%2e%2e&#96;) are
+decoded and processed as actual path traversal, even though encoded slashes
+(&#96;%2F&#96;, &#96;%5C&#96;) are correctly rejected.
+
+**Applications must not rely on &#96;fileURLToPath()&#96; alone to prevent directory
+traversal attacks.** Always perform explicit path validation and security checks
+on the returned path value to ensure it remains within expected boundaries
+before using it for file system operations.</div><div class="twoslash-popup-docs twoslash-popup-docs-tags"><span class="twoslash-popup-docs-tag"><span class="twoslash-popup-docs-tag-name">@since</span><span class="twoslash-popup-docs-tag-value">v10.12.0</span></span><span class="twoslash-popup-docs-tag"><span class="twoslash-popup-docs-tag-name">@param</span><span class="twoslash-popup-docs-tag-value">url The file URL string or URL object to convert to a path.</span></span><span class="twoslash-popup-docs-tag"><span class="twoslash-popup-docs-tag-name">@return</span><span class="twoslash-popup-docs-tag-value">The fully-resolved platform-specific Node.js file path.</span></span></div></span>fileURLToPath</span></span><span style="color:#666666">(</span><span style="color:#4D9375">import</span><span style="color:#666666">.</span><span style="color:#B8A965">meta</span><span style="color:#666666">.</span><span style="color:#BD976A"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#BD976A">ImportMeta</span><span style="color:#666666">.</span><span style="color:#BD976A">url</span><span style="color:#DBD7CAEE">: </span><span style="color:#BD976A">string</span></code></span>url</span></span><span style="color:#666666">)))</span></span>
 <span class="line"><span style="color:#4D9375">    return</span><span style="color:#BD976A"> </span><span style="color:#BD976A"><span class="twoslash-hover"><span class="twoslash-popup-container"><code class="twoslash-popup-code"><span style="color:#CB7676">const </span><span style="color:#BD976A">srcFolderPath</span><span style="color:#666666">: </span><span style="color:#5DA994">string</span></code></span>srcFolderPath</span></span><span style="color:#CB7676"> +</span><span style="color:#C98A7D99"> "</span><span style="color:#C98A7D">/devtools/entry.js</span><span style="color:#C98A7D99">"</span></span>
 <span class="line"><span style="color:#666666">&#125;</span></span></code></pre>`;
   let t105;
