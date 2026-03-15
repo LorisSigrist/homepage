@@ -1,0 +1,70 @@
+# Avoiding the Coming AI Provider Lock-In
+
+![Gemini generated image](/articles/avoiding-the-coming-ai-provider-lock-in/Gemini_Generated_Image_77wqfo77wqfo77wq.png)
+
+"AI Providers have no moat" is a sentiment that gets echoed every time some new open source model performs unexpectedly well in a benchmark. How can an AI Provider retain pricing power in an environment where models are fungible, inference is commodified and competition from open models quickly erodes any technological advantage?
+
+This framing assumes Enterprise AI providers will compete on models. They won’t. Enterprise AI **providers will attempt to maintain pricing power by taking your business context hostage** and charging you to access it.
+
+## Why is business context so vital for Agents?
+Like People, Agents need "Business Context" to perform their tasks well. I'll illustrate this using an example:
+
+Let's say we are an educational institution and want an agent to manage our time-table. This involves negotiating with people who want modifications made to the time-table. Requests for modifications come in via Email.
+
+```
+From: timmys.mom@outlook.com
+To: administration@school.edu
+
+Dear Administrator
+
+My son Timmy has a trumpet class out of town on Tuesday afternoon at 5. 
+Unfortunately he has a Math class that ends a 4:45, 
+which won't allow him to make it to the trumpet class. 
+I already asked and the class can't be moved. 
+Is it possible to move the math class to wednesday afternoon?
+
+Best
+Timmy's Mom
+```
+
+In a naïve implementation, we would just feed the email to some Agent (analogous to copy-pasting the email into ChatGPT) & give the agent some affordances to make modifications to the timetable. This system will quickly be abused:
+1. Does this person only requests changes if necessary, or about every minor annoyance? We don't want one party to dictate the timetable.
+2. Has this request been denied before? Retrying the same request should not change the outcome.
+3. Have similar requests been granted to others? We want to be fair to all parties.
+4. How much do we care about making this person happy? If they are a major donor to the school we would bend over backwards, if they are dropping out in two months, who cares.
+5. Is this just a ploy to extract information about Timmy's schedule (maybe a divorced dad)? We don't want to give information out bad actors.
+
+A human administrator would have reasonably confident answers to all of these questions. They know how requests like this are usually handled and they know who Timmy is and they know who Timmy's parents are. Even if they don't, they know who they can ask. **This tacit knowledge, gained through experience, is the "business context" required to make a decision here.**
+
+Most “agentification” efforts attempt to make this tacit knowledge explicit and feed it into the agent’s context.
+- Cross-reference the email address with previous interactions this person has had with the university.
+- Compare the request to similar requests made previously.
+- Give the agent the ability to ask someone for additional information
+- (basically, if [Boris Tane would log it](https://loggingsucks.com/), you should put it in the context)
+
+This "context engineering" requires _some_ skill and a decent understanding of the business process at hand. It usually involves pulling data from all across the organisation. This is hard, since the data that would be most useful frequently isn't materialised anywhere, or is [siloed off](https://medium.com/data-engineering-with-dremio/how-data-silos-block-ai-and-how-to-fix-them-e54901c749d3#:~:text=Access%20alone%20doesn%E2%80%99t%20make%20AI,versus%20a%20generic%20textbook%20definition).
+
+## Model Providers will become Context Brokers to solve companies' context woes
+What if we didn't have to teach the agent this business context? What if it could acquire it the same way humans do: through experience, observation, and interaction with colleagues?
+
+If most business processes involve agents, those agents will naturally accumulate knowledge about how the company operates. The obvious next step is to let agents share that tacit understanding. [The technology for this already exists](https://embracethered.com/blog/posts/2025/chatgpt-how-does-chat-history-memory-preferences-work/). Google's Vertex AI, Microsoft's Graph and Salesforce's Data Cloud are already attempting to scale it to the size of a company. It is a matter of time until OpenAI and Anthropic realise they're in a prime position to become _context brokers_ too.
+
+This will be hugely valuable. Agents will be able to hit the ground running, without the costly endeavour of first piping in all the data required from traditional source. Companies will love it and adopt it quickly.
+
+## How this creates lock-in
+Keeping context locked down creates **internal network effects within companies**. If process A uses provider X, then process B should also use provider X so that they can share learnings. Providers have no incentive to make this context portable. Companies will find it increasingly difficult to switch providers in response to changes in circumstance. Enshittification and price increases will follow.
+
+If AI providers store and accumulate this context over time, they become the institutional memory layer of the company. Switching providers would mean losing years of accumulated context about how the business operates. Would your business survive firing every employee at once and rehiring new people in their positions?
+
+This strategy is not new. It is classic SaaS data lock-in. Oracle used it to trap its Enterprise Customers in their database offerings, now it's positioning itself as an Enterprise AI provider. Do you trust them?
+
+## So, How can we avoid getting trapped?
+Are we cooked? No. There are plenty of things we still can do:
+- Separating _reasoning_ from _memory_ is a good first step, but it is not enough. Services like [Amazon Bedrock AgentCore Memory](https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-agentcore-memory-building-context-aware-agents) make it easy to manage agent memories, but it is still a silo. Being trapped on the memory side is no better than being trapped on the reasoning side.
+- Avoid all-in-one providers
+- Own your context. Run it on infrastructure you control or can easily migrate away from. Egress fees can and will be used against you.
+- Bet on open formats for memories. This can be text-files, or open vector database formats, whatever works for your company.
+
+One way you can viscerally feel how trapped you are is by switching providers frequently. If it's easy you're in a good place. This will also let you adopt better models more quickly, giving you a competitive advantage.
+
+The real moat in AI won’t be the model. It will be the context layer surrounding it. You should own that layer.

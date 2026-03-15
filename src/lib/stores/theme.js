@@ -2,6 +2,14 @@ import { writable } from 'svelte/store';
 
 const LOCAL_STORAGE_KEY = 'theme';
 
+const hasLocalStorage =
+	typeof globalThis !== 'undefined' &&
+	typeof globalThis.localStorage !== 'undefined' &&
+	typeof globalThis.localStorage.getItem === 'function' &&
+	typeof globalThis.localStorage.setItem === 'function';
+
+const hasDocument = typeof document !== 'undefined';
+
 /**
  * @typedef { 'light' | 'dark' } Theme
  */
@@ -10,8 +18,8 @@ const LOCAL_STORAGE_KEY = 'theme';
  * @type {Theme}
  */
 const initial_theme =
-	'localStorage' in globalThis
-		? localStorage.getItem(LOCAL_STORAGE_KEY) === 'dark'
+	hasLocalStorage
+		? globalThis.localStorage.getItem(LOCAL_STORAGE_KEY) === 'dark'
 			? 'dark'
 			: 'light'
 		: 'light';
@@ -22,8 +30,10 @@ const initial_theme =
 export const theme = writable(initial_theme);
 
 theme.subscribe((value) => {
-	if ('localStorage' in globalThis) {
-		localStorage.setItem(LOCAL_STORAGE_KEY, value);
+	if (hasLocalStorage) {
+		globalThis.localStorage.setItem(LOCAL_STORAGE_KEY, value);
+	}
+	if (hasDocument) {
 		document.documentElement.classList.toggle('dark', value === 'dark');
 	}
 });
