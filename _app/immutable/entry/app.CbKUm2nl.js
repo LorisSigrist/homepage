@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["../nodes/0.qtZVnYTY.js","../chunks/scheduler.ZIqz7M1C.js","../chunks/index.D4FFmrY2.js","../nodes/1.DtZjQAWm.js","../chunks/stores.ClWkuVhK.js","../chunks/entry.BJEMMQEo.js","../chunks/index.CtraicQk.js","../nodes/2.zmwhaIiD.js","../chunks/Metadata.D-xa1Kp-.js","../assets/Metadata.CvNMVPeL.css","../chunks/each.CuygwpM4.js","../chunks/theme.DWJkjjUv.js","../nodes/3.B9KcmJVe.js","../assets/3.C1fGWMhf.css","../nodes/4.DIJpkCFC.js","../nodes/5.DJpSWQb0.js","../nodes/6.3ob-VMbQ.js","../chunks/_commonjsHelpers.DWwsNxpa.js","../assets/6.C0-9uiu2.css","../nodes/7.BJEQCr9k.js","../nodes/8.BR6t0zWc.js","../nodes/9.C23SJQsi.js","../nodes/10.BwdkYfw6.js","../nodes/11.B65CqOIc.js","../nodes/12.N9p0AeHA.js","../nodes/13.CAGBigVB.js","../chunks/preload-helper.CQrtv1eE.js","../chunks/Showcase.CrHcMjuA.js","../nodes/14.tddCCTtO.js","../nodes/15.CQsjl0ZL.js","../nodes/16.C6ux6udd.js","../nodes/17.DR6PJr0e.js","../nodes/18.C1gzig0d.js","../nodes/19.BYCmJjns.js","../nodes/20.CjtscgHT.js"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["../nodes/0.qtZVnYTY.js","../chunks/scheduler.ZIqz7M1C.js","../chunks/index.D4FFmrY2.js","../nodes/1.DDUNGs6V.js","../chunks/stores.Dx1wRuEF.js","../chunks/entry.CGyR2EG3.js","../chunks/index.CtraicQk.js","../nodes/2.BqrejDGk.js","../chunks/Metadata.ndMjop9-.js","../assets/Metadata.CvNMVPeL.css","../chunks/each.CuygwpM4.js","../chunks/theme.BHSbm7Uk.js","../nodes/3.B9KcmJVe.js","../assets/3.C1fGWMhf.css","../nodes/4.DXML7mPJ.js","../nodes/5.DJpSWQb0.js","../nodes/6.CpVHjozc.js","../chunks/_commonjsHelpers.DWwsNxpa.js","../assets/6.C0-9uiu2.css","../nodes/7.BJEQCr9k.js","../nodes/8.BR6t0zWc.js","../nodes/9.G5ghvx3L.js","../nodes/10.C23SJQsi.js","../nodes/11.BwdkYfw6.js","../nodes/12.B65CqOIc.js","../nodes/13.N9p0AeHA.js","../nodes/14.CAGBigVB.js","../chunks/preload-helper.CQrtv1eE.js","../chunks/Showcase.CrHcMjuA.js","../nodes/15.tddCCTtO.js","../nodes/16.CQsjl0ZL.js","../nodes/17.C6ux6udd.js","../nodes/18.DR6PJr0e.js","../nodes/19.C1gzig0d.js","../nodes/20.BYCmJjns.js","../nodes/21.CjtscgHT.js"])))=>i.map(i=>d[i]);
 import { _ as __vitePreload } from "../chunks/preload-helper.CQrtv1eE.js";
 import { s as safe_not_equal, d as afterUpdate, o as onMount, t as tick, e as binding_callbacks } from "../chunks/scheduler.ZIqz7M1C.js";
 import { S as SvelteComponent, i as init, d as detach, o as transition_out, p as transition_in, q as group_outros, r as check_outros, a as insert_hydration, g as claim_space, n as empty, j as space, u as construct_svelte_component, v as destroy_component, w as create_component, x as mount_component, y as claim_component, k as attr, z as set_style, c as claim_element, e as children, h as element, s as set_data, f as claim_text, t as text } from "../chunks/index.D4FFmrY2.js";
@@ -1084,46 +1084,48 @@ class Root extends SvelteComponent {
 }
 const nodes = [
   () => __vitePreload(() => import("../nodes/0.qtZVnYTY.js"), true ? __vite__mapDeps([0,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/1.DtZjQAWm.js"), true ? __vite__mapDeps([3,1,2,4,5,6]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/2.zmwhaIiD.js"), true ? __vite__mapDeps([7,1,2,8,4,5,6,9,10,11]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/1.DDUNGs6V.js"), true ? __vite__mapDeps([3,1,2,4,5,6]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/2.BqrejDGk.js"), true ? __vite__mapDeps([7,1,2,8,4,5,6,9,10,11]) : void 0, import.meta.url),
   () => __vitePreload(() => import("../nodes/3.B9KcmJVe.js"), true ? __vite__mapDeps([12,1,2,13]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/4.DIJpkCFC.js"), true ? __vite__mapDeps([14,1,2,8,4,5,6,9]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/4.DXML7mPJ.js"), true ? __vite__mapDeps([14,1,2,8,4,5,6,9]) : void 0, import.meta.url),
   () => __vitePreload(() => import("../nodes/5.DJpSWQb0.js"), true ? __vite__mapDeps([15,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/6.3ob-VMbQ.js"), true ? __vite__mapDeps([16,1,2,10,11,6,17,18]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/6.CpVHjozc.js"), true ? __vite__mapDeps([16,1,2,10,11,6,17,18]) : void 0, import.meta.url),
   () => __vitePreload(() => import("../nodes/7.BJEQCr9k.js"), true ? __vite__mapDeps([19,1,2]) : void 0, import.meta.url),
   () => __vitePreload(() => import("../nodes/8.BR6t0zWc.js"), true ? __vite__mapDeps([20,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/9.C23SJQsi.js"), true ? __vite__mapDeps([21,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/10.BwdkYfw6.js"), true ? __vite__mapDeps([22,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/11.B65CqOIc.js"), true ? __vite__mapDeps([23,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/12.N9p0AeHA.js"), true ? __vite__mapDeps([24,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/13.CAGBigVB.js"), true ? __vite__mapDeps([25,1,2,26,6,27]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/14.tddCCTtO.js"), true ? __vite__mapDeps([28,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/15.CQsjl0ZL.js"), true ? __vite__mapDeps([29,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/16.C6ux6udd.js"), true ? __vite__mapDeps([30,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/17.DR6PJr0e.js"), true ? __vite__mapDeps([31,1,2,27,10,6]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/18.C1gzig0d.js"), true ? __vite__mapDeps([32,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/19.BYCmJjns.js"), true ? __vite__mapDeps([33,1,2]) : void 0, import.meta.url),
-  () => __vitePreload(() => import("../nodes/20.CjtscgHT.js"), true ? __vite__mapDeps([34,1,2]) : void 0, import.meta.url)
+  () => __vitePreload(() => import("../nodes/9.G5ghvx3L.js"), true ? __vite__mapDeps([21,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/10.C23SJQsi.js"), true ? __vite__mapDeps([22,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/11.BwdkYfw6.js"), true ? __vite__mapDeps([23,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/12.B65CqOIc.js"), true ? __vite__mapDeps([24,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/13.N9p0AeHA.js"), true ? __vite__mapDeps([25,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/14.CAGBigVB.js"), true ? __vite__mapDeps([26,1,2,27,6,28]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/15.tddCCTtO.js"), true ? __vite__mapDeps([29,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/16.CQsjl0ZL.js"), true ? __vite__mapDeps([30,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/17.C6ux6udd.js"), true ? __vite__mapDeps([31,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/18.DR6PJr0e.js"), true ? __vite__mapDeps([32,1,2,28,10,6]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/19.C1gzig0d.js"), true ? __vite__mapDeps([33,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/20.BYCmJjns.js"), true ? __vite__mapDeps([34,1,2]) : void 0, import.meta.url),
+  () => __vitePreload(() => import("../nodes/21.CjtscgHT.js"), true ? __vite__mapDeps([35,1,2]) : void 0, import.meta.url)
 ];
 const server_loads = [];
 const dictionary = {
   "/(site)": [-7, [2]],
   "/(site)/(articles)/adding-devtools-to-vite-plugins": [-8, [2, 3]],
   "/(site)/(articles)/assertions-in-javascript": [-9, [2, 3]],
+  "/(site)/(articles)/avoiding-the-coming-ai-provider-lock-in": [-10, [2, 3]],
   "/(experiments)/blurhash": [4],
-  "/(site)/(articles)/branching-in-opencode-with-legit": [-10, [2, 3]],
-  "/(site)/(articles)/building-an-i18n-library-for-the-modern-web": [-11, [2, 3]],
-  "/(site)/(articles)/declarative-exception-handling": [-12, [2, 3]],
-  "/(site)/(articles)/dts-buddy-fixes-type-declarations": [-13, [2, 3]],
+  "/(site)/(articles)/branching-in-opencode-with-legit": [-11, [2, 3]],
+  "/(site)/(articles)/building-an-i18n-library-for-the-modern-web": [-12, [2, 3]],
+  "/(site)/(articles)/declarative-exception-handling": [-13, [2, 3]],
+  "/(site)/(articles)/dts-buddy-fixes-type-declarations": [-14, [2, 3]],
   "/(experiments)/flaci-to-godel": [5],
-  "/(site)/(articles)/fluent-inputs": [-14, [2, 3]],
-  "/(site)/(articles)/melt-ui-neat-pattern": [-15, [2, 3]],
-  "/(site)/(articles)/mock-data-with-zocker": [-16, [2, 3]],
-  "/(site)/(articles)/reliably-avoiding-theme-flashes": [-17, [2, 3]],
-  "/(site)/(articles)/tailwind-ui": [-18, [2, 3]],
-  "/(site)/(articles)/the-better-way-to-load-data": [-19, [2, 3]],
-  "/(site)/(articles)/the-poor-mans-scheduled-post": [-20, [2, 3]],
-  "/(site)/(articles)/zod-driven-development": [-21, [2, 3]]
+  "/(site)/(articles)/fluent-inputs": [-15, [2, 3]],
+  "/(site)/(articles)/melt-ui-neat-pattern": [-16, [2, 3]],
+  "/(site)/(articles)/mock-data-with-zocker": [-17, [2, 3]],
+  "/(site)/(articles)/reliably-avoiding-theme-flashes": [-18, [2, 3]],
+  "/(site)/(articles)/tailwind-ui": [-19, [2, 3]],
+  "/(site)/(articles)/the-better-way-to-load-data": [-20, [2, 3]],
+  "/(site)/(articles)/the-poor-mans-scheduled-post": [-21, [2, 3]],
+  "/(site)/(articles)/zod-driven-development": [-22, [2, 3]]
 };
 const hooks = {
   handleError: ({ error }) => {
