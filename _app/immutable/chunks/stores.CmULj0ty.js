@@ -1,4 +1,4 @@
-import { s as stores } from "./entry.Diok2-PY.js";
+import { s as stores } from "./entry.DxHaIL8A.js";
 const getStores = () => {
   const stores$1 = stores;
   return {
