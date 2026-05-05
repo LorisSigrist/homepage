@@ -1,6 +1,6 @@
 import { c as commonjsGlobal, g as getDefaultExportFromCjs } from "./_commonjsHelpers.DWwsNxpa.js";
 var quarterOfYear$1 = { exports: {} };
-(function(module, exports$1) {
+(function(module, exports) {
   !function(t, n) {
     module.exports = n();
   }(commonjsGlobal, function() {
@@ -29,7 +29,7 @@ var quarterOfYear$1 = { exports: {} };
 var quarterOfYearExports = quarterOfYear$1.exports;
 const quarterOfYear = /* @__PURE__ */ getDefaultExportFromCjs(quarterOfYearExports);
 var dayjs_min = { exports: {} };
-(function(module, exports$1) {
+(function(module, exports) {
   !function(t, e) {
     module.exports = e();
   }(commonjsGlobal, function() {
