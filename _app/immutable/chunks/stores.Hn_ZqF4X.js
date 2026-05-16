@@ -1,4 +1,4 @@
-import { a as stores } from "./entry.DlfoXRsd.js";
+import { a as stores } from "./entry.D3DRPv-1.js";
 const getStores = () => {
   const stores$1 = stores;
   return {
