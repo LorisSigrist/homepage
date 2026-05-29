@@ -1,4 +1,4 @@
-import { a as stores } from "./entry.DGFAD_Lw.js";
+import { a as stores } from "./entry.UXI-Q_gW.js";
 const getStores = () => {
   const stores$1 = stores;
   return {
