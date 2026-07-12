@@ -1,6 +1,6 @@
 import { s as safe_not_equal, l as assign, n as noop, m as compute_rest_props, p as exclude_internal_props, a as create_slot, u as update_slot_base, g as get_all_dirty_from_scope, b as get_slot_changes } from "../chunks/scheduler.ZIqz7M1C.js";
 import { S as SvelteComponent, i as init, d as detach, E as destroy_each, J as set_svg_attributes, a as insert_hydration, K as claim_svg_element, e as children, L as svg_element, o as transition_out, p as transition_in, k as attr, c as claim_element, g as claim_space, h as element, j as space, b as append_hydration, v as destroy_component, x as mount_component, B as listen, l as get_svelte_dataset, y as claim_component, w as create_component, A as head_selector } from "../chunks/index.D4FFmrY2.js";
-import { M as Metadata } from "../chunks/Metadata.BaxeZCE3.js";
+import { M as Metadata } from "../chunks/Metadata.C3mW5pq7.js";
 import { e as ensure_array_like } from "../chunks/each.CuygwpM4.js";
 import { t as theme } from "../chunks/theme.BHSbm7Uk.js";
 function get_spread_update(levels, updates) {
