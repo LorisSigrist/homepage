@@ -1,7 +1,7 @@
 var _a, _b;
 import { t as tick } from "./scheduler.ZIqz7M1C.js";
 import { w as writable } from "./index.CtraicQk.js";
-const version = "1787100685455";
+const version = "1787187069488";
 new URL("sveltekit-internal://");
 function normalize_path(path, trailing_slash) {
   if (path === "/" || trailing_slash === "ignore") return path;
@@ -302,8 +302,8 @@ function set(key, value, stringify = JSON.stringify) {
   } catch {
   }
 }
-const base = ((_a = globalThis.__sveltekit_1i4txoy) == null ? void 0 : _a.base) ?? "";
-const assets = ((_b = globalThis.__sveltekit_1i4txoy) == null ? void 0 : _b.assets) ?? base;
+const base = ((_a = globalThis.__sveltekit_wneqm1) == null ? void 0 : _a.base) ?? "";
+const assets = ((_b = globalThis.__sveltekit_wneqm1) == null ? void 0 : _b.assets) ?? base;
 const SNAPSHOT_KEY = "sveltekit:snapshot";
 const SCROLL_KEY = "sveltekit:scroll";
 const STATES_KEY = "sveltekit:states";
